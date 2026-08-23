@@ -42,6 +42,7 @@ export function useYouTubePlayer({
   const lastPlaylistIndexRef = useRef(-1);
   const captionsReadyRef = useRef(false);
   const pendingCaptionsEnabledRef = useRef<boolean | null>(null);
+  const volumeRampRef = useRef<number | null>(null);
   const callbacksRef = useRef({
     onReady,
     onError,
@@ -90,6 +91,13 @@ export function useYouTubePlayer({
     },
     [applyCaptionsEnabled]
   );
+
+  const cancelVolumeRamp = useCallback(() => {
+    if (volumeRampRef.current !== null) {
+      cancelAnimationFrame(volumeRampRef.current);
+      volumeRampRef.current = null;
+    }
+  }, []);
 
   useEffect(() => {
     let mounted = true;
@@ -181,6 +189,7 @@ export function useYouTubePlayer({
 
     return () => {
       mounted = false;
+      cancelVolumeRamp();
       playerRef.current?.destroy();
       playerRef.current = null;
       setPlayerReady(false);
@@ -188,7 +197,7 @@ export function useYouTubePlayer({
       captionsReadyRef.current = false;
       pendingCaptionsEnabledRef.current = null;
     };
-  }, [applyCaptionsEnabled, containerId]);
+  }, [applyCaptionsEnabled, cancelVolumeRamp, containerId]);
 
   const play = useCallback(() => {
     playerRef.current?.playVideo();
@@ -202,14 +211,53 @@ export function useYouTubePlayer({
     playerRef.current?.stopVideo();
   }, []);
 
-  const setVolume = useCallback((volume: number) => {
-    playerRef.current?.setVolume(volume);
-    if (volume === 0) {
-      playerRef.current?.mute();
-    } else {
-      playerRef.current?.unMute();
-    }
-  }, []);
+  const setVolume = useCallback(
+    (volume: number) => {
+      cancelVolumeRamp();
+      playerRef.current?.setVolume(volume);
+      if (volume === 0) {
+        playerRef.current?.mute();
+      } else {
+        playerRef.current?.unMute();
+      }
+    },
+    [cancelVolumeRamp]
+  );
+
+  const rampVolume = useCallback(
+    (targetVolume: number, durationMs: number) => {
+      const player = playerRef.current;
+      if (!player || durationMs <= 0) return;
+
+      cancelVolumeRamp();
+      player.setVolume(0);
+      player.mute();
+
+      const startTime = performance.now();
+
+      const tick = (now: number) => {
+        const elapsed = now - startTime;
+        const t = Math.min(1, elapsed / durationMs);
+        const nextVolume = Math.round(targetVolume * t);
+
+        player.setVolume(nextVolume);
+        if (nextVolume > 0) {
+          player.unMute();
+        } else {
+          player.mute();
+        }
+
+        if (t < 1) {
+          volumeRampRef.current = requestAnimationFrame(tick);
+        } else {
+          volumeRampRef.current = null;
+        }
+      };
+
+      volumeRampRef.current = requestAnimationFrame(tick);
+    },
+    [cancelVolumeRamp]
+  );
 
   const loadVideo = useCallback((videoId: string, startSeconds = 0) => {
     if (!playerRef.current || !videoId) return;
@@ -290,6 +338,8 @@ export function useYouTubePlayer({
     pause,
     stop,
     setVolume,
+    rampVolume,
+    cancelVolumeRamp,
     loadVideo,
     loadPlaylist,
     nextVideo,

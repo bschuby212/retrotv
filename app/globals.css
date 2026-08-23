@@ -8,11 +8,13 @@
 
 html,
 body {
+  width: 100%;
   height: 100%;
+  overflow: hidden;
 }
 
 body {
-  background: #1a1816;
+  background: #120e0c;
   color: #e8e4df;
   font-family: system-ui, -apple-system, sans-serif;
   -webkit-font-smoothing: antialiased;
@@ -26,33 +28,28 @@ button {
 }
 
 :root {
-  --tv-plastic-highlight: #c4c0b8;
-  --tv-plastic-light: #b8b4ac;
-  --tv-plastic-mid: #9a968e;
-  --tv-plastic-dark: #7a766e;
-  --tv-plastic-shadow: #5c5852;
+  --tv-plastic-highlight: #d4d0c8;
+  --tv-plastic-light: #c4c0b6;
+  --tv-plastic-mid: #a8a49a;
+  --tv-plastic-dark: #8a8680;
+  --tv-plastic-shadow: #6e6a64;
   --tv-bezel-outer: #1a1918;
   --tv-bezel-mid: #121110;
   --tv-bezel-inner: #0a0908;
-  --tv-room-bg: #1a1816;
   --tv-osd-color: #d8f0d0;
   --tv-osd-glow: rgba(180, 255, 160, 0.35);
+  --cabinet-surface-y: 56%;
+  --cabinet-anchor: 30%;
+  --cabinet-anchor-mobile: 26%;
+  --cabinet-anchor-wide: 29%;
+  --room-focal-x: 50%;
+  --room-focal-y: 56%;
+  --room-focal-y-mobile: 54%;
+  --room-focal-y-wide: 55%;
 }
 
 .page {
-  min-height: 100vh;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 2rem 1rem;
-  background:
-    radial-gradient(ellipse at 28% 42%, rgba(255, 210, 160, 0.06) 0%, transparent 45%),
-    radial-gradient(ellipse at 50% 30%, rgba(45, 40, 35, 0.5) 0%, transparent 60%),
-    var(--tv-room-bg);
-}
-
-@media (max-width: 640px) {
-  .page {
-    padding: 1rem 0.5rem;
-  }
+  width: 100vw;
+  height: 100dvh;
+  overflow: hidden;
 }

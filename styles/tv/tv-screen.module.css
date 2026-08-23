@@ -2,7 +2,6 @@
   position: absolute;
   overflow: hidden;
   z-index: 3;
-  /* Slight barrel inset — screen sits behind bezel lip */
   transform: translateZ(0);
 }
 
@@ -12,18 +11,32 @@
   height: 100%;
   background: #040404;
   overflow: hidden;
-  /* CRT barrel geometry — subtle convex curve */
-  transform: perspective(680px) rotateX(2.4deg) scale(0.985);
-  transform-origin: center 48%;
-  /* Authentic CRT corner rounding — not uniform border-radius */
   border-radius: 4% 4% 5% 5% / 3.5% 3.5% 4.5% 4.5%;
   box-shadow:
     inset 0 0 20px rgba(0, 0, 0, 0.9),
     inset 0 4px 12px rgba(0, 0, 0, 0.75);
 }
 
-/* Thick glass layer — curved surface behind bezel */
-.screenInner::before {
+/* Flat viewport — no 3D transform so iframe sizing stays correct */
+.screenViewport {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  border-radius: inherit;
+}
+
+/* CRT barrel geometry on effect-only glass layer */
+.screenEffects {
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  pointer-events: none;
+  transform: perspective(680px) rotateX(2.4deg) scale(0.985);
+  transform-origin: center 48%;
+  z-index: 20;
+}
+
+.screenEffects::before {
   content: "";
   position: absolute;
   inset: -1%;
@@ -33,11 +46,9 @@
     inset 0 3px 10px rgba(0, 0, 0, 0.5),
     inset 0 -2px 6px rgba(255, 255, 255, 0.02);
   pointer-events: none;
-  z-index: 20;
 }
 
-/* Subtle room reflection on glass — upper left */
-.screenInner::after {
+.screenEffects::after {
   content: "";
   position: absolute;
   inset: 0;
@@ -50,7 +61,6 @@
     transparent 100%
   );
   pointer-events: none;
-  z-index: 21;
 }
 
 .off .screenInner {
@@ -70,6 +80,8 @@
 }
 
 .playerHost {
+  position: absolute;
+  inset: 0;
   width: 100%;
   height: 100%;
   pointer-events: none;
@@ -78,10 +90,15 @@
 }
 
 .playerHost iframe {
+  position: absolute;
+  top: 50%;
+  left: 50%;
   width: 100% !important;
   height: 100% !important;
   border: none;
   pointer-events: none;
+  transform: translate(-50%, -50%) scale(1.12);
+  transform-origin: center;
 }
 
 .contentLayer {
@@ -91,8 +108,8 @@
   overflow: hidden;
 }
 
-.tuningLayer {
-  z-index: 7;
+.loadingLayer {
+  z-index: 8;
   inset: 1.5% 1.2%;
   border-radius: inherit;
   overflow: hidden;
@@ -159,12 +176,7 @@
   }
 }
 
-.poweredOff .screenInner {
-  transform: perspective(680px) rotateX(2.4deg) scale(0.985);
-}
-
-.poweredOff .playerLayer,
-.poweredOff .contentLayer {
+.poweredOff .screenViewport {
   opacity: 0;
 }
 
@@ -178,15 +190,15 @@
 
 @keyframes crtShutDown {
   0% {
-    transform: perspective(680px) rotateX(2.4deg) scale(0.985, 1);
+    transform: scaleY(1);
     opacity: 1;
   }
   40% {
-    transform: perspective(680px) rotateX(2.4deg) scale(0.985, 0.04);
+    transform: scaleY(0.04);
     opacity: 0.9;
   }
   100% {
-    transform: perspective(680px) rotateX(2.4deg) scale(0.985, 0.002);
+    transform: scaleY(0.002);
     opacity: 0;
   }
 }

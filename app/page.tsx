@@ -1,9 +1,9 @@
-import { RetroTV } from "@/components/tv/RetroTV";
+import { RoomScene } from "@/components/tv/RoomScene";
 
 export default function Home() {
   return (
     <main className="page">
-      <RetroTV />
+      <RoomScene />
     </main>
   );
 }

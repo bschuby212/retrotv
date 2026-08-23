@@ -37,7 +37,7 @@ export function TVControls({
       <div className={controlsStyles.gap} aria-hidden="true" />
 
       <div className={controlsStyles.cluster}>
-        <span className={controlsStyles.clusterLabel}>Volume</span>
+        <span className={controlsStyles.clusterLabel}>Vol</span>
         <div className={controlsStyles.buttonPair}>
           <TVButton
             variant="narrow"
@@ -56,10 +56,10 @@ export function TVControls({
         </div>
       </div>
 
-      <div className={controlsStyles.gapWide} aria-hidden="true" />
+      <div className={controlsStyles.gap} aria-hidden="true" />
 
       <div className={controlsStyles.cluster}>
-        <span className={controlsStyles.clusterLabel}>Channel</span>
+        <span className={controlsStyles.clusterLabel}>Ch</span>
         <div className={controlsStyles.buttonPair}>
           <TVButton
             variant="narrow"

@@ -4,9 +4,9 @@ import { useCallback } from "react";
 import { isChannelPlayable } from "@/config/channels";
 import { CRTOSD } from "@/components/tv/CRTDOSD";
 import { CRTOverlay } from "@/components/tv/CRTOverlay";
+import { LoadingScreen } from "@/components/tv/LoadingScreen";
 import { PlaceholderScreen } from "@/components/tv/PlaceholderScreen";
 import { StaticTransition } from "@/components/tv/StaticTransition";
-import { TuningScreen } from "@/components/tv/TuningScreen";
 import { YouTubePlayer } from "@/components/tv/YouTubePlayer";
 import { tvScreenConfig } from "@/config/tvScreen";
 import { tvSettings } from "@/config/tvSettings";
@@ -20,7 +20,8 @@ interface TVScreenProps {
   powerPhase: PowerPhase;
   currentChannel: Channel;
   isChangingChannel: boolean;
-  isTuningIn: boolean;
+  isLoading: boolean;
+  loadingProgress: number;
   hasSignal: boolean;
   osd: OSDState;
   onChannelUp: () => void;
@@ -32,7 +33,8 @@ export function TVScreen({
   powerPhase,
   currentChannel,
   isChangingChannel,
-  isTuningIn,
+  isLoading,
+  loadingProgress,
   hasSignal,
   osd,
   onChannelUp,
@@ -92,35 +94,42 @@ export function TVScreen({
         className={screenStyles.screenInner}
         style={{ borderRadius: tvScreenConfig.screenBorderRadius }}
       >
-        <YouTubePlayer
-          containerId={YOUTUBE_CONTAINER_ID}
-          visible={showPlayer}
-        />
+        <div className={screenStyles.screenViewport}>
+          <YouTubePlayer
+            containerId={YOUTUBE_CONTAINER_ID}
+            visible={showPlayer}
+          />
 
-        <div className={`${screenStyles.layer} ${screenStyles.contentLayer}`}>
-          {showPlaceholder && (
-            <PlaceholderScreen
-              channelNumber={currentChannel.channel}
-              channelName={currentChannel.name}
+          <div className={`${screenStyles.layer} ${screenStyles.contentLayer}`}>
+            {showPlaceholder && (
+              <PlaceholderScreen
+                channelNumber={currentChannel.channel}
+                channelName={currentChannel.name}
+              />
+            )}
+            {showNoSignalOverlay && (
+              <div className={screenStyles.noSignal}>
+                <span className={screenStyles.noSignalText}>NO SIGNAL</span>
+              </div>
+            )}
+          </div>
+
+          <div className={`${screenStyles.layer} ${screenStyles.transitionLayer}`}>
+            <StaticTransition active={isChangingChannel} />
+          </div>
+
+          <div className={`${screenStyles.layer} ${screenStyles.loadingLayer}`}>
+            <LoadingScreen
+              active={showPlayer && isLoading}
+              progress={loadingProgress}
             />
-          )}
-          {showNoSignalOverlay && (
-            <div className={screenStyles.noSignal}>
-              <span className={screenStyles.noSignalText}>NO SIGNAL</span>
-            </div>
-          )}
+          </div>
         </div>
 
-        <div className={`${screenStyles.layer} ${screenStyles.transitionLayer}`}>
-          <StaticTransition active={isChangingChannel} />
-        </div>
+        <div className={screenStyles.screenEffects} aria-hidden="true" />
 
         <div className={`${screenStyles.layer} ${screenStyles.overlayLayer}`}>
           <CRTOverlay isPowered={isPowered} powerPhase={powerPhase} />
-        </div>
-
-        <div className={`${screenStyles.layer} ${screenStyles.tuningLayer}`}>
-          <TuningScreen active={showPlayer && isTuningIn} />
         </div>
       </div>
 

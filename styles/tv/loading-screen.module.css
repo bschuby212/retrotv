@@ -1,0 +1,96 @@
+.loading {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1.25rem;
+  background: #000;
+  border-radius: inherit;
+  overflow: hidden;
+  z-index: 8;
+}
+
+.noise {
+  position: absolute;
+  inset: -20%;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.4'/%3E%3C/svg%3E");
+  opacity: 0.12;
+  mix-blend-mode: screen;
+  pointer-events: none;
+}
+
+.scanlines {
+  position: absolute;
+  inset: 0;
+  background: repeating-linear-gradient(
+    0deg,
+    rgba(0, 0, 0, 0) 0,
+    rgba(0, 0, 0, 0) 1px,
+    rgba(0, 0, 0, 0.22) 1px,
+    rgba(0, 0, 0, 0.22) 2px
+  );
+  opacity: 0.35;
+  pointer-events: none;
+}
+
+.labelRow {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  gap: 0.15em;
+}
+
+.label {
+  font-family: "Arial Narrow", "Helvetica Neue Condensed", "Arial", sans-serif;
+  font-size: clamp(1.1rem, 3.2vw, 1.65rem);
+  font-weight: 700;
+  font-stretch: condensed;
+  letter-spacing: 0.22em;
+  color: #fff;
+  text-transform: uppercase;
+}
+
+.cursor {
+  display: inline-block;
+  width: 0.55em;
+  height: 0.85em;
+  background: #fff;
+  animation: cursorBlink 900ms steps(1) infinite;
+}
+
+.progressBar {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  gap: 0.35rem;
+}
+
+.segment {
+  width: clamp(1.4rem, 4vw, 2rem);
+  height: clamp(0.55rem, 1.6vw, 0.75rem);
+  background: #1a1a1a;
+  border: 1px solid #333;
+  box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.8);
+}
+
+.segmentFilled {
+  background: linear-gradient(180deg, #f0f0f0 0%, #c8c8c8 45%, #909090 100%);
+  border-color: #bbb;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.5),
+    0 0 6px rgba(255, 255, 255, 0.15);
+}
+
+@keyframes cursorBlink {
+  0%,
+  49% {
+    opacity: 1;
+  }
+  50%,
+  100% {
+    opacity: 0;
+  }
+}

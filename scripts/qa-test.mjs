@@ -44,8 +44,8 @@ await check("Channel OSD appears", async () => {
 });
 
 await check("Hardware labels visible", async () => {
-  await page.getByText("Volume", { exact: true });
-  await page.getByText("Channel", { exact: true });
+  await page.getByText("Vol", { exact: true });
+  await page.getByText("Ch", { exact: true });
   await page.getByText("Prev", { exact: true });
   await page.getByText("Next", { exact: true });
 });

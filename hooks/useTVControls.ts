@@ -20,6 +20,8 @@ interface UseTVControlsOptions {
   pause: () => void;
   stop: () => void;
   setPlayerVolume: (volume: number) => void;
+  rampVolume: (targetVolume: number, durationMs: number) => void;
+  cancelVolumeRamp: () => void;
   loadVideo: (videoId: string, startSeconds?: number) => void;
   loadPlaylist: (playlistId: string, index?: number) => void;
   nextVideo: () => void;
@@ -55,6 +57,8 @@ export function useTVControls({
   pause,
   stop,
   setPlayerVolume,
+  rampVolume,
+  cancelVolumeRamp,
   loadVideo,
   loadPlaylist,
   nextVideo,
@@ -74,7 +78,8 @@ export function useTVControls({
   const [currentChannelIndex, setCurrentChannelIndex] = useState(0);
   const [volume, setVolume] = useState<number>(tvSettings.defaultVolume);
   const [isChangingChannel, setIsChangingChannel] = useState(false);
-  const [isTuningIn, setIsTuningIn] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const [loadingProgress, setLoadingProgress] = useState(0);
   const [captionsEnabled, setCaptionsEnabledState] = useState(false);
   const [osd, setOsd] = useState<OSDState>({ type: null });
   const [hasSignal, setHasSignal] = useState(true);
@@ -84,8 +89,9 @@ export function useTVControls({
   const volumeOsdTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const transportOsdTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const powerTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-  const tuneInStartedAtRef = useRef(0);
-  const tuneInTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const loadStartedAtRef = useRef(0);
+  const loadTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const loadRafRef = useRef<number | null>(null);
   const channelLockRef = useRef(false);
   const episodePositionRef = useRef<Record<number, number>>({});
   const errorSkipAttemptsRef = useRef(0);
@@ -133,43 +139,59 @@ export function useTVControls({
     }
   }, []);
 
-  const endTuneIn = useCallback(() => {
-    if (tuneInTimerRef.current) {
-      clearTimeout(tuneInTimerRef.current);
-      tuneInTimerRef.current = null;
+  const endLoading = useCallback(() => {
+    if (loadTimerRef.current) {
+      clearTimeout(loadTimerRef.current);
+      loadTimerRef.current = null;
     }
-    setIsTuningIn(false);
-  }, []);
-
-  const beginTuneIn = useCallback(() => {
-    tuneInStartedAtRef.current = Date.now();
-    setIsTuningIn(true);
-
-    if (tuneInTimerRef.current) {
-      clearTimeout(tuneInTimerRef.current);
+    if (loadRafRef.current !== null) {
+      cancelAnimationFrame(loadRafRef.current);
+      loadRafRef.current = null;
     }
+    cancelVolumeRamp();
+    setIsLoading(false);
+    setLoadingProgress(0);
+  }, [cancelVolumeRamp]);
 
-    tuneInTimerRef.current = setTimeout(() => {
-      setIsTuningIn(false);
-      tuneInTimerRef.current = null;
-    }, tvSettings.tuneInMinMs);
-  }, []);
+  const startLoadingAudioFade = useCallback(() => {
+    rampVolume(volumeRef.current, tvSettings.loadVolumeFadeMs);
+  }, [rampVolume]);
 
-  const tryEndTuneInOnPlay = useCallback(() => {
-    const elapsed = Date.now() - tuneInStartedAtRef.current;
-    const delay = Math.max(
-      tvSettings.tuneInSettleMs,
-      tvSettings.tuneInMinMs - elapsed
-    );
+  const beginLoading = useCallback(() => {
+    loadStartedAtRef.current = Date.now();
+    setIsLoading(true);
+    setLoadingProgress(0);
 
-    if (tuneInTimerRef.current) {
-      clearTimeout(tuneInTimerRef.current);
+    if (loadTimerRef.current) {
+      clearTimeout(loadTimerRef.current);
+    }
+    if (loadRafRef.current !== null) {
+      cancelAnimationFrame(loadRafRef.current);
     }
 
-    tuneInTimerRef.current = setTimeout(() => {
-      setIsTuningIn(false);
-      tuneInTimerRef.current = null;
-    }, delay);
+    const tick = () => {
+      const elapsed = Date.now() - loadStartedAtRef.current;
+      const progress = Math.min(1, elapsed / tvSettings.loadDurationMs);
+      setLoadingProgress(progress);
+
+      if (progress < 1) {
+        loadRafRef.current = requestAnimationFrame(tick);
+      } else {
+        loadRafRef.current = null;
+      }
+    };
+
+    loadRafRef.current = requestAnimationFrame(tick);
+
+    loadTimerRef.current = setTimeout(() => {
+      setIsLoading(false);
+      setLoadingProgress(1);
+      loadTimerRef.current = null;
+      if (loadRafRef.current !== null) {
+        cancelAnimationFrame(loadRafRef.current);
+        loadRafRef.current = null;
+      }
+    }, tvSettings.loadDurationMs);
   }, []);
 
   const reapplyCaptionsIfEnabled = useCallback(() => {
@@ -288,10 +310,10 @@ export function useTVControls({
   const showNoSignal = useCallback(() => {
     clearChannelOsdTimer();
     clearEpisodeOsdTimer();
-    endTuneIn();
+    endLoading();
     setHasSignal(false);
     setOsd({ type: null });
-  }, [clearChannelOsdTimer, clearEpisodeOsdTimer, endTuneIn]);
+  }, [clearChannelOsdTimer, clearEpisodeOsdTimer, endLoading]);
 
   const loadChannelSource = useCallback(
     (channel: Channel) => {
@@ -303,7 +325,7 @@ export function useTVControls({
 
       errorSkipAttemptsRef.current = 0;
       setHasSignal(true);
-      beginTuneIn();
+      beginLoading();
 
       if (channel.type === "playlist" && channel.playlistId) {
         const savedIndex = getSavedEpisodeIndex(channel);
@@ -315,18 +337,20 @@ export function useTVControls({
 
       if (isPoweredRef.current && powerPhaseRef.current === "on") {
         play();
+        startLoadingAudioFade();
       }
 
       reapplyCaptionsIfEnabled();
     },
     [
-      beginTuneIn,
+      beginLoading,
       getSavedEpisodeIndex,
       loadPlaylist,
       loadVideo,
       play,
       reapplyCaptionsIfEnabled,
       showNoSignal,
+      startLoadingAudioFade,
       stop,
       syncPlaylistIndex,
     ]
@@ -372,7 +396,7 @@ export function useTVControls({
 
       channelLockRef.current = true;
       setIsChangingChannel(true);
-      beginTuneIn();
+      beginLoading();
 
       const nextIndex = wrapIndex(
         currentChannelIndexRef.current + direction,
@@ -386,7 +410,7 @@ export function useTVControls({
         channelLockRef.current = false;
       }, tvSettings.channelTransitionMs);
     },
-    [beginTuneIn, loadCurrentChannel]
+    [beginLoading, loadCurrentChannel]
   );
 
   const channelUp = useCallback(() => {
@@ -466,9 +490,10 @@ export function useTVControls({
     const channel = channels[currentChannelIndexRef.current];
     if (channel.type !== "playlist" || !channel.playlistId || !playerReady) return;
 
-    beginTuneIn();
+    beginLoading();
     previousVideo();
     play();
+    startLoadingAudioFade();
 
     window.setTimeout(() => {
       const index = getPlaylistIndex();
@@ -477,7 +502,7 @@ export function useTVControls({
       reapplyCaptionsIfEnabled();
     }, 150);
   }, [
-    beginTuneIn,
+    beginLoading,
     getPlaylistIndex,
     play,
     playerReady,
@@ -485,6 +510,7 @@ export function useTVControls({
     reapplyCaptionsIfEnabled,
     saveEpisodeIndex,
     showEpisodeOsd,
+    startLoadingAudioFade,
   ]);
 
   const episodeNext = useCallback(() => {
@@ -493,9 +519,10 @@ export function useTVControls({
     const channel = channels[currentChannelIndexRef.current];
     if (channel.type !== "playlist" || !channel.playlistId || !playerReady) return;
 
-    beginTuneIn();
+    beginLoading();
     nextVideo();
     play();
+    startLoadingAudioFade();
 
     window.setTimeout(() => {
       const index = getPlaylistIndex();
@@ -504,7 +531,7 @@ export function useTVControls({
       reapplyCaptionsIfEnabled();
     }, 150);
   }, [
-    beginTuneIn,
+    beginLoading,
     getPlaylistIndex,
     nextVideo,
     play,
@@ -512,6 +539,7 @@ export function useTVControls({
     reapplyCaptionsIfEnabled,
     saveEpisodeIndex,
     showEpisodeOsd,
+    startLoadingAudioFade,
   ]);
 
   const handlePlaylistIndexChange = useCallback(() => {
@@ -560,9 +588,10 @@ export function useTVControls({
         currentIndex < playlist.length - 1 &&
         errorSkipAttemptsRef.current < playlist.length
       ) {
-        beginTuneIn();
+        beginLoading();
         nextVideo();
         play();
+        startLoadingAudioFade();
         window.setTimeout(() => {
           const index = getPlaylistIndex();
           saveEpisodeIndex(channel, index);
@@ -575,7 +604,7 @@ export function useTVControls({
 
     showNoSignal();
   }, [
-    beginTuneIn,
+    beginLoading,
     getPlaylist,
     getPlaylistIndex,
     nextVideo,
@@ -583,6 +612,7 @@ export function useTVControls({
     saveEpisodeIndex,
     showEpisodeOsd,
     showNoSignal,
+    startLoadingAudioFade,
   ]);
 
   const toggleCaptions = useCallback(() => {
@@ -597,14 +627,9 @@ export function useTVControls({
     showTransportOsd(nextEnabled ? "ccOn" : "ccOff");
   }, [setCaptionsEnabled, showTransportOsd]);
 
-  const handlePlayerStateChange = useCallback(
-    (state: number) => {
-      if (state === 1) {
-        tryEndTuneInOnPlay();
-      }
-    },
-    [tryEndTuneInOnPlay]
-  );
+  const handlePlayerStateChange = useCallback((_state: number) => {
+    // Loading overlay runs for a fixed duration; no early exit on PLAYING.
+  }, []);
 
   const togglePower = useCallback(() => {
     if (
@@ -621,7 +646,7 @@ export function useTVControls({
 
     if (isPoweredRef.current) {
       setPowerPhase("shuttingDown");
-      endTuneIn();
+      endLoading();
       pause();
       stop();
 
@@ -645,6 +670,7 @@ export function useTVControls({
       }, tvSettings.powerOnDurationMs);
     }
   }, [
+    endLoading,
     loadCurrentChannel,
     pause,
     playerReady,
@@ -670,13 +696,16 @@ export function useTVControls({
       clearVolumeOsdTimer();
       clearTransportOsdTimer();
       if (powerTimerRef.current) clearTimeout(powerTimerRef.current);
-      if (tuneInTimerRef.current) clearTimeout(tuneInTimerRef.current);
+      if (loadTimerRef.current) clearTimeout(loadTimerRef.current);
+      if (loadRafRef.current !== null) cancelAnimationFrame(loadRafRef.current);
+      cancelVolumeRamp();
     };
   }, [
     clearChannelOsdTimer,
     clearEpisodeOsdTimer,
     clearVolumeOsdTimer,
     clearTransportOsdTimer,
+    cancelVolumeRamp,
   ]);
 
   return {
@@ -685,7 +714,8 @@ export function useTVControls({
     currentChannelIndex,
     volume,
     isChangingChannel,
-    isTuningIn,
+    isLoading,
+    loadingProgress,
     captionsEnabled,
     osd,
     playerReady,

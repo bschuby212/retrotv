@@ -1,0 +1,101 @@
+.scene {
+  position: fixed;
+  inset: 0;
+  width: 100vw;
+  height: 100dvh;
+  overflow: hidden;
+  background: #120e0c;
+  --cabinet-anchor: 30%;
+  --cabinet-anchor-mobile: 26%;
+  --cabinet-anchor-wide: 29%;
+  --room-focal-x: 50%;
+  --room-focal-y: 56%;
+  --room-focal-y-mobile: 54%;
+  --room-focal-y-wide: 55%;
+}
+
+.background {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: var(--room-focal-x, 50%) var(--room-focal-y, 56%);
+  pointer-events: none;
+  user-select: none;
+}
+
+.tvMount {
+  position: absolute;
+  left: 50%;
+  bottom: var(--cabinet-anchor, 30%);
+  transform: translateX(-50%);
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.contactShadow {
+  position: absolute;
+  bottom: -2px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 72%;
+  height: 14px;
+  background: radial-gradient(
+    ellipse at 50% 0%,
+    rgba(0, 0, 0, 0.72) 0%,
+    rgba(0, 0, 0, 0.38) 42%,
+    rgba(0, 0, 0, 0.12) 68%,
+    transparent 82%
+  );
+  pointer-events: none;
+  z-index: 0;
+}
+
+.ambientShadow {
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 88%;
+  height: 28px;
+  background: radial-gradient(
+    ellipse at 50% 0%,
+    rgba(0, 0, 0, 0.28) 0%,
+    transparent 75%
+  );
+  pointer-events: none;
+  z-index: 0;
+}
+
+@media (max-width: 640px) {
+  .background {
+    object-position: var(--room-focal-x, 50%) var(--room-focal-y-mobile, 54%);
+  }
+
+  .tvMount {
+    bottom: var(--cabinet-anchor-mobile, 26%);
+  }
+}
+
+@media (min-width: 641px) and (max-width: 1366px) {
+  .background {
+    object-position: var(--room-focal-x, 50%) var(--room-focal-y, 57%);
+  }
+
+  .tvMount {
+    bottom: var(--cabinet-anchor, 31%);
+  }
+}
+
+@media (min-width: 1920px) {
+  .background {
+    object-position: var(--room-focal-x, 50%) var(--room-focal-y-wide, 55%);
+  }
+
+  .tvMount {
+    bottom: var(--cabinet-anchor-wide, 29%);
+  }
+}
