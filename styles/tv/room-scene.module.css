@@ -147,12 +147,24 @@
   }
 }
 
-@media (min-width: 1367px) {
+@media (min-width: 1367px) and (max-width: 1559px) {
   .background {
     object-position: var(--room-focal-x, 50%) var(--room-focal-y-wide, calc(47% + 60px));
   }
 
   .tvMount {
     bottom: var(--cabinet-anchor-wide, 19%);
+    transform: translateX(-50%);
+  }
+}
+
+@media (min-width: 1560px) {
+  .background {
+    object-position: var(--room-focal-x, 50%) var(--room-focal-y-wide, calc(47% + 60px));
+  }
+
+  .tvMount {
+    bottom: var(--cabinet-anchor-wide, 19%);
+    transform: translate(-50%, 24px);
   }
 }
