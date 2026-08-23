@@ -12,15 +12,15 @@
   --room-focal-y: 61%;
   --room-focal-y-mobile: 58%;
   --room-focal-y-wide: 60%;
-  --room-bg-scale: 1.2;
+  --room-bg-scale: 1.5;
 }
 
 .backgroundWrap {
   position: absolute;
   inset: 0;
   overflow: hidden;
-  transform: scale(var(--room-bg-scale, 1.2));
-  transform-origin: center 62%;
+  transform: scale(var(--room-bg-scale, 1.5));
+  transform-origin: center 58%;
 }
 
 .background {
@@ -36,7 +36,7 @@
 .tvMount {
   position: absolute;
   left: 50%;
-  bottom: var(--cabinet-anchor, 24%);
+  bottom: calc(var(--cabinet-anchor, 29%) + 80px);
   transform: translateX(-50%);
   z-index: 2;
   display: flex;
@@ -84,7 +84,7 @@
   }
 
   .tvMount {
-    bottom: var(--cabinet-anchor-mobile, 20%);
+    bottom: calc(var(--cabinet-anchor-mobile, 25%) + 80px);
   }
 }
 
@@ -94,7 +94,7 @@
   }
 
   .tvMount {
-    bottom: var(--cabinet-anchor, 25%);
+    bottom: calc(var(--cabinet-anchor, 29%) + 80px);
   }
 }
 
@@ -104,6 +104,6 @@
   }
 
   .tvMount {
-    bottom: var(--cabinet-anchor-wide, 23%);
+    bottom: calc(var(--cabinet-anchor-wide, 28%) + 80px);
   }
 }

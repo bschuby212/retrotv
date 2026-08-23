@@ -2,7 +2,7 @@
 .retroTv {
   --plastic-grain: url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='1.15' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23g)' opacity='0.35'/%3E%3C/svg%3E");
   position: relative;
-  width: min(680px, 44vw);
+  width: min(850px, 55vw);
   aspect-ratio: 1.05 / 1;
   z-index: 1;
   filter:
@@ -90,7 +90,7 @@
   position: absolute;
   left: 0;
   right: 0;
-  top: 72.5%;
+  top: 74.2%;
   bottom: 0;
   pointer-events: none;
   z-index: 2;
@@ -152,7 +152,7 @@
 
 .brandPlate {
   position: absolute;
-  top: 72.6%;
+  top: 74.4%;
   left: 50%;
   transform: translateX(-50%);
   z-index: 4;
@@ -172,14 +172,14 @@
 
 .lowerCenter {
   position: absolute;
-  top: 75.8%;
+  top: 77.6%;
   left: 12%;
   right: 12%;
   z-index: 4;
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 8px;
+  gap: 12px;
   height: auto;
 }
 
@@ -468,12 +468,12 @@
 
 @media (max-width: 640px) {
   .retroTv {
-    width: min(680px, 94vw);
+    width: min(850px, 96vw);
   }
 }
 
 @media (min-width: 1600px) {
   .retroTv {
-    width: min(700px, 42vw);
+    width: min(875px, 52vw);
   }
 }
