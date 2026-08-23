@@ -115,8 +115,13 @@ export function RetroTV() {
           <div className={retroStyles.vcrSection} aria-hidden="true">
             <div className={retroStyles.vcrRecess}>
               <div className={retroStyles.vcrFlap}>
+                <div className={retroStyles.vcrWindow}>
+                  <div className={retroStyles.vcrTapePath} />
+                  <div className={retroStyles.vcrReel} />
+                  <div className={retroStyles.vcrReel} />
+                </div>
                 <span className={retroStyles.vcrLabel}>
-                  VHS  DIGITAL TRACKING
+                  VHS · DIGITAL TRACKING
                 </span>
                 <div className={retroStyles.vcrSlotOpening} />
               </div>

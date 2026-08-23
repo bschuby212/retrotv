@@ -186,7 +186,7 @@
 .vcrSection {
   position: relative;
   width: 100%;
-  height: 20px;
+  height: 30px;
   flex-shrink: 0;
 }
 
@@ -194,34 +194,43 @@
   position: relative;
   width: 100%;
   height: 100%;
-  padding: 3px 4px 4px;
-  border-radius: 3px;
+  padding: 4px 5px 5px;
+  border-radius: 4px;
   background: linear-gradient(
     180deg,
-    rgba(0, 0, 0, 0.12) 0%,
-    rgba(0, 0, 0, 0.06) 100%
+    rgba(0, 0, 0, 0.18) 0%,
+    rgba(0, 0, 0, 0.08) 100%
   );
   box-shadow:
-    inset 0 2px 5px rgba(0, 0, 0, 0.42),
-    inset 0 0 0 1px rgba(0, 0, 0, 0.2),
-    0 1px 0 rgba(255, 248, 235, 0.04);
+    inset 0 3px 7px rgba(0, 0, 0, 0.48),
+    inset 0 0 0 1px rgba(0, 0, 0, 0.24),
+    0 1px 0 rgba(255, 248, 235, 0.05);
 }
 
 .vcrFlap {
   position: relative;
   width: 100%;
   height: 100%;
-  border-radius: 2px;
-  background: linear-gradient(
-    180deg,
-    #b4b0a8 0%,
-    #a49f97 42%,
-    #908c84 100%
-  );
+  border-radius: 3px;
+  background:
+    linear-gradient(
+      90deg,
+      rgba(255, 255, 255, 0.04) 0%,
+      transparent 8%,
+      transparent 92%,
+      rgba(0, 0, 0, 0.06) 100%
+    ),
+    linear-gradient(
+      180deg,
+      #c2bdb4 0%,
+      #aea9a0 18%,
+      #9a958c 52%,
+      #86817a 100%
+    );
   box-shadow:
-    inset 0 1px 0 rgba(255, 250, 240, 0.28),
-    inset 0 -2px 3px rgba(0, 0, 0, 0.18),
-    0 1px 1px rgba(0, 0, 0, 0.12);
+    inset 0 1px 0 rgba(255, 250, 240, 0.34),
+    inset 0 -2px 4px rgba(0, 0, 0, 0.22),
+    0 1px 1px rgba(0, 0, 0, 0.14);
   overflow: hidden;
 }
 
@@ -230,36 +239,121 @@
   position: absolute;
   inset: 0;
   border-radius: inherit;
-  box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.14);
+  box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.16);
   pointer-events: none;
+}
+
+.vcrWindow {
+  position: absolute;
+  top: 18%;
+  left: 6%;
+  width: 22%;
+  height: 52%;
+  border-radius: 2px;
+  background: linear-gradient(180deg, #1a1816 0%, #080706 100%);
+  box-shadow:
+    inset 0 2px 5px rgba(0, 0, 0, 0.92),
+    inset 0 0 0 1px rgba(0, 0, 0, 0.65),
+    0 0 0 1px rgba(255, 248, 235, 0.06);
+  overflow: hidden;
+}
+
+.vcrTapePath {
+  position: absolute;
+  left: 12%;
+  right: 12%;
+  top: 50%;
+  height: 2px;
+  transform: translateY(-50%);
+  background: linear-gradient(
+    90deg,
+    #3a2820 0%,
+    #5a4030 50%,
+    #3a2820 100%
+  );
+  box-shadow: 0 0 2px rgba(0, 0, 0, 0.6);
+}
+
+.vcrReel {
+  position: absolute;
+  top: 50%;
+  width: 34%;
+  aspect-ratio: 1;
+  transform: translateY(-50%);
+  border-radius: 50%;
+  background: radial-gradient(
+    circle at 38% 34%,
+    #6a6058 0%,
+    #3a3430 42%,
+    #1a1614 72%,
+    #0a0806 100%
+  );
+  box-shadow:
+    inset 0 1px 2px rgba(255, 248, 235, 0.08),
+    inset 0 -1px 3px rgba(0, 0, 0, 0.65);
+}
+
+.vcrReel::after {
+  content: "";
+  position: absolute;
+  inset: 28%;
+  border-radius: 50%;
+  background: radial-gradient(
+    circle at 40% 35%,
+    #2a2624 0%,
+    #0e0c0a 100%
+  );
+  box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.8);
+}
+
+.vcrReel:first-of-type {
+  left: 8%;
+}
+
+.vcrReel:last-of-type {
+  right: 8%;
 }
 
 .vcrSlotOpening {
   position: absolute;
-  left: 5%;
-  right: 5%;
+  left: 4%;
+  right: 4%;
   bottom: 0;
-  height: 14%;
+  height: 22%;
+  border-radius: 0 0 2px 2px;
   background: linear-gradient(
     180deg,
-    rgba(20, 18, 16, 0.7) 0%,
-    #080706 100%
+    rgba(12, 10, 8, 0.85) 0%,
+    #040302 100%
   );
-  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.85);
+  box-shadow:
+    inset 0 3px 6px rgba(0, 0, 0, 0.95),
+    inset 0 1px 0 rgba(255, 248, 235, 0.03);
+}
+
+.vcrSlotOpening::before {
+  content: "";
+  position: absolute;
+  left: 8%;
+  right: 8%;
+  top: 35%;
+  height: 1px;
+  background: rgba(255, 248, 235, 0.04);
 }
 
 .vcrLabel {
   position: absolute;
-  top: 28%;
+  top: 24%;
   left: 50%;
   transform: translateX(-50%);
   font-family: "Arial Narrow", Arial, sans-serif;
-  font-size: clamp(0.16rem, 0.38vw, 0.2rem);
+  font-size: clamp(0.18rem, 0.42vw, 0.22rem);
   font-weight: 600;
-  letter-spacing: 0.14em;
-  color: rgba(40, 38, 36, 0.32);
+  letter-spacing: 0.16em;
+  color: rgba(40, 38, 36, 0.38);
   white-space: nowrap;
   user-select: none;
+  text-shadow: 0 1px 0 rgba(255, 248, 235, 0.12);
 }
 
 .controlsArea {

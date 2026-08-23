@@ -102,8 +102,9 @@
 }
 
 .narrow .buttonIcon {
-  font-size: clamp(0.38rem, 0.82vw, 0.46rem);
+  font-size: clamp(0.418rem, 0.902vw, 0.506rem);
   font-weight: 800;
+  transform: scale(1.1);
 }
 
 .transport .buttonIcon {

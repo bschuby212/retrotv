@@ -19,6 +19,7 @@ const shareTechMono = Share_Tech_Mono({
 export const metadata: Metadata = {
   title: "Retro CRT TV",
   description: "Interactive late-90s CRT television with YouTube playback",
+  referrer: "strict-origin-when-cross-origin",
 };
 
 export default function RootLayout({

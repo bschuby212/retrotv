@@ -3,7 +3,6 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import {
   disablePlayerCaptions,
-  isYouTubeEmbedError,
   loadYouTubeIframeAPI,
   type YouTubePlayer,
   type YouTubeVideoData,
@@ -123,9 +122,7 @@ export function useYouTubePlayer({
             }
           },
           onError: (event) => {
-            if (isYouTubeEmbedError(event.data)) {
-              callbacksRef.current.onError?.(event.data);
-            }
+            callbacksRef.current.onError?.(event.data);
           },
         },
       });

@@ -607,41 +607,62 @@ export function useTVControls({
     }
   }, [coverPlayback, pause, play, seekTo]);
 
-  const handlePlayerError = useCallback(() => {
-    const channel = channels[currentChannelIndexRef.current];
-
-    if (channel.type === "playlist" && channel.playlistId) {
-      const playlist = getPlaylist();
-      const currentIndex = getPlaylistIndex();
-      errorSkipAttemptsRef.current += 1;
+  const handlePlayerError = useCallback(
+    (code?: number) => {
+      const channel = channels[currentChannelIndexRef.current];
 
       if (
-        playlist.length > 0 &&
-        currentIndex < playlist.length - 1 &&
-        errorSkipAttemptsRef.current < playlist.length
+        channel.type === "playlist" &&
+        channel.videoId &&
+        errorSkipAttemptsRef.current === 0
       ) {
+        errorSkipAttemptsRef.current += 1;
+        hasSignalRef.current = true;
+        setHasSignal(true);
         beginLoading();
-        nextVideo();
-        window.setTimeout(() => {
-          const index = getPlaylistIndex();
-          saveEpisodeIndex(channel, index);
-          setHasSignal(true);
-          showEpisodeOsd(channel, index);
-        }, 200);
+        loadVideo(channel.videoId, 0);
         return;
       }
-    }
 
-    showNoSignal();
-  }, [
-    beginLoading,
-    getPlaylist,
-    getPlaylistIndex,
-    nextVideo,
-    saveEpisodeIndex,
-    showEpisodeOsd,
-    showNoSignal,
-  ]);
+      if (channel.type === "playlist" && channel.playlistId) {
+        const playlist = getPlaylist();
+        const currentIndex = getPlaylistIndex();
+        errorSkipAttemptsRef.current += 1;
+
+        if (
+          playlist.length > 0 &&
+          currentIndex < playlist.length - 1 &&
+          errorSkipAttemptsRef.current < playlist.length
+        ) {
+          beginLoading();
+          nextVideo();
+          window.setTimeout(() => {
+            const index = getPlaylistIndex();
+            saveEpisodeIndex(channel, index);
+            setHasSignal(true);
+            showEpisodeOsd(channel, index);
+          }, 200);
+          return;
+        }
+      }
+
+      if (code === 153) {
+        console.warn("[RetroTV] YouTube embed error 153 — check Referrer-Policy");
+      }
+
+      showNoSignal();
+    },
+    [
+      beginLoading,
+      getPlaylist,
+      getPlaylistIndex,
+      loadVideo,
+      nextVideo,
+      saveEpisodeIndex,
+      showEpisodeOsd,
+      showNoSignal,
+    ]
+  );
 
   const handlePlayerStateChange = useCallback(
     (state: number) => {

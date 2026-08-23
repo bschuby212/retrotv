@@ -132,7 +132,7 @@ export function loadYouTubeIframeAPI(): Promise<void> {
 }
 
 export function isYouTubeEmbedError(code: number): boolean {
-  return [2, 5, 100, 101, 150].includes(code);
+  return [2, 5, 100, 101, 150, 153].includes(code);
 }
 
 /** Force captions off for the current video (cc_load_policy alone is not enough). */
