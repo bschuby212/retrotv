@@ -38,14 +38,15 @@ button {
   --tv-bezel-inner: #0a0908;
   --tv-osd-color: #d8f0d0;
   --tv-osd-glow: rgba(180, 255, 160, 0.35);
-  --cabinet-surface-y: 56%;
-  --cabinet-anchor: 30%;
-  --cabinet-anchor-mobile: 26%;
-  --cabinet-anchor-wide: 29%;
+  --cabinet-surface-y: 61%;
+  --cabinet-anchor: 24%;
+  --cabinet-anchor-mobile: 20%;
+  --cabinet-anchor-wide: 23%;
   --room-focal-x: 50%;
-  --room-focal-y: 56%;
-  --room-focal-y-mobile: 54%;
-  --room-focal-y-wide: 55%;
+  --room-focal-y: 61%;
+  --room-focal-y-mobile: 58%;
+  --room-focal-y-wide: 60%;
+  --room-bg-scale: 0.9;
 }
 
 .page {

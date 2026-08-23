@@ -5,13 +5,20 @@
   height: 100dvh;
   overflow: hidden;
   background: #120e0c;
-  --cabinet-anchor: 30%;
-  --cabinet-anchor-mobile: 26%;
-  --cabinet-anchor-wide: 29%;
+  --cabinet-anchor: 24%;
+  --cabinet-anchor-mobile: 20%;
+  --cabinet-anchor-wide: 23%;
   --room-focal-x: 50%;
-  --room-focal-y: 56%;
-  --room-focal-y-mobile: 54%;
-  --room-focal-y-wide: 55%;
+  --room-focal-y: 61%;
+  --room-focal-y-mobile: 58%;
+  --room-focal-y-wide: 60%;
+  --room-bg-scale: 0.9;
+}
+
+.backgroundWrap {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
 }
 
 .background {
@@ -20,7 +27,9 @@
   width: 100%;
   height: 100%;
   object-fit: cover;
-  object-position: var(--room-focal-x, 50%) var(--room-focal-y, 56%);
+  object-position: var(--room-focal-x, 50%) var(--room-focal-y, 61%);
+  transform: scale(var(--room-bg-scale, 0.9));
+  transform-origin: center 62%;
   pointer-events: none;
   user-select: none;
 }
@@ -28,7 +37,7 @@
 .tvMount {
   position: absolute;
   left: 50%;
-  bottom: var(--cabinet-anchor, 30%);
+  bottom: var(--cabinet-anchor, 24%);
   transform: translateX(-50%);
   z-index: 2;
   display: flex;
@@ -41,13 +50,13 @@
   bottom: -2px;
   left: 50%;
   transform: translateX(-50%);
-  width: 72%;
-  height: 14px;
+  width: 78%;
+  height: 12px;
   background: radial-gradient(
     ellipse at 50% 0%,
-    rgba(0, 0, 0, 0.72) 0%,
-    rgba(0, 0, 0, 0.38) 42%,
-    rgba(0, 0, 0, 0.12) 68%,
+    rgba(0, 0, 0, 0.78) 0%,
+    rgba(0, 0, 0, 0.42) 42%,
+    rgba(0, 0, 0, 0.14) 68%,
     transparent 82%
   );
   pointer-events: none;
@@ -59,11 +68,11 @@
   bottom: 0;
   left: 50%;
   transform: translateX(-50%);
-  width: 88%;
-  height: 28px;
+  width: 92%;
+  height: 22px;
   background: radial-gradient(
     ellipse at 50% 0%,
-    rgba(0, 0, 0, 0.28) 0%,
+    rgba(0, 0, 0, 0.32) 0%,
     transparent 75%
   );
   pointer-events: none;
@@ -72,30 +81,33 @@
 
 @media (max-width: 640px) {
   .background {
-    object-position: var(--room-focal-x, 50%) var(--room-focal-y-mobile, 54%);
+    object-position: var(--room-focal-x, 50%) var(--room-focal-y-mobile, 58%);
+    transform: scale(0.94);
   }
 
   .tvMount {
-    bottom: var(--cabinet-anchor-mobile, 26%);
+    bottom: var(--cabinet-anchor-mobile, 20%);
   }
 }
 
 @media (min-width: 641px) and (max-width: 1366px) {
   .background {
-    object-position: var(--room-focal-x, 50%) var(--room-focal-y, 57%);
+    object-position: var(--room-focal-x, 50%) var(--room-focal-y, 62%);
+    transform: scale(0.91);
   }
 
   .tvMount {
-    bottom: var(--cabinet-anchor, 31%);
+    bottom: var(--cabinet-anchor, 25%);
   }
 }
 
 @media (min-width: 1920px) {
   .background {
-    object-position: var(--room-focal-x, 50%) var(--room-focal-y-wide, 55%);
+    object-position: var(--room-focal-x, 50%) var(--room-focal-y-wide, 60%);
+    transform: scale(0.88);
   }
 
   .tvMount {
-    bottom: var(--cabinet-anchor-wide, 29%);
+    bottom: var(--cabinet-anchor-wide, 23%);
   }
 }

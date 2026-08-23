@@ -2,7 +2,7 @@
 .retroTv {
   --plastic-grain: url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='1.15' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23g)' opacity='0.35'/%3E%3C/svg%3E");
   position: relative;
-  width: min(900px, 62vw);
+  width: min(680px, 44vw);
   aspect-ratio: 0.9 / 1;
   z-index: 1;
   filter:
@@ -458,12 +458,12 @@
 
 @media (max-width: 640px) {
   .retroTv {
-    width: min(900px, 94vw);
+    width: min(680px, 94vw);
   }
 }
 
 @media (min-width: 1600px) {
   .retroTv {
-    width: min(920px, 58vw);
+    width: min(700px, 42vw);
   }
 }

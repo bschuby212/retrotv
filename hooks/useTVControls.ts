@@ -91,7 +91,10 @@ export function useTVControls({
   const powerTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const loadStartedAtRef = useRef(0);
   const loadTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const loadExtendTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const loadRafRef = useRef<number | null>(null);
+  const playTriggeredRef = useRef(false);
+  const rampTriggeredRef = useRef(false);
   const channelLockRef = useRef(false);
   const episodePositionRef = useRef<Record<number, number>>({});
   const errorSkipAttemptsRef = useRef(0);
@@ -144,35 +147,109 @@ export function useTVControls({
       clearTimeout(loadTimerRef.current);
       loadTimerRef.current = null;
     }
+    if (loadExtendTimerRef.current) {
+      clearTimeout(loadExtendTimerRef.current);
+      loadExtendTimerRef.current = null;
+    }
     if (loadRafRef.current !== null) {
       cancelAnimationFrame(loadRafRef.current);
       loadRafRef.current = null;
     }
+    playTriggeredRef.current = false;
+    rampTriggeredRef.current = false;
     cancelVolumeRamp();
     setIsLoading(false);
     setLoadingProgress(0);
   }, [cancelVolumeRamp]);
 
-  const startLoadingAudioFade = useCallback(() => {
-    rampVolume(volumeRef.current, tvSettings.loadVolumeFadeMs);
-  }, [rampVolume]);
+  const triggerLoadPlayback = useCallback(() => {
+    if (
+      !playTriggeredRef.current &&
+      isPoweredRef.current &&
+      powerPhaseRef.current === "on"
+    ) {
+      const channel = channels[currentChannelIndexRef.current];
+      if (isChannelPlayable(channel)) {
+        playTriggeredRef.current = true;
+        play();
+      }
+    }
+
+    if (!rampTriggeredRef.current) {
+      rampTriggeredRef.current = true;
+      rampVolume(volumeRef.current, tvSettings.loadVolumeFadeMs);
+    }
+  }, [play, rampVolume]);
+
+  const finishLoading = useCallback(() => {
+    if (loadTimerRef.current) {
+      clearTimeout(loadTimerRef.current);
+      loadTimerRef.current = null;
+    }
+    if (loadExtendTimerRef.current) {
+      clearTimeout(loadExtendTimerRef.current);
+      loadExtendTimerRef.current = null;
+    }
+    if (loadRafRef.current !== null) {
+      cancelAnimationFrame(loadRafRef.current);
+      loadRafRef.current = null;
+    }
+    playTriggeredRef.current = false;
+    rampTriggeredRef.current = false;
+    setIsLoading(false);
+    setLoadingProgress(1);
+  }, []);
+
+  const attemptFinishLoading = useCallback(() => {
+    const elapsed = Date.now() - loadStartedAtRef.current;
+    const playing = getPlayerState() === 1;
+
+    if (elapsed >= tvSettings.loadDurationMs && playing) {
+      finishLoading();
+      return;
+    }
+
+    if (elapsed >= tvSettings.loadDurationMs + tvSettings.loadMaxExtendMs) {
+      finishLoading();
+      return;
+    }
+
+    if (elapsed >= tvSettings.loadDurationMs) {
+      loadExtendTimerRef.current = setTimeout(attemptFinishLoading, 50);
+    }
+  }, [finishLoading, getPlayerState]);
 
   const beginLoading = useCallback(() => {
     loadStartedAtRef.current = Date.now();
+    playTriggeredRef.current = false;
+    rampTriggeredRef.current = false;
     setIsLoading(true);
     setLoadingProgress(0);
 
     if (loadTimerRef.current) {
       clearTimeout(loadTimerRef.current);
     }
+    if (loadExtendTimerRef.current) {
+      clearTimeout(loadExtendTimerRef.current);
+      loadExtendTimerRef.current = null;
+    }
     if (loadRafRef.current !== null) {
       cancelAnimationFrame(loadRafRef.current);
+    }
+
+    if (isPoweredRef.current && powerPhaseRef.current === "on") {
+      cancelVolumeRamp();
+      setPlayerVolume(0);
     }
 
     const tick = () => {
       const elapsed = Date.now() - loadStartedAtRef.current;
       const progress = Math.min(1, elapsed / tvSettings.loadDurationMs);
       setLoadingProgress(progress);
+
+      if (progress >= tvSettings.loadPlayAtProgress) {
+        triggerLoadPlayback();
+      }
 
       if (progress < 1) {
         loadRafRef.current = requestAnimationFrame(tick);
@@ -184,15 +261,15 @@ export function useTVControls({
     loadRafRef.current = requestAnimationFrame(tick);
 
     loadTimerRef.current = setTimeout(() => {
-      setIsLoading(false);
-      setLoadingProgress(1);
       loadTimerRef.current = null;
-      if (loadRafRef.current !== null) {
-        cancelAnimationFrame(loadRafRef.current);
-        loadRafRef.current = null;
-      }
+      attemptFinishLoading();
     }, tvSettings.loadDurationMs);
-  }, []);
+  }, [
+    attemptFinishLoading,
+    cancelVolumeRamp,
+    setPlayerVolume,
+    triggerLoadPlayback,
+  ]);
 
   const reapplyCaptionsIfEnabled = useCallback(() => {
     if (!captionsEnabledRef.current) return;
@@ -335,11 +412,6 @@ export function useTVControls({
         loadVideo(channel.videoId, 0);
       }
 
-      if (isPoweredRef.current && powerPhaseRef.current === "on") {
-        play();
-        startLoadingAudioFade();
-      }
-
       reapplyCaptionsIfEnabled();
     },
     [
@@ -347,10 +419,8 @@ export function useTVControls({
       getSavedEpisodeIndex,
       loadPlaylist,
       loadVideo,
-      play,
       reapplyCaptionsIfEnabled,
       showNoSignal,
-      startLoadingAudioFade,
       stop,
       syncPlaylistIndex,
     ]
@@ -492,8 +562,6 @@ export function useTVControls({
 
     beginLoading();
     previousVideo();
-    play();
-    startLoadingAudioFade();
 
     window.setTimeout(() => {
       const index = getPlaylistIndex();
@@ -504,13 +572,11 @@ export function useTVControls({
   }, [
     beginLoading,
     getPlaylistIndex,
-    play,
     playerReady,
     previousVideo,
     reapplyCaptionsIfEnabled,
     saveEpisodeIndex,
     showEpisodeOsd,
-    startLoadingAudioFade,
   ]);
 
   const episodeNext = useCallback(() => {
@@ -521,8 +587,6 @@ export function useTVControls({
 
     beginLoading();
     nextVideo();
-    play();
-    startLoadingAudioFade();
 
     window.setTimeout(() => {
       const index = getPlaylistIndex();
@@ -534,12 +598,10 @@ export function useTVControls({
     beginLoading,
     getPlaylistIndex,
     nextVideo,
-    play,
     playerReady,
     reapplyCaptionsIfEnabled,
     saveEpisodeIndex,
     showEpisodeOsd,
-    startLoadingAudioFade,
   ]);
 
   const handlePlaylistIndexChange = useCallback(() => {
@@ -590,8 +652,6 @@ export function useTVControls({
       ) {
         beginLoading();
         nextVideo();
-        play();
-        startLoadingAudioFade();
         window.setTimeout(() => {
           const index = getPlaylistIndex();
           saveEpisodeIndex(channel, index);
@@ -608,11 +668,9 @@ export function useTVControls({
     getPlaylist,
     getPlaylistIndex,
     nextVideo,
-    play,
     saveEpisodeIndex,
     showEpisodeOsd,
     showNoSignal,
-    startLoadingAudioFade,
   ]);
 
   const toggleCaptions = useCallback(() => {
@@ -627,9 +685,17 @@ export function useTVControls({
     showTransportOsd(nextEnabled ? "ccOn" : "ccOff");
   }, [setCaptionsEnabled, showTransportOsd]);
 
-  const handlePlayerStateChange = useCallback((_state: number) => {
-    // Loading overlay runs for a fixed duration; no early exit on PLAYING.
-  }, []);
+  const handlePlayerStateChange = useCallback(
+    (state: number) => {
+      if (state === 1 && isLoading) {
+        const elapsed = Date.now() - loadStartedAtRef.current;
+        if (elapsed >= tvSettings.loadDurationMs) {
+          attemptFinishLoading();
+        }
+      }
+    },
+    [attemptFinishLoading, isLoading]
+  );
 
   const togglePower = useCallback(() => {
     if (
@@ -697,6 +763,7 @@ export function useTVControls({
       clearTransportOsdTimer();
       if (powerTimerRef.current) clearTimeout(powerTimerRef.current);
       if (loadTimerRef.current) clearTimeout(loadTimerRef.current);
+      if (loadExtendTimerRef.current) clearTimeout(loadExtendTimerRef.current);
       if (loadRafRef.current !== null) cancelAnimationFrame(loadRafRef.current);
       cancelVolumeRamp();
     };
