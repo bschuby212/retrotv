@@ -475,6 +475,12 @@
   }
 }
 
+@media (max-width: 450px) {
+  .retroTv {
+    width: min(360px, calc(100vw - 24px), calc((100dvh - 24px) * 1.05));
+  }
+}
+
 /* Laptop: tablets and typical laptop widths */
 @media (min-width: 641px) and (max-width: 1366px) {
   .retroTv {
