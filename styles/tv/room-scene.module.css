@@ -13,6 +13,10 @@
   --room-focal-y-mobile: calc(46% + 60px);
   --room-focal-y-wide: calc(47% + 60px);
   --room-bg-scale: 2.15;
+  --tv-max-width: 1120px;
+  --tv-width-cap-vw: 76vw;
+  --tv-top-safe: 20px;
+  --tv-mount-bottom: var(--cabinet-anchor);
 }
 
 .backgroundWrap {
@@ -36,7 +40,7 @@
 .tvMount {
   position: absolute;
   left: 50%;
-  bottom: var(--cabinet-anchor, 20%);
+  bottom: var(--tv-mount-bottom, var(--cabinet-anchor, 20%));
   transform: translateX(-50%);
   z-index: 2;
   display: flex;
@@ -79,12 +83,13 @@
 }
 
 @media (max-width: 640px) {
-  .background {
-    object-position: var(--room-focal-x, 50%) var(--room-focal-y-mobile, calc(46% + 60px));
+  .scene {
+    --tv-mount-bottom: var(--cabinet-anchor-mobile);
+    --tv-width-cap-vw: 96vw;
   }
 
-  .tvMount {
-    bottom: var(--cabinet-anchor-mobile, 16%);
+  .background {
+    object-position: var(--room-focal-x, 50%) var(--room-focal-y-mobile, calc(46% + 60px));
   }
 }
 
@@ -92,18 +97,14 @@
   .background {
     object-position: var(--room-focal-x, 50%) var(--room-focal-y, calc(48% + 60px));
   }
-
-  .tvMount {
-    bottom: var(--cabinet-anchor, 20%);
-  }
 }
 
 @media (min-width: 1920px) {
-  .background {
-    object-position: var(--room-focal-x, 50%) var(--room-focal-y-wide, calc(47% + 60px));
+  .scene {
+    --tv-mount-bottom: var(--cabinet-anchor-wide);
   }
 
-  .tvMount {
-    bottom: var(--cabinet-anchor-wide, 19%);
+  .background {
+    object-position: var(--room-focal-x, 50%) var(--room-focal-y-wide, calc(47% + 60px));
   }
 }
