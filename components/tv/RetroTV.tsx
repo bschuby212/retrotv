@@ -111,19 +111,6 @@ export function RetroTV() {
 
         <span className={retroStyles.brandPlate}>RETROTV</span>
 
-        <div
-          className={`${retroStyles.speaker} ${retroStyles.speakerLeft}`}
-          aria-hidden="true"
-        >
-          <div className={retroStyles.speakerGrille} />
-        </div>
-        <div
-          className={`${retroStyles.speaker} ${retroStyles.speakerRight}`}
-          aria-hidden="true"
-        >
-          <div className={retroStyles.speakerGrille} />
-        </div>
-
         <div className={retroStyles.lowerCenter}>
           <div className={retroStyles.vcrSection} aria-hidden="true">
             <div className={retroStyles.vcrRecess}>

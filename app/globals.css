@@ -39,9 +39,9 @@ button {
   --tv-osd-color: #d8f0d0;
   --tv-osd-glow: rgba(180, 255, 160, 0.35);
   --cabinet-surface-y: 61%;
-  --cabinet-anchor: 24%;
-  --cabinet-anchor-mobile: 20%;
-  --cabinet-anchor-wide: 23%;
+  --cabinet-anchor: 29%;
+  --cabinet-anchor-mobile: 25%;
+  --cabinet-anchor-wide: 28%;
   --room-focal-x: 50%;
   --room-focal-y: 61%;
   --room-focal-y-mobile: 58%;
