@@ -13,10 +13,11 @@
   --room-focal-y-mobile: calc(46% + 60px);
   --room-focal-y-wide: calc(47% + 60px);
   --room-bg-scale: 2.15;
-  --tv-max-width: 1120px;
-  --tv-width-cap-vw: 76vw;
-  --tv-top-safe: 20px;
-  --tv-mount-bottom: var(--cabinet-anchor);
+  --tv-max-width: 980px;
+  --tv-width-cap-vw: 62vw;
+  --tv-top-safe: 24px;
+  --tv-mount-bottom: 20dvh;
+  --tv-available-height: calc(100dvh - var(--tv-mount-bottom) - var(--tv-top-safe));
 }
 
 .backgroundWrap {
@@ -40,7 +41,7 @@
 .tvMount {
   position: absolute;
   left: 50%;
-  bottom: var(--tv-mount-bottom, var(--cabinet-anchor, 20%));
+  bottom: var(--tv-mount-bottom, 20dvh);
   transform: translateX(-50%);
   z-index: 2;
   display: flex;
@@ -84,8 +85,9 @@
 
 @media (max-width: 640px) {
   .scene {
-    --tv-mount-bottom: var(--cabinet-anchor-mobile);
-    --tv-width-cap-vw: 96vw;
+    --tv-mount-bottom: 16dvh;
+    --tv-width-cap-vw: 92vw;
+    --tv-available-height: calc(100dvh - var(--tv-mount-bottom) - var(--tv-top-safe));
   }
 
   .background {
@@ -101,7 +103,8 @@
 
 @media (min-width: 1920px) {
   .scene {
-    --tv-mount-bottom: var(--cabinet-anchor-wide);
+    --tv-mount-bottom: 19dvh;
+    --tv-available-height: calc(100dvh - var(--tv-mount-bottom) - var(--tv-top-safe));
   }
 
   .background {
