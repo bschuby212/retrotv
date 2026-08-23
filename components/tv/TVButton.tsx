@@ -40,8 +40,6 @@ export function TVButton({
           ? buttonStyles.transport
           : "";
 
-  const useWell = true;
-
   const buttonEl = (
     <button
       type="button"
@@ -54,7 +52,22 @@ export function TVButton({
     >
       {variant === "power" && (
         <span className={buttonStyles.powerIcon} aria-hidden="true">
-          ⏻
+          <svg viewBox="0 0 16 16" width="100%" height="100%">
+            <path
+              d="M8 2.5v4.5"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="1.6"
+              strokeLinecap="round"
+            />
+            <path
+              d="M5.2 4.1a4.2 4.2 0 1 0 5.6 0"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="1.6"
+              strokeLinecap="round"
+            />
+          </svg>
         </span>
       )}
       {icon && (
@@ -67,11 +80,7 @@ export function TVButton({
 
   return (
     <div className={buttonStyles.buttonWrap}>
-      {useWell ? (
-        <div className={buttonStyles.buttonWell}>{buttonEl}</div>
-      ) : (
-        buttonEl
-      )}
+      {buttonEl}
       {!hideLabel && label && (
         <span className={buttonStyles.label}>{label}</span>
       )}
