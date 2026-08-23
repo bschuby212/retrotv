@@ -29,12 +29,12 @@
   font-stretch: condensed;
   letter-spacing: 0.06em;
   text-transform: uppercase;
-  color: rgba(48, 46, 42, 0.34);
+  color: rgba(36, 34, 30, 0.48);
   user-select: none;
   line-height: 1;
   text-shadow:
-    0 0.5px 0 rgba(255, 248, 235, 0.14),
-    0 -0.5px 0 rgba(0, 0, 0, 0.1);
+    0 0.5px 0 rgba(255, 248, 235, 0.08),
+    0 -0.5px 0 rgba(0, 0, 0, 0.16);
 }
 
 .buttonPair {
