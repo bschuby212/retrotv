@@ -110,22 +110,11 @@ export function RetroTV() {
 
         <div className={retroStyles.vcrSection} aria-hidden="true">
           <div className={retroStyles.vcrRecess}>
-            <div className={retroStyles.vcrSlot} />
-            <span className={retroStyles.vcrLabel}>VHS  DIGITAL TRACKING</span>
+            <div className={retroStyles.vcrFlap}>
+              <span className={retroStyles.vcrLabel}>VHS  DIGITAL TRACKING</span>
+              <div className={retroStyles.vcrSlotOpening} />
+            </div>
           </div>
-        </div>
-
-        <div
-          className={`${retroStyles.speaker} ${retroStyles.speakerLeft}`}
-          aria-hidden="true"
-        >
-          <div className={retroStyles.speakerGrille} />
-        </div>
-        <div
-          className={`${retroStyles.speaker} ${retroStyles.speakerRight}`}
-          aria-hidden="true"
-        >
-          <div className={retroStyles.speakerGrille} />
         </div>
 
         <div className={retroStyles.avInputs} aria-hidden="true">
