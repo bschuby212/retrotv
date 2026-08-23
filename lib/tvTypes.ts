@@ -77,7 +77,6 @@ export interface TVControlsActions {
   stopPlayback: () => void;
   episodePrevious: () => void;
   episodeNext: () => void;
-  toggleCaptions: () => void;
 }
 
 export interface TVControlsInternal {
@@ -93,10 +92,7 @@ export interface TVControlsState {
   currentChannelIndex: number;
   volume: number;
   isChangingChannel: boolean;
-  isLoading: boolean;
-  loadingProgress: number;
   isPlaybackShielded: boolean;
-  captionsEnabled: boolean;
   osd: OSDState;
   playerReady: boolean;
   hasSignal: boolean;

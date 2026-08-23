@@ -5,7 +5,7 @@ import type { TVControlsActions } from "@/lib/tvTypes";
 import controlsStyles from "@/styles/tv/tv-controls.module.css";
 import retroStyles from "@/styles/tv/retro-tv.module.css";
 
-interface TVControlsProps extends Omit<TVControlsActions, "toggleCaptions"> {
+interface TVControlsProps extends TVControlsActions {
   isPowered: boolean;
 }
 

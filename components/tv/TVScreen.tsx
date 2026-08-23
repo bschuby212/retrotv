@@ -1,10 +1,10 @@
 "use client";
 
 import { useCallback } from "react";
-import { isChannelPlayable } from "@/config/channels";
+import type { RefObject } from "react";
+import { DEBUG_YOUTUBE_MASK } from "@/config/debugYoutubeMask";
 import { CRTOSD } from "@/components/tv/CRTDOSD";
 import { CRTOverlay } from "@/components/tv/CRTOverlay";
-import { LoadingScreen } from "@/components/tv/LoadingScreen";
 import { PlaybackShield } from "@/components/tv/PlaybackShield";
 import { PlaceholderScreen } from "@/components/tv/PlaceholderScreen";
 import { StaticTransition } from "@/components/tv/StaticTransition";
@@ -21,11 +21,9 @@ interface TVScreenProps {
   powerPhase: PowerPhase;
   currentChannel: Channel;
   isChangingChannel: boolean;
-  isLoading: boolean;
-  loadingProgress: number;
-  isPlaybackShielded: boolean;
   hasSignal: boolean;
   osd: OSDState;
+  playbackShieldRef: RefObject<HTMLDivElement | null>;
   onChannelUp: () => void;
   onChannelDown: () => void;
 }
@@ -35,17 +33,12 @@ export function TVScreen({
   powerPhase,
   currentChannel,
   isChangingChannel,
-  isLoading,
-  loadingProgress,
-  isPlaybackShielded,
   hasSignal,
   osd,
+  playbackShieldRef,
   onChannelUp,
   onChannelDown,
 }: TVScreenProps) {
-  const playable = isChannelPlayable(currentChannel);
-  const showPlayer = playable && isPowered && hasSignal;
-
   const showNoSignalOverlay =
     isPowered &&
     powerPhase === "on" &&
@@ -83,6 +76,7 @@ export function TVScreen({
     !isPowered ? screenStyles.poweredOff : "",
     powerPhase === "shuttingDown" ? screenStyles.shuttingDown : "",
     powerPhase === "booting" ? screenStyles.booting : "",
+    DEBUG_YOUTUBE_MASK ? screenStyles.debugMask : "",
   ]
     .filter(Boolean)
     .join(" ");
@@ -98,12 +92,11 @@ export function TVScreen({
         style={{ borderRadius: tvScreenConfig.screenBorderRadius }}
       >
         <div className={screenStyles.screenViewport}>
-          <YouTubePlayer
-            containerId={YOUTUBE_CONTAINER_ID}
-            visible={showPlayer}
-          />
+          <YouTubePlayer containerId={YOUTUBE_CONTAINER_ID} />
 
-          <PlaybackShield active={isPlaybackShielded} />
+          <div className={screenStyles.crtEdgeMask} aria-hidden="true" />
+
+          <PlaybackShield shieldRef={playbackShieldRef} />
 
           <div className={`${screenStyles.layer} ${screenStyles.contentLayer}`}>
             {showPlaceholder && (
@@ -121,13 +114,6 @@ export function TVScreen({
 
           <div className={`${screenStyles.layer} ${screenStyles.transitionLayer}`}>
             <StaticTransition active={isChangingChannel} />
-          </div>
-
-          <div className={`${screenStyles.layer} ${screenStyles.loadingLayer}`}>
-            <LoadingScreen
-              active={showPlayer && isLoading}
-              progress={loadingProgress}
-            />
           </div>
         </div>
 

@@ -10,6 +10,7 @@ import { tvScreenConfig } from "@/config/tvScreen";
 import retroStyles from "@/styles/tv/retro-tv.module.css";
 
 export function RetroTV() {
+  const playbackShieldRef = useRef<HTMLDivElement | null>(null);
   const onErrorRef = useRef<(code: number) => void>(() => {});
   const onPlaylistIndexChangeRef = useRef<() => void>(() => {});
   const onVideoEndedRef = useRef<() => void>(() => {});
@@ -39,9 +40,10 @@ export function RetroTV() {
     getPlaylist: youtube.getPlaylist,
     getVideoData: youtube.getVideoData,
     getPlayerState: youtube.getPlayerState,
+    getCurrentTime: youtube.getCurrentTime,
     seekTo: youtube.seekTo,
     syncPlaylistIndex: youtube.syncPlaylistIndex,
-    setCaptionsEnabled: youtube.setCaptionsEnabled,
+    playbackShieldRef,
   });
 
   useEffect(() => {
@@ -67,7 +69,6 @@ export function RetroTV() {
       stopPlayback: tv.stopPlayback,
       episodePrevious: tv.episodePrevious,
       episodeNext: tv.episodeNext,
-      toggleCaptions: tv.toggleCaptions,
     },
     isPowered: tv.isPowered,
   });
@@ -101,11 +102,9 @@ export function RetroTV() {
           powerPhase={tv.powerPhase}
           currentChannel={tv.currentChannel}
           isChangingChannel={tv.isChangingChannel}
-          isLoading={tv.isLoading}
-          loadingProgress={tv.loadingProgress}
-          isPlaybackShielded={tv.isPlaybackShielded}
           hasSignal={tv.hasSignal}
           osd={tv.osd}
+          playbackShieldRef={playbackShieldRef}
           onChannelUp={tv.channelUp}
           onChannelDown={tv.channelDown}
         />

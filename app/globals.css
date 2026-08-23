@@ -43,9 +43,9 @@ button {
   --cabinet-anchor-mobile: 16%;
   --cabinet-anchor-wide: 19%;
   --room-focal-x: 50%;
-  --room-focal-y: calc(48% + 70px);
-  --room-focal-y-mobile: calc(46% + 70px);
-  --room-focal-y-wide: calc(47% + 70px);
+  --room-focal-y: calc(48% + 60px);
+  --room-focal-y-mobile: calc(46% + 60px);
+  --room-focal-y-wide: calc(47% + 60px);
   --room-bg-scale: 2.15;
 }
 

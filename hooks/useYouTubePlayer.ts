@@ -4,7 +4,6 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import {
   isYouTubeEmbedError,
   loadYouTubeIframeAPI,
-  type YouTubeCaptionTrack,
   type YouTubePlayer,
   type YouTubeVideoData,
 } from "@/lib/youtubeApi";
@@ -18,17 +17,6 @@ interface UseYouTubePlayerOptions {
   onVideoEnded?: () => void;
 }
 
-function pickCaptionTrack(
-  tracks: YouTubeCaptionTrack[]
-): YouTubeCaptionTrack | undefined {
-  if (tracks.length === 0) return undefined;
-  return (
-    tracks.find((track) => track.languageCode === "en") ??
-    tracks.find((track) => track.languageCode?.startsWith("en")) ??
-    tracks[0]
-  );
-}
-
 export function useYouTubePlayer({
   containerId,
   onReady,
@@ -40,8 +28,6 @@ export function useYouTubePlayer({
   const playerRef = useRef<YouTubePlayer | null>(null);
   const [playerReady, setPlayerReady] = useState(false);
   const lastPlaylistIndexRef = useRef(-1);
-  const captionsReadyRef = useRef(false);
-  const pendingCaptionsEnabledRef = useRef<boolean | null>(null);
   const volumeRampRef = useRef<number | null>(null);
   const callbacksRef = useRef({
     onReady,
@@ -60,37 +46,6 @@ export function useYouTubePlayer({
       onVideoEnded,
     };
   }, [onReady, onError, onStateChange, onPlaylistIndexChange, onVideoEnded]);
-
-  const applyCaptionsEnabled = useCallback((enabled: boolean) => {
-    const player = playerRef.current;
-    if (!player) return;
-
-    try {
-      if (enabled) {
-        const tracks = player.getOption(
-          "captions",
-          "tracklist"
-        ) as YouTubeCaptionTrack[] | undefined;
-        const track = pickCaptionTrack(tracks ?? []);
-        if (!track) return;
-        player.setOption("captions", "track", track);
-      } else {
-        player.setOption("captions", "track", {});
-      }
-    } catch {
-      // Captions module may be unavailable for this video
-    }
-  }, []);
-
-  const setCaptionsEnabled = useCallback(
-    (enabled: boolean) => {
-      pendingCaptionsEnabledRef.current = enabled;
-      if (captionsReadyRef.current) {
-        applyCaptionsEnabled(enabled);
-      }
-    },
-    [applyCaptionsEnabled]
-  );
 
   const cancelVolumeRamp = useCallback(() => {
     if (volumeRampRef.current !== null) {
@@ -116,7 +71,7 @@ export function useYouTubePlayer({
         playerVars: {
           autoplay: 1,
           mute: 1,
-          cc_load_policy: 1,
+          cc_load_policy: 0,
           controls: 0,
           disablekb: 1,
           fs: 0,
@@ -133,22 +88,6 @@ export function useYouTubePlayer({
             if (!mounted) return;
             setPlayerReady(true);
             callbacksRef.current.onReady?.();
-          },
-          onApiChange: () => {
-            const player = playerRef.current;
-            if (!player) return;
-
-            try {
-              const options = player.getOptions("captions");
-              if (!options.includes("track")) return;
-
-              captionsReadyRef.current = true;
-              if (pendingCaptionsEnabledRef.current !== null) {
-                applyCaptionsEnabled(pendingCaptionsEnabledRef.current);
-              }
-            } catch {
-              // Captions module not available yet
-            }
           },
           onStateChange: (event) => {
             callbacksRef.current.onStateChange?.(event.data);
@@ -168,12 +107,6 @@ export function useYouTubePlayer({
                 }
               } catch {
                 // Playlist index unavailable for non-playlist playback
-              }
-
-              if (pendingCaptionsEnabledRef.current) {
-                window.setTimeout(() => {
-                  applyCaptionsEnabled(true);
-                }, 200);
               }
             }
           },
@@ -195,10 +128,8 @@ export function useYouTubePlayer({
       playerRef.current = null;
       setPlayerReady(false);
       lastPlaylistIndexRef.current = -1;
-      captionsReadyRef.current = false;
-      pendingCaptionsEnabledRef.current = null;
     };
-  }, [applyCaptionsEnabled, cancelVolumeRamp, containerId]);
+  }, [cancelVolumeRamp, containerId]);
 
   const play = useCallback(() => {
     playerRef.current?.playVideo();
@@ -327,6 +258,15 @@ export function useYouTubePlayer({
     }
   }, []);
 
+  const getCurrentTime = useCallback((): number => {
+    if (!playerRef.current) return 0;
+    try {
+      return playerRef.current.getCurrentTime();
+    } catch {
+      return 0;
+    }
+  }, []);
+
   const seekTo = useCallback((seconds: number, allowSeekAhead = true) => {
     if (!playerRef.current) return;
     playerRef.current.seekTo(seconds, allowSeekAhead);
@@ -357,8 +297,8 @@ export function useYouTubePlayer({
     getPlaylist,
     getVideoData,
     getPlayerState,
+    getCurrentTime,
     seekTo,
     syncPlaylistIndex,
-    setCaptionsEnabled,
   };
 }

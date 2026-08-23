@@ -18,5 +18,5 @@ export const tvSettings = {
   loadVolumeFadeAtProgress: 6 / 7,
   loadVolumeFadeMs: 286,
   loadMaxExtendMs: 2500,
-  shieldRevealDelayMs: 150,
+  shieldRevealDelayMs: 300,
 } as const;

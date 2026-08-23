@@ -79,22 +79,6 @@
   overflow: hidden;
 }
 
-.playbackShield {
-  position: absolute;
-  inset: 1.5% 1.2%;
-  width: auto;
-  height: auto;
-  z-index: 2;
-  pointer-events: none;
-  background: #040404;
-  opacity: 1;
-  border-radius: inherit;
-}
-
-.playbackShieldOff {
-  opacity: 0;
-}
-
 .playerHost {
   position: absolute;
   inset: 0;
@@ -107,25 +91,69 @@
 
 .playerHost iframe {
   position: absolute;
-  top: 50%;
-  left: 50%;
-  width: 100% !important;
-  height: 100% !important;
+  top: -6%;
+  left: -6%;
+  width: 112% !important;
+  height: 112% !important;
   border: none;
   pointer-events: none;
-  transform: translate(-50%, -50%) scale(1.22);
-  transform-origin: center;
+  display: block;
+}
+
+.crtEdgeMask {
+  position: absolute;
+  inset: 1.5% 1.2%;
+  z-index: 4;
+  pointer-events: none;
+  border-radius: inherit;
+  background:
+    linear-gradient(
+      to right,
+      #040404 0%,
+      rgba(4, 4, 4, 0.75) 2.2%,
+      transparent 5%,
+      transparent 95%,
+      rgba(4, 4, 4, 0.75) 97.8%,
+      #040404 100%
+    ),
+    linear-gradient(
+      to bottom,
+      #040404 0%,
+      rgba(4, 4, 4, 0.7) 2.4%,
+      transparent 5.5%,
+      transparent 93.5%,
+      rgba(4, 4, 4, 0.78) 97.2%,
+      #040404 100%
+    );
+  box-shadow:
+    inset 22px 0 26px rgba(0, 0, 0, 0.55),
+    inset -22px 0 26px rgba(0, 0, 0, 0.55),
+    inset 0 16px 22px rgba(0, 0, 0, 0.5),
+    inset 0 -20px 26px rgba(0, 0, 0, 0.62);
+}
+
+.playbackShield {
+  position: absolute;
+  inset: 0;
+  z-index: 7;
+  pointer-events: none;
+  background: #040404;
+  opacity: 1;
+}
+
+.playbackShield[data-active="false"] {
+  opacity: 0;
 }
 
 .contentLayer {
-  z-index: 2;
+  z-index: 8;
   inset: 1.5% 1.2%;
   border-radius: inherit;
   overflow: hidden;
 }
 
 .loadingLayer {
-  z-index: 8;
+  z-index: 9;
   inset: 1.5% 1.2%;
   border-radius: inherit;
   overflow: hidden;
@@ -133,7 +161,7 @@
 }
 
 .transitionLayer {
-  z-index: 3;
+  z-index: 8;
 }
 
 .overlayLayer {
@@ -270,4 +298,25 @@
   50% {
     opacity: 1;
   }
+}
+
+.debugMask .screenViewport {
+  outline: 2px solid #ffe14d;
+  outline-offset: -2px;
+}
+
+.debugMask .playerLayer {
+  outline: 2px solid #ff4dff;
+}
+
+.debugMask .playerHost iframe {
+  outline: 2px solid #4dfff3;
+}
+
+.debugMask .crtEdgeMask {
+  outline: 2px solid #7cff4d;
+}
+
+.debugMask .playbackShield {
+  outline: 2px solid #ff4d4d;
 }

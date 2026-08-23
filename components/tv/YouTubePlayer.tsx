@@ -4,14 +4,11 @@ import screenStyles from "@/styles/tv/tv-screen.module.css";
 
 interface YouTubePlayerProps {
   containerId: string;
-  visible: boolean;
 }
 
-export function YouTubePlayer({ containerId, visible }: YouTubePlayerProps) {
+export function YouTubePlayer({ containerId }: YouTubePlayerProps) {
   return (
-    <div
-      className={`${screenStyles.layer} ${screenStyles.playerLayer} ${!visible ? screenStyles.hidden : ""}`}
-    >
+    <div className={`${screenStyles.layer} ${screenStyles.playerLayer}`}>
       <div id={containerId} className={screenStyles.playerHost} />
     </div>
   );

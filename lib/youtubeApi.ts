@@ -42,6 +42,7 @@ export interface YouTubePlayer {
   getPlaylist: () => string[];
   getVideoData: () => YouTubeVideoData;
   getPlayerState: () => number;
+  getCurrentTime: () => number;
   seekTo: (seconds: number, allowSeekAhead?: boolean) => void;
   getOptions: (module?: string) => string[];
   getOption: (module: string, option: string) => unknown;
