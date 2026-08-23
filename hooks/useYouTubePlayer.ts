@@ -222,6 +222,26 @@ export function useYouTubePlayer({
     player.playVideo();
   }, []);
 
+  const loadPlaylistEntry = useCallback(
+    (videoId: string, playlistId: string, index = 0) => {
+      const player = playerRef.current;
+      if (!player || !videoId || !playlistId) return;
+      lastPlaylistIndexRef.current = index;
+      player.mute();
+      player.setVolume(0);
+      player.loadVideoById({
+        videoId,
+        list: playlistId,
+        listType: "playlist",
+        index,
+        startSeconds: 0,
+      });
+      disablePlayerCaptions(player);
+      player.playVideo();
+    },
+    []
+  );
+
   const nextVideo = useCallback(() => {
     if (!playerRef.current) return;
     playerRef.current.nextVideo();
@@ -302,6 +322,7 @@ export function useYouTubePlayer({
     cancelVolumeRamp,
     loadVideo,
     loadPlaylist,
+    loadPlaylistEntry,
     nextVideo,
     previousVideo,
     getPlaylistIndex,

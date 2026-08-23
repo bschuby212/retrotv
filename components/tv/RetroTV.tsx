@@ -34,6 +34,7 @@ export function RetroTV() {
     cancelVolumeRamp: youtube.cancelVolumeRamp,
     loadVideo: youtube.loadVideo,
     loadPlaylist: youtube.loadPlaylist,
+    loadPlaylistEntry: youtube.loadPlaylistEntry,
     nextVideo: youtube.nextVideo,
     previousVideo: youtube.previousVideo,
     getPlaylistIndex: youtube.getPlaylistIndex,

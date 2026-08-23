@@ -12,6 +12,14 @@ export interface YouTubeCaptionTrack {
   name?: string;
 }
 
+export interface YouTubePlaylistVideoOptions {
+  videoId: string;
+  startSeconds?: number;
+  list?: string;
+  listType?: "playlist" | "user_uploads" | "search";
+  index?: number;
+}
+
 export interface YouTubePlayer {
   playVideo: () => void;
   pauseVideo: () => void;
@@ -21,10 +29,10 @@ export interface YouTubePlayer {
   setVolume: (volume: number) => void;
   getVolume: () => number;
   loadVideoById: (
-    videoId: string | { videoId: string; startSeconds?: number }
+    videoId: string | YouTubePlaylistVideoOptions
   ) => void;
   cueVideoById: (
-    videoId: string | { videoId: string; startSeconds?: number }
+    videoId: string | YouTubePlaylistVideoOptions
   ) => void;
   loadPlaylist: (
     playlistId: string | { list: string; index?: number; startSeconds?: number },

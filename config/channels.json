@@ -59,10 +59,10 @@
     },
     {
       "channel": 10,
-      "name": "NARUTO TV",
-      "sourceUrl": "https://www.youtube.com/watch?v=luFYz4zAG9c",
-      "type": "video",
-      "loop": false
+      "name": "ULTIMATE SPIDER-MAN",
+      "sourceUrl": "https://www.youtube.com/watch?v=2PzfL3zrE-o",
+      "type": "live",
+      "loop": true
     }
   ]
 }
