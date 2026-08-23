@@ -11,11 +11,9 @@
     {
       "channel": 3,
       "name": "POKÉMON — SEASON 1",
-      "sourceUrl": "https://www.youtube.com/show/VLPLRcHmntfmJ8BNpfON92grhkv6WxuqF5vD?sbp=Kgt6M2hNWDY1S2h0Z0AB",
-      "type": "show",
-      "embeddable": false,
-      "needsMapping": true,
-      "note": "YouTube Show URL — IFrame Player API cannot embed this. Needs Season 1 playlist or video-ID mapping."
+      "sourceUrl": "https://www.youtube.com/playlist?list=PLRcHmntfmJ8B5eUO9b-J_fSWF5tPjnSWB",
+      "type": "playlist",
+      "loop": false
     },
     {
       "channel": 4,
