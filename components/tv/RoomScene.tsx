@@ -1,4 +1,3 @@
-import Image from "next/image";
 import { RetroTV } from "@/components/tv/RetroTV";
 import sceneStyles from "@/styles/tv/room-scene.module.css";
 
@@ -6,14 +5,12 @@ export function RoomScene() {
   return (
     <div className={sceneStyles.scene}>
       <div className={sceneStyles.backgroundWrap}>
-        <Image
+        <img
           src="/images/room-background.jpg"
-          alt=""
-          fill
-          priority
           className={sceneStyles.background}
-          sizes="100vw"
+          alt=""
           aria-hidden="true"
+          draggable={false}
         />
       </div>
       <div className={sceneStyles.tvMount}>
