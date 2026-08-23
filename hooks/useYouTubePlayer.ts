@@ -1,7 +1,6 @@
 "use client";
 
 import { useCallback, useEffect, useRef, useState } from "react";
-import { tvSettings } from "@/config/tvSettings";
 import {
   isYouTubeEmbedError,
   loadYouTubeIframeAPI,
@@ -15,6 +14,7 @@ interface UseYouTubePlayerOptions {
   onError?: (code: number) => void;
   onStateChange?: (state: number) => void;
   onPlaylistIndexChange?: () => void;
+  onVideoEnded?: () => void;
 }
 
 export function useYouTubePlayer({
@@ -23,6 +23,7 @@ export function useYouTubePlayer({
   onError,
   onStateChange,
   onPlaylistIndexChange,
+  onVideoEnded,
 }: UseYouTubePlayerOptions) {
   const playerRef = useRef<YouTubePlayer | null>(null);
   const [playerReady, setPlayerReady] = useState(false);
@@ -32,6 +33,7 @@ export function useYouTubePlayer({
     onError,
     onStateChange,
     onPlaylistIndexChange,
+    onVideoEnded,
   });
 
   useEffect(() => {
@@ -40,8 +42,9 @@ export function useYouTubePlayer({
       onError,
       onStateChange,
       onPlaylistIndexChange,
+      onVideoEnded,
     };
-  }, [onReady, onError, onStateChange, onPlaylistIndexChange]);
+  }, [onReady, onError, onStateChange, onPlaylistIndexChange, onVideoEnded]);
 
   useEffect(() => {
     let mounted = true;
@@ -56,6 +59,7 @@ export function useYouTubePlayer({
       playerRef.current = new window.YT.Player(containerId, {
         height: "100%",
         width: "100%",
+        host: "https://www.youtube.com",
         playerVars: {
           autoplay: 0,
           controls: 0,
@@ -66,7 +70,8 @@ export function useYouTubePlayer({
           playsinline: 1,
           rel: 0,
           showinfo: 0,
-          loop: tvSettings.autoPlayNextEpisode ? 0 : 0,
+          origin:
+            typeof window !== "undefined" ? window.location.origin : undefined,
         },
         events: {
           onReady: () => {
@@ -79,11 +84,8 @@ export function useYouTubePlayer({
 
             const playerState = window.YT!.PlayerState;
 
-            if (
-              event.data === playerState.ENDED &&
-              !tvSettings.autoPlayNextEpisode
-            ) {
-              event.target.pauseVideo();
+            if (event.data === playerState.ENDED) {
+              callbacksRef.current.onVideoEnded?.();
             }
 
             if (event.data === playerState.PLAYING) {
@@ -139,6 +141,12 @@ export function useYouTubePlayer({
     }
   }, []);
 
+  const loadVideo = useCallback((videoId: string, startSeconds = 0) => {
+    if (!playerRef.current || !videoId) return;
+    lastPlaylistIndexRef.current = -1;
+    playerRef.current.loadVideoById({ videoId, startSeconds });
+  }, []);
+
   const loadPlaylist = useCallback((playlistId: string, index = 0) => {
     if (!playerRef.current || !playlistId) return;
     lastPlaylistIndexRef.current = index;
@@ -183,6 +191,20 @@ export function useYouTubePlayer({
     }
   }, []);
 
+  const getPlayerState = useCallback((): number => {
+    if (!playerRef.current) return -1;
+    try {
+      return playerRef.current.getPlayerState();
+    } catch {
+      return -1;
+    }
+  }, []);
+
+  const seekTo = useCallback((seconds: number, allowSeekAhead = true) => {
+    if (!playerRef.current) return;
+    playerRef.current.seekTo(seconds, allowSeekAhead);
+  }, []);
+
   const syncPlaylistIndex = useCallback(() => {
     if (!playerRef.current) return;
     try {
@@ -198,12 +220,15 @@ export function useYouTubePlayer({
     pause,
     stop,
     setVolume,
+    loadVideo,
     loadPlaylist,
     nextVideo,
     previousVideo,
     getPlaylistIndex,
     getPlaylist,
     getVideoData,
+    getPlayerState,
+    seekTo,
     syncPlaylistIndex,
   };
 }

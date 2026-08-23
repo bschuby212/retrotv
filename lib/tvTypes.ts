@@ -1,7 +1,21 @@
+export type ChannelSourceType =
+  | "video"
+  | "live"
+  | "playlist"
+  | "show"
+  | "unconfigured";
+
 export interface Channel {
   channel: number;
   name: string;
-  playlistId: string;
+  sourceUrl: string;
+  type: ChannelSourceType;
+  videoId?: string;
+  playlistId?: string;
+  loop: boolean;
+  embeddable: boolean;
+  needsMapping?: boolean;
+  note?: string;
 }
 
 export type PowerPhase = "off" | "booting" | "on" | "shuttingDown";
@@ -14,6 +28,7 @@ export type OSDType =
   | "noSignal"
   | "play"
   | "pause"
+  | "stop"
   | null;
 
 export interface ChannelOSDPayload {
@@ -56,6 +71,8 @@ export interface TVControlsActions {
   channelDown: () => void;
   volumeUp: () => void;
   volumeDown: () => void;
+  togglePlayPause: () => void;
+  stopPlayback: () => void;
   episodePrevious: () => void;
   episodeNext: () => void;
 }
@@ -63,6 +80,7 @@ export interface TVControlsActions {
 export interface TVControlsInternal {
   handlePlayerError: () => void;
   handlePlaylistIndexChange: () => void;
+  handleVideoEnded: () => void;
 }
 
 export interface TVControlsState {

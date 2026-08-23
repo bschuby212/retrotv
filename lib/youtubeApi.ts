@@ -35,6 +35,7 @@ export interface YouTubePlayer {
   getPlaylist: () => string[];
   getVideoData: () => YouTubeVideoData;
   getPlayerState: () => number;
+  seekTo: (seconds: number, allowSeekAhead?: boolean) => void;
   destroy: () => void;
 }
 
@@ -42,7 +43,8 @@ export interface YouTubePlayerOptions {
   height?: string;
   width?: string;
   videoId?: string;
-  playerVars?: Record<string, string | number>;
+  host?: string;
+  playerVars?: Record<string, string | number | undefined>;
   events?: {
     onReady?: (event: { target: YouTubePlayer }) => void;
     onStateChange?: (event: { data: number; target: YouTubePlayer }) => void;

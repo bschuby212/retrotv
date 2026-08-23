@@ -3,6 +3,7 @@
 import { ChannelOSD } from "@/components/tv/ChannelOSD";
 import { EpisodeOSD } from "@/components/tv/EpisodeOSD";
 import { NoSignalOSD } from "@/components/tv/NoSignalOSD";
+import { TransportOSD } from "@/components/tv/TransportOSD";
 import { VolumeOSD } from "@/components/tv/VolumeOSD";
 import type { OSDState } from "@/lib/tvTypes";
 
@@ -51,6 +52,12 @@ export function CRTOSD({ osd }: CRTOSDProps) {
       );
     case "mute":
       return <VolumeOSD volume={0} muted />;
+    case "play":
+      return <TransportOSD label="PLAY" />;
+    case "pause":
+      return <TransportOSD label="PAUSE" />;
+    case "stop":
+      return <TransportOSD label="STOP" />;
     case "noSignal":
       return <NoSignalOSD />;
     default:

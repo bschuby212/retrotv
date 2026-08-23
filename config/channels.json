@@ -1,20 +1,49 @@
 {
-  "_instructions": "Paste YouTube playlist links in chat and ask the agent to update channels. You do not need to edit this file yourself.",
+  "_instructions": "Original source URLs are preserved exactly. Send new links in chat to update — no coding required.",
   "channels": [
     {
       "channel": 2,
-      "name": "Pokémon",
-      "playlistUrl": ""
+      "name": "YU-GI-OH!",
+      "sourceUrl": "https://www.youtube.com/watch?v=I6WRXeKZK64",
+      "type": "video",
+      "loop": false
     },
     {
       "channel": 3,
-      "name": "Yu-Gi-Oh!",
-      "playlistUrl": ""
+      "name": "POKÉMON — SEASON 1",
+      "sourceUrl": "https://www.youtube.com/show/VLPLRcHmntfmJ8BNpfON92grhkv6WxuqF5vD?sbp=Kgt6M2hNWDY1S2h0Z0AB",
+      "type": "show",
+      "embeddable": false,
+      "needsMapping": true,
+      "note": "YouTube Show URL — IFrame Player API cannot embed this. Needs Season 1 playlist or video-ID mapping."
     },
     {
       "channel": 4,
-      "name": "Cartoons",
-      "playlistUrl": ""
+      "name": "CLASSIC CARTOONS",
+      "sourceUrl": "https://www.youtube.com/watch?v=W0Rb3v7J1ZQ",
+      "type": "video",
+      "loop": true
+    },
+    {
+      "channel": 5,
+      "name": "POKÉMON: THE FIRST MOVIE",
+      "sourceUrl": "https://www.youtube.com/watch?v=CvTG5HtDYpY",
+      "type": "video",
+      "loop": true
+    },
+    {
+      "channel": 6,
+      "name": "YU-GI-OH! MOVIE",
+      "sourceUrl": "https://www.youtube.com/watch?v=iqJifTEbatc",
+      "type": "video",
+      "loop": true
+    },
+    {
+      "channel": 7,
+      "name": "YU-GI-OH! MOVIE 2",
+      "sourceUrl": "https://www.youtube.com/watch?v=h-AEPFNIJFc",
+      "type": "video",
+      "loop": true
     }
   ]
 }

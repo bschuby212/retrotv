@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback } from "react";
+import { isChannelPlayable } from "@/config/channels";
 import { CRTOSD } from "@/components/tv/CRTDOSD";
 import { CRTOverlay } from "@/components/tv/CRTOverlay";
 import { PlaceholderScreen } from "@/components/tv/PlaceholderScreen";
@@ -34,11 +35,18 @@ export function TVScreen({
   onChannelUp,
   onChannelDown,
 }: TVScreenProps) {
-  const showPlaceholder = !currentChannel.playlistId;
-  const showPlayer =
-    Boolean(currentChannel.playlistId) && isPowered && hasSignal;
+  const playable = isChannelPlayable(currentChannel);
+  const showPlayer = playable && isPowered && hasSignal;
   const showNoSignalOverlay =
-    isPowered && powerPhase === "on" && !showPlaceholder && !hasSignal;
+    isPowered &&
+    powerPhase === "on" &&
+    Boolean(currentChannel.sourceUrl) &&
+    !hasSignal;
+  const showPlaceholder =
+    isPowered &&
+    powerPhase === "on" &&
+    !currentChannel.sourceUrl &&
+    currentChannel.type === "unconfigured";
 
   const handleWheel = useCallback(
     (event: React.WheelEvent) => {
@@ -86,7 +94,7 @@ export function TVScreen({
         />
 
         <div className={`${screenStyles.layer} ${screenStyles.contentLayer}`}>
-          {showPlaceholder && isPowered && powerPhase === "on" && (
+          {showPlaceholder && (
             <PlaceholderScreen
               channelNumber={currentChannel.channel}
               channelName={currentChannel.name}

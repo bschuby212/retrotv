@@ -1,7 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useRef, useState } from "react";
-import { channels } from "@/config/channels";
+import { channels, isChannelPlayable } from "@/config/channels";
 import { tvSettings } from "@/config/tvSettings";
 import { truncateTitle } from "@/lib/youtubeApi";
 import type {
@@ -20,12 +20,15 @@ interface UseTVControlsOptions {
   pause: () => void;
   stop: () => void;
   setPlayerVolume: (volume: number) => void;
+  loadVideo: (videoId: string, startSeconds?: number) => void;
   loadPlaylist: (playlistId: string, index?: number) => void;
   nextVideo: () => void;
   previousVideo: () => void;
   getPlaylistIndex: () => number;
   getPlaylist: () => string[];
   getVideoData: () => { title: string } | null;
+  getPlayerState: () => number;
+  seekTo: (seconds: number) => void;
   syncPlaylistIndex: () => void;
 }
 
@@ -51,12 +54,15 @@ export function useTVControls({
   pause,
   stop,
   setPlayerVolume,
+  loadVideo,
   loadPlaylist,
   nextVideo,
   previousVideo,
   getPlaylistIndex,
   getPlaylist,
   getVideoData,
+  getPlayerState,
+  seekTo,
   syncPlaylistIndex,
 }: UseTVControlsOptions): TVControlsState &
   TVControlsActions &
@@ -72,6 +78,7 @@ export function useTVControls({
   const channelOsdTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const episodeOsdTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const volumeOsdTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const transportOsdTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const powerTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const channelLockRef = useRef(false);
   const episodePositionRef = useRef<Record<number, number>>({});
@@ -108,6 +115,13 @@ export function useTVControls({
     if (volumeOsdTimerRef.current) {
       clearTimeout(volumeOsdTimerRef.current);
       volumeOsdTimerRef.current = null;
+    }
+  }, []);
+
+  const clearTransportOsdTimer = useCallback(() => {
+    if (transportOsdTimerRef.current) {
+      clearTimeout(transportOsdTimerRef.current);
+      transportOsdTimerRef.current = null;
     }
   }, []);
 
@@ -163,6 +177,7 @@ export function useTVControls({
       clearEpisodeOsdTimer();
       clearChannelOsdTimer();
       clearVolumeOsdTimer();
+      clearTransportOsdTimer();
 
       const payload = buildEpisodePayload(channel, playlistIndex);
       setOsd({ type: "episode", payload });
@@ -175,8 +190,21 @@ export function useTVControls({
       buildEpisodePayload,
       clearChannelOsdTimer,
       clearEpisodeOsdTimer,
+      clearTransportOsdTimer,
       clearVolumeOsdTimer,
     ]
+  );
+
+  const showTransportOsd = useCallback(
+    (type: "play" | "pause" | "stop") => {
+      clearTransportOsdTimer();
+      clearVolumeOsdTimer();
+      setOsd({ type });
+      transportOsdTimerRef.current = setTimeout(() => {
+        setOsd((prev) => (prev.type === type ? { type: null } : prev));
+      }, tvSettings.channelOsdHideMs);
+    },
+    [clearTransportOsdTimer, clearVolumeOsdTimer]
   );
 
   const showVolumeOsd = useCallback(
@@ -184,6 +212,7 @@ export function useTVControls({
       clearVolumeOsdTimer();
       clearChannelOsdTimer();
       clearEpisodeOsdTimer();
+      clearTransportOsdTimer();
       setOsd({
         type: nextVolume === 0 ? "mute" : "volume",
         payload: { volume: nextVolume },
@@ -194,7 +223,12 @@ export function useTVControls({
         );
       }, tvSettings.volumeOsdHideMs);
     },
-    [clearVolumeOsdTimer, clearChannelOsdTimer, clearEpisodeOsdTimer]
+    [
+      clearVolumeOsdTimer,
+      clearChannelOsdTimer,
+      clearEpisodeOsdTimer,
+      clearTransportOsdTimer,
+    ]
   );
 
   const showNoSignal = useCallback(() => {
@@ -204,42 +238,66 @@ export function useTVControls({
     setOsd({ type: null });
   }, [clearChannelOsdTimer, clearEpisodeOsdTimer]);
 
+  const loadChannelSource = useCallback(
+    (channel: Channel) => {
+      if (!isChannelPlayable(channel)) {
+        stop();
+        showNoSignal();
+        return;
+      }
+
+      errorSkipAttemptsRef.current = 0;
+      setHasSignal(true);
+
+      if (channel.type === "playlist" && channel.playlistId) {
+        const savedIndex = getSavedEpisodeIndex(channel);
+        loadPlaylist(channel.playlistId, savedIndex);
+        syncPlaylistIndex();
+      } else if (channel.videoId) {
+        loadVideo(channel.videoId, 0);
+      }
+
+      if (isPoweredRef.current && powerPhaseRef.current === "on") {
+        play();
+      }
+    },
+    [
+      getSavedEpisodeIndex,
+      loadPlaylist,
+      loadVideo,
+      play,
+      showNoSignal,
+      stop,
+      syncPlaylistIndex,
+    ]
+  );
+
   const loadCurrentChannel = useCallback(
     (index: number, showOsd = true) => {
       const channel = channels[index];
       if (!channel) return;
 
-      errorSkipAttemptsRef.current = 0;
-
-      if (!channel.playlistId) {
+      if (!channel.sourceUrl || channel.type === "unconfigured") {
         setHasSignal(true);
         stop();
         if (showOsd) showChannelOsd(channel);
         return;
       }
 
-      const savedIndex = getSavedEpisodeIndex(channel);
+      if (!isChannelPlayable(channel)) {
+        stop();
+        showNoSignal();
+        if (showOsd) showChannelOsd(channel);
+        return;
+      }
 
       if (playerReady) {
-        loadPlaylist(channel.playlistId, savedIndex);
-        setHasSignal(true);
-        syncPlaylistIndex();
-        if (isPoweredRef.current && powerPhaseRef.current === "on") {
-          play();
-        }
+        loadChannelSource(channel);
       }
 
       if (showOsd) showChannelOsd(channel);
     },
-    [
-      getSavedEpisodeIndex,
-      loadPlaylist,
-      play,
-      playerReady,
-      showChannelOsd,
-      stop,
-      syncPlaylistIndex,
-    ]
+    [loadChannelSource, playerReady, showChannelOsd, showNoSignal, stop]
   );
 
   const performChannelChange = useCallback(
@@ -312,11 +370,40 @@ export function useTVControls({
     applyVolume(volumeRef.current - tvSettings.volumeStep);
   }, [applyVolume]);
 
+  const togglePlayPause = useCallback(() => {
+    if (!isPoweredRef.current || !isTvInteractive(powerPhaseRef.current)) return;
+
+    const channel = channels[currentChannelIndexRef.current];
+    if (!isChannelPlayable(channel)) return;
+
+    const state = getPlayerState();
+    const playing = state === 1;
+
+    if (playing) {
+      pause();
+      showTransportOsd("pause");
+    } else {
+      play();
+      showTransportOsd("play");
+    }
+  }, [getPlayerState, pause, play, showTransportOsd]);
+
+  const stopPlayback = useCallback(() => {
+    if (!isPoweredRef.current || !isTvInteractive(powerPhaseRef.current)) return;
+
+    const channel = channels[currentChannelIndexRef.current];
+    if (!isChannelPlayable(channel)) return;
+
+    seekTo(0);
+    pause();
+    showTransportOsd("stop");
+  }, [pause, seekTo, showTransportOsd]);
+
   const episodePrevious = useCallback(() => {
     if (!isPoweredRef.current || !isTvInteractive(powerPhaseRef.current)) return;
 
     const channel = channels[currentChannelIndexRef.current];
-    if (!channel?.playlistId || !playerReady) return;
+    if (channel.type !== "playlist" || !channel.playlistId || !playerReady) return;
 
     previousVideo();
     play();
@@ -339,7 +426,7 @@ export function useTVControls({
     if (!isPoweredRef.current || !isTvInteractive(powerPhaseRef.current)) return;
 
     const channel = channels[currentChannelIndexRef.current];
-    if (!channel?.playlistId || !playerReady) return;
+    if (channel.type !== "playlist" || !channel.playlistId || !playerReady) return;
 
     nextVideo();
     play();
@@ -360,7 +447,7 @@ export function useTVControls({
 
   const handlePlaylistIndexChange = useCallback(() => {
     const channel = channels[currentChannelIndexRef.current];
-    if (!channel?.playlistId) return;
+    if (channel.type !== "playlist" || !channel.playlistId) return;
 
     const index = getPlaylistIndex();
     saveEpisodeIndex(channel, index);
@@ -370,31 +457,48 @@ export function useTVControls({
     }
   }, [getPlaylistIndex, saveEpisodeIndex, showEpisodeOsd]);
 
-  const handlePlayerError = useCallback(() => {
+  const handleVideoEnded = useCallback(() => {
     const channel = channels[currentChannelIndexRef.current];
-    if (!channel?.playlistId) {
-      showNoSignal();
+    if (!channel || !isPoweredRef.current) return;
+
+    if (channel.loop && channel.videoId) {
+      seekTo(0);
+      play();
       return;
     }
 
-    const playlist = getPlaylist();
-    const currentIndex = getPlaylistIndex();
-    errorSkipAttemptsRef.current += 1;
-
-    if (
-      playlist.length > 0 &&
-      currentIndex < playlist.length - 1 &&
-      errorSkipAttemptsRef.current < playlist.length
-    ) {
-      nextVideo();
-      play();
-      window.setTimeout(() => {
-        const index = getPlaylistIndex();
-        saveEpisodeIndex(channel, index);
-        setHasSignal(true);
-        showEpisodeOsd(channel, index);
-      }, 200);
+    if (channel.type === "playlist" && tvSettings.autoPlayNextEpisode) {
       return;
+    }
+
+    if (channel.type === "playlist" && !tvSettings.autoPlayNextEpisode) {
+      pause();
+    }
+  }, [pause, play, seekTo]);
+
+  const handlePlayerError = useCallback(() => {
+    const channel = channels[currentChannelIndexRef.current];
+
+    if (channel.type === "playlist" && channel.playlistId) {
+      const playlist = getPlaylist();
+      const currentIndex = getPlaylistIndex();
+      errorSkipAttemptsRef.current += 1;
+
+      if (
+        playlist.length > 0 &&
+        currentIndex < playlist.length - 1 &&
+        errorSkipAttemptsRef.current < playlist.length
+      ) {
+        nextVideo();
+        play();
+        window.setTimeout(() => {
+          const index = getPlaylistIndex();
+          saveEpisodeIndex(channel, index);
+          setHasSignal(true);
+          showEpisodeOsd(channel, index);
+        }, 200);
+        return;
+      }
     }
 
     showNoSignal();
@@ -458,9 +562,8 @@ export function useTVControls({
     if (playerReady && isPowered && powerPhase === "on") {
       setPlayerVolume(volume);
       const channel = channels[currentChannelIndex];
-      if (channel?.playlistId) {
-        loadPlaylist(channel.playlistId, getSavedEpisodeIndex(channel));
-        play();
+      if (isChannelPlayable(channel)) {
+        loadChannelSource(channel);
       }
     }
   }, [playerReady]); // eslint-disable-line react-hooks/exhaustive-deps
@@ -470,12 +573,14 @@ export function useTVControls({
       clearChannelOsdTimer();
       clearEpisodeOsdTimer();
       clearVolumeOsdTimer();
+      clearTransportOsdTimer();
       if (powerTimerRef.current) clearTimeout(powerTimerRef.current);
     };
   }, [
     clearChannelOsdTimer,
     clearEpisodeOsdTimer,
     clearVolumeOsdTimer,
+    clearTransportOsdTimer,
   ]);
 
   return {
@@ -493,10 +598,13 @@ export function useTVControls({
     channelDown,
     volumeUp,
     volumeDown,
+    togglePlayPause,
+    stopPlayback,
     episodePrevious,
     episodeNext,
     handlePlayerError,
     handlePlaylistIndexChange,
+    handleVideoEnded,
   };
 }
 

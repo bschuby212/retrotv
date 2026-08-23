@@ -12,11 +12,13 @@ import retroStyles from "@/styles/tv/retro-tv.module.css";
 export function RetroTV() {
   const onErrorRef = useRef<(code: number) => void>(() => {});
   const onPlaylistIndexChangeRef = useRef<() => void>(() => {});
+  const onVideoEndedRef = useRef<() => void>(() => {});
 
   const youtube = useYouTubePlayer({
     containerId: YOUTUBE_CONTAINER_ID,
     onError: (code) => onErrorRef.current(code),
     onPlaylistIndexChange: () => onPlaylistIndexChangeRef.current(),
+    onVideoEnded: () => onVideoEndedRef.current(),
   });
 
   const tv = useTVControls({
@@ -25,19 +27,27 @@ export function RetroTV() {
     pause: youtube.pause,
     stop: youtube.stop,
     setPlayerVolume: youtube.setVolume,
+    loadVideo: youtube.loadVideo,
     loadPlaylist: youtube.loadPlaylist,
     nextVideo: youtube.nextVideo,
     previousVideo: youtube.previousVideo,
     getPlaylistIndex: youtube.getPlaylistIndex,
     getPlaylist: youtube.getPlaylist,
     getVideoData: youtube.getVideoData,
+    getPlayerState: youtube.getPlayerState,
+    seekTo: youtube.seekTo,
     syncPlaylistIndex: youtube.syncPlaylistIndex,
   });
 
   useEffect(() => {
     onErrorRef.current = tv.handlePlayerError;
     onPlaylistIndexChangeRef.current = tv.handlePlaylistIndexChange;
-  }, [tv.handlePlayerError, tv.handlePlaylistIndexChange]);
+    onVideoEndedRef.current = tv.handleVideoEnded;
+  }, [
+    tv.handlePlayerError,
+    tv.handlePlaylistIndexChange,
+    tv.handleVideoEnded,
+  ]);
 
   useKeyboardControls({
     actions: {
@@ -46,6 +56,8 @@ export function RetroTV() {
       channelDown: tv.channelDown,
       volumeUp: tv.volumeUp,
       volumeDown: tv.volumeDown,
+      togglePlayPause: tv.togglePlayPause,
+      stopPlayback: tv.stopPlayback,
       episodePrevious: tv.episodePrevious,
       episodeNext: tv.episodeNext,
     },
@@ -100,6 +112,8 @@ export function RetroTV() {
             channelDown={tv.channelDown}
             volumeUp={tv.volumeUp}
             volumeDown={tv.volumeDown}
+            togglePlayPause={tv.togglePlayPause}
+            stopPlayback={tv.stopPlayback}
             episodePrevious={tv.episodePrevious}
             episodeNext={tv.episodeNext}
           />

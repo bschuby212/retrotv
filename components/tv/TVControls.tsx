@@ -14,6 +14,8 @@ export function TVControls({
   channelDown,
   volumeUp,
   volumeDown,
+  togglePlayPause,
+  stopPlayback,
   episodePrevious,
   episodeNext,
 }: TVControlsProps) {
@@ -76,6 +78,26 @@ export function TVControls({
       <div className={controlsStyles.gapWide} aria-hidden="true" />
 
       <div className={controlsStyles.transportGroup}>
+        <div className={controlsStyles.cluster}>
+          <span className={controlsStyles.clusterLabel}>Play</span>
+          <TVButton
+            variant="transport"
+            icon="▶❚"
+            ariaLabel="Play or pause"
+            onClick={togglePlayPause}
+            hideLabel
+          />
+        </div>
+        <div className={controlsStyles.cluster}>
+          <span className={controlsStyles.clusterLabel}>Stop</span>
+          <TVButton
+            variant="transport"
+            icon="■"
+            ariaLabel="Stop"
+            onClick={stopPlayback}
+            hideLabel
+          />
+        </div>
         <div className={controlsStyles.cluster}>
           <span className={controlsStyles.clusterLabel}>Prev</span>
           <TVButton
