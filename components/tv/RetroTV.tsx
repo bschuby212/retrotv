@@ -13,10 +13,12 @@ export function RetroTV() {
   const onErrorRef = useRef<(code: number) => void>(() => {});
   const onPlaylistIndexChangeRef = useRef<() => void>(() => {});
   const onVideoEndedRef = useRef<() => void>(() => {});
+  const onStateChangeRef = useRef<(state: number) => void>(() => {});
 
   const youtube = useYouTubePlayer({
     containerId: YOUTUBE_CONTAINER_ID,
     onError: (code) => onErrorRef.current(code),
+    onStateChange: (state) => onStateChangeRef.current(state),
     onPlaylistIndexChange: () => onPlaylistIndexChangeRef.current(),
     onVideoEnded: () => onVideoEndedRef.current(),
   });
@@ -37,16 +39,19 @@ export function RetroTV() {
     getPlayerState: youtube.getPlayerState,
     seekTo: youtube.seekTo,
     syncPlaylistIndex: youtube.syncPlaylistIndex,
+    setCaptionsEnabled: youtube.setCaptionsEnabled,
   });
 
   useEffect(() => {
     onErrorRef.current = tv.handlePlayerError;
     onPlaylistIndexChangeRef.current = tv.handlePlaylistIndexChange;
     onVideoEndedRef.current = tv.handleVideoEnded;
+    onStateChangeRef.current = tv.handlePlayerStateChange;
   }, [
     tv.handlePlayerError,
     tv.handlePlaylistIndexChange,
     tv.handleVideoEnded,
+    tv.handlePlayerStateChange,
   ]);
 
   useKeyboardControls({
@@ -60,6 +65,7 @@ export function RetroTV() {
       stopPlayback: tv.stopPlayback,
       episodePrevious: tv.episodePrevious,
       episodeNext: tv.episodeNext,
+      toggleCaptions: tv.toggleCaptions,
     },
     isPowered: tv.isPowered,
   });
@@ -90,6 +96,7 @@ export function RetroTV() {
           powerPhase={tv.powerPhase}
           currentChannel={tv.currentChannel}
           isChangingChannel={tv.isChangingChannel}
+          playerUiMasked={tv.playerUiMasked}
           hasSignal={tv.hasSignal}
           osd={tv.osd}
           onChannelUp={tv.channelUp}
@@ -122,6 +129,8 @@ export function RetroTV() {
             stopPlayback={tv.stopPlayback}
             episodePrevious={tv.episodePrevious}
             episodeNext={tv.episodeNext}
+            toggleCaptions={tv.toggleCaptions}
+            captionsEnabled={tv.captionsEnabled}
           />
           </div>
         </div>

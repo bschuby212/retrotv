@@ -6,6 +6,7 @@ import controlsStyles from "@/styles/tv/tv-controls.module.css";
 
 interface TVControlsProps extends TVControlsActions {
   isPowered: boolean;
+  captionsEnabled: boolean;
 }
 
 export function TVControls({
@@ -18,6 +19,8 @@ export function TVControls({
   stopPlayback,
   episodePrevious,
   episodeNext,
+  toggleCaptions,
+  captionsEnabled,
 }: TVControlsProps) {
   return (
     <div className={controlsStyles.panel}>
@@ -115,6 +118,17 @@ export function TVControls({
             icon="▶▶"
             ariaLabel="Next episode"
             onClick={episodeNext}
+            hideLabel
+          />
+        </div>
+        <div className={controlsStyles.cluster}>
+          <span className={controlsStyles.clusterLabel}>CC</span>
+          <TVButton
+            variant="transport"
+            icon="CC"
+            ariaLabel="Toggle captions"
+            onClick={toggleCaptions}
+            active={captionsEnabled}
             hideLabel
           />
         </div>

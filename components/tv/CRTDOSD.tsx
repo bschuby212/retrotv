@@ -58,6 +58,10 @@ export function CRTOSD({ osd }: CRTOSDProps) {
       return <TransportOSD label="PAUSE" />;
     case "stop":
       return <TransportOSD label="STOP" />;
+    case "ccOn":
+      return <TransportOSD label="CC ON" />;
+    case "ccOff":
+      return <TransportOSD label="CC OFF" />;
     case "noSignal":
       return <NoSignalOSD />;
     default:

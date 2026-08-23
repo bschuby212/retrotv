@@ -4,6 +4,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import {
   isYouTubeEmbedError,
   loadYouTubeIframeAPI,
+  type YouTubeCaptionTrack,
   type YouTubePlayer,
   type YouTubeVideoData,
 } from "@/lib/youtubeApi";
@@ -17,6 +18,17 @@ interface UseYouTubePlayerOptions {
   onVideoEnded?: () => void;
 }
 
+function pickCaptionTrack(
+  tracks: YouTubeCaptionTrack[]
+): YouTubeCaptionTrack | undefined {
+  if (tracks.length === 0) return undefined;
+  return (
+    tracks.find((track) => track.languageCode === "en") ??
+    tracks.find((track) => track.languageCode?.startsWith("en")) ??
+    tracks[0]
+  );
+}
+
 export function useYouTubePlayer({
   containerId,
   onReady,
@@ -28,6 +40,8 @@ export function useYouTubePlayer({
   const playerRef = useRef<YouTubePlayer | null>(null);
   const [playerReady, setPlayerReady] = useState(false);
   const lastPlaylistIndexRef = useRef(-1);
+  const captionsReadyRef = useRef(false);
+  const pendingCaptionsEnabledRef = useRef<boolean | null>(null);
   const callbacksRef = useRef({
     onReady,
     onError,
@@ -46,6 +60,37 @@ export function useYouTubePlayer({
     };
   }, [onReady, onError, onStateChange, onPlaylistIndexChange, onVideoEnded]);
 
+  const applyCaptionsEnabled = useCallback((enabled: boolean) => {
+    const player = playerRef.current;
+    if (!player) return;
+
+    try {
+      if (enabled) {
+        const tracks = player.getOption(
+          "captions",
+          "tracklist"
+        ) as YouTubeCaptionTrack[] | undefined;
+        const track = pickCaptionTrack(tracks ?? []);
+        if (!track) return;
+        player.setOption("captions", "track", track);
+      } else {
+        player.setOption("captions", "track", {});
+      }
+    } catch {
+      // Captions module may be unavailable for this video
+    }
+  }, []);
+
+  const setCaptionsEnabled = useCallback(
+    (enabled: boolean) => {
+      pendingCaptionsEnabledRef.current = enabled;
+      if (captionsReadyRef.current) {
+        applyCaptionsEnabled(enabled);
+      }
+    },
+    [applyCaptionsEnabled]
+  );
+
   useEffect(() => {
     let mounted = true;
 
@@ -62,6 +107,7 @@ export function useYouTubePlayer({
         host: "https://www.youtube.com",
         playerVars: {
           autoplay: 0,
+          cc_load_policy: 1,
           controls: 0,
           disablekb: 1,
           fs: 0,
@@ -78,6 +124,22 @@ export function useYouTubePlayer({
             if (!mounted) return;
             setPlayerReady(true);
             callbacksRef.current.onReady?.();
+          },
+          onApiChange: () => {
+            const player = playerRef.current;
+            if (!player) return;
+
+            try {
+              const options = player.getOptions("captions");
+              if (!options.includes("track")) return;
+
+              captionsReadyRef.current = true;
+              if (pendingCaptionsEnabledRef.current !== null) {
+                applyCaptionsEnabled(pendingCaptionsEnabledRef.current);
+              }
+            } catch {
+              // Captions module not available yet
+            }
           },
           onStateChange: (event) => {
             callbacksRef.current.onStateChange?.(event.data);
@@ -98,6 +160,12 @@ export function useYouTubePlayer({
               } catch {
                 // Playlist index unavailable for non-playlist playback
               }
+
+              if (pendingCaptionsEnabledRef.current) {
+                window.setTimeout(() => {
+                  applyCaptionsEnabled(true);
+                }, 200);
+              }
             }
           },
           onError: (event) => {
@@ -117,8 +185,10 @@ export function useYouTubePlayer({
       playerRef.current = null;
       setPlayerReady(false);
       lastPlaylistIndexRef.current = -1;
+      captionsReadyRef.current = false;
+      pendingCaptionsEnabledRef.current = null;
     };
-  }, [containerId]);
+  }, [applyCaptionsEnabled, containerId]);
 
   const play = useCallback(() => {
     playerRef.current?.playVideo();
@@ -230,5 +300,6 @@ export function useYouTubePlayer({
     getPlayerState,
     seekTo,
     syncPlaylistIndex,
+    setCaptionsEnabled,
   };
 }

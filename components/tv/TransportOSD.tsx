@@ -1,7 +1,7 @@
 import osdStyles from "@/styles/tv/osd.module.css";
 
 interface TransportOSDProps {
-  label: "PLAY" | "PAUSE" | "STOP";
+  label: "PLAY" | "PAUSE" | "STOP" | "CC ON" | "CC OFF";
 }
 
 export function TransportOSD({ label }: TransportOSDProps) {

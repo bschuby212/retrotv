@@ -19,6 +19,7 @@ interface TVScreenProps {
   powerPhase: PowerPhase;
   currentChannel: Channel;
   isChangingChannel: boolean;
+  playerUiMasked: boolean;
   hasSignal: boolean;
   osd: OSDState;
   onChannelUp: () => void;
@@ -30,6 +31,7 @@ export function TVScreen({
   powerPhase,
   currentChannel,
   isChangingChannel,
+  playerUiMasked,
   hasSignal,
   osd,
   onChannelUp,
@@ -92,6 +94,17 @@ export function TVScreen({
           containerId={YOUTUBE_CONTAINER_ID}
           visible={showPlayer && !isChangingChannel}
         />
+
+        {showPlayer && playerUiMasked && (
+          <div
+            className={`${screenStyles.layer} ${screenStyles.youtubeUiMaskLayer}`}
+            aria-hidden="true"
+          >
+            <div className={screenStyles.youtubeUiMaskTop} />
+            <div className={screenStyles.youtubeUiMaskBottom} />
+            <div className={screenStyles.youtubeUiMaskCenter} />
+          </div>
+        )}
 
         <div className={`${screenStyles.layer} ${screenStyles.contentLayer}`}>
           {showPlaceholder && (

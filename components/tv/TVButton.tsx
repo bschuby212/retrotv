@@ -11,6 +11,7 @@ interface TVButtonProps {
   onClickSound?: () => void;
   ariaLabel: string;
   hideLabel?: boolean;
+  active?: boolean;
 }
 
 export function TVButton({
@@ -21,6 +22,7 @@ export function TVButton({
   onClickSound,
   ariaLabel,
   hideLabel = false,
+  active = false,
 }: TVButtonProps) {
   const [pressed, setPressed] = useState(false);
 
@@ -43,7 +45,7 @@ export function TVButton({
   const buttonEl = (
     <button
       type="button"
-      className={`${buttonStyles.button} ${variantClass} ${pressed ? buttonStyles.buttonPressed : ""}`}
+      className={`${buttonStyles.button} ${variantClass} ${pressed ? buttonStyles.buttonPressed : ""} ${active ? buttonStyles.buttonActive : ""}`}
       onClick={handleClick}
       onPointerDown={() => setPressed(true)}
       onPointerUp={() => setPressed(false)}

@@ -95,6 +95,24 @@
   opacity: 0.35;
 }
 
+.buttonActive {
+  transform: translateY(1px);
+  background: linear-gradient(
+    180deg,
+    #8a8680 0%,
+    #787470 48%,
+    #666258 100%
+  );
+  box-shadow:
+    0 0 0 #4a4844,
+    0 1px 2px rgba(0, 0, 0, 0.22),
+    inset 0 3px 6px rgba(0, 0, 0, 0.38);
+}
+
+.buttonActive::before {
+  opacity: 0.25;
+}
+
 .power {
   width: clamp(38px, 5.2vw, 46px);
   height: clamp(24px, 3.2vw, 30px);

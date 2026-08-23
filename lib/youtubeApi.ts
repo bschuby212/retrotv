@@ -5,6 +5,13 @@ export interface YouTubeVideoData {
   video_url: string;
 }
 
+export interface YouTubeCaptionTrack {
+  languageCode?: string;
+  languageName?: string;
+  kind?: string;
+  name?: string;
+}
+
 export interface YouTubePlayer {
   playVideo: () => void;
   pauseVideo: () => void;
@@ -36,6 +43,9 @@ export interface YouTubePlayer {
   getVideoData: () => YouTubeVideoData;
   getPlayerState: () => number;
   seekTo: (seconds: number, allowSeekAhead?: boolean) => void;
+  getOptions: (module?: string) => string[];
+  getOption: (module: string, option: string) => unknown;
+  setOption: (module: string, option: string, value: unknown) => void;
   destroy: () => void;
 }
 
@@ -49,6 +59,7 @@ export interface YouTubePlayerOptions {
     onReady?: (event: { target: YouTubePlayer }) => void;
     onStateChange?: (event: { data: number; target: YouTubePlayer }) => void;
     onError?: (event: { data: number; target: YouTubePlayer }) => void;
+    onApiChange?: (event: { target: YouTubePlayer }) => void;
   };
 }
 

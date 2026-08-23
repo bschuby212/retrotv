@@ -29,6 +29,8 @@ export type OSDType =
   | "play"
   | "pause"
   | "stop"
+  | "ccOn"
+  | "ccOff"
   | null;
 
 export interface ChannelOSDPayload {
@@ -75,12 +77,14 @@ export interface TVControlsActions {
   stopPlayback: () => void;
   episodePrevious: () => void;
   episodeNext: () => void;
+  toggleCaptions: () => void;
 }
 
 export interface TVControlsInternal {
   handlePlayerError: () => void;
   handlePlaylistIndexChange: () => void;
   handleVideoEnded: () => void;
+  handlePlayerStateChange: (state: number) => void;
 }
 
 export interface TVControlsState {
@@ -89,6 +93,8 @@ export interface TVControlsState {
   currentChannelIndex: number;
   volume: number;
   isChangingChannel: boolean;
+  playerUiMasked: boolean;
+  captionsEnabled: boolean;
   osd: OSDState;
   playerReady: boolean;
   hasSignal: boolean;
