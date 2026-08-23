@@ -468,3 +468,24 @@
     0 3px 4px rgba(0, 0, 0, 0.5),
     inset 0 1px 0 rgba(255, 248, 235, 0.05);
 }
+
+/* Mobile: phones and small screens */
+@media (max-width: 640px) {
+  .retroTv {
+    width: 360px;
+  }
+}
+
+/* Laptop: tablets and typical laptop widths */
+@media (min-width: 641px) and (max-width: 1366px) {
+  .retroTv {
+    width: 620px;
+  }
+}
+
+/* Desktop: large monitors */
+@media (min-width: 1367px) {
+  .retroTv {
+    width: 880px;
+  }
+}
