@@ -10,10 +10,10 @@
   --cabinet-anchor-wide: 19%;
   --room-focal-x: 50%;
   --room-focal-y: calc(48% + 60px);
-  --room-focal-y-mobile: 56%;
+  --room-focal-y-mobile: 54%;
   --room-focal-y-wide: calc(47% + 60px);
   --room-bg-scale: 2.15;
-  --room-bg-scale-mobile: 2.5;
+  --room-bg-scale-mobile: 1.95;
 }
 
 .backgroundWrap {
@@ -82,11 +82,11 @@
 @media (max-width: 480px) {
   .scene {
     --room-focal-y-mobile: 54%;
-    --room-bg-scale-mobile: 2.65;
+    --room-bg-scale-mobile: 1.95;
   }
 
   .backgroundWrap {
-    transform: scale(var(--room-bg-scale-mobile, 2.65));
+    transform: scale(var(--room-bg-scale-mobile, 1.95));
     transform-origin: center var(--room-focal-y-mobile, 54%);
   }
 
@@ -103,12 +103,12 @@
 
 @media (min-width: 481px) and (max-width: 768px) {
   .backgroundWrap {
-    transform: scale(3.35);
-    transform-origin: center 48%;
+    transform: scale(2);
+    transform-origin: center 52%;
   }
 
   .background {
-    object-position: 50% 48%;
+    object-position: 50% 52%;
   }
 
   .tvMount {
@@ -120,12 +120,12 @@
 
 @media (min-width: 769px) and (max-width: 1024px) {
   .backgroundWrap {
-    transform: scale(3.1);
-    transform-origin: center 48%;
+    transform: scale(2.05);
+    transform-origin: center 52%;
   }
 
   .background {
-    object-position: 50% 48%;
+    object-position: 50% 52%;
   }
 
   .tvMount {
