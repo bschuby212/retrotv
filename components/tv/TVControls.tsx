@@ -3,7 +3,6 @@
 import { TVButton } from "@/components/tv/TVButton";
 import type { TVControlsActions } from "@/lib/tvTypes";
 import controlsStyles from "@/styles/tv/tv-controls.module.css";
-import retroStyles from "@/styles/tv/retro-tv.module.css";
 
 interface TVControlsProps extends TVControlsActions {
   isPowered: boolean;
@@ -23,25 +22,14 @@ export function TVControls({
 }: TVControlsProps) {
   return (
     <div className={controlsStyles.panel}>
-      <div className={controlsStyles.powerCluster}>
-        <div className={controlsStyles.cluster}>
-          <span className={controlsStyles.clusterLabel}>Power</span>
-          <TVButton
-            variant="power"
-            ariaLabel="Power"
-            onClick={togglePower}
-            hideLabel
-          />
-        </div>
-        <div className={retroStyles.ledHousing} aria-hidden="true">
-          <div
-            className={`${retroStyles.standbyLed} ${
-              !isPowered
-                ? retroStyles.standbyLedActive
-                : retroStyles.standbyLedOn
-            }`}
-          />
-        </div>
+      <div className={controlsStyles.cluster}>
+        <span className={controlsStyles.clusterLabel}>Power</span>
+        <TVButton
+          variant="power"
+          ariaLabel="Power"
+          onClick={togglePower}
+          hideLabel
+        />
       </div>
 
       <div className={controlsStyles.cluster}>
@@ -83,8 +71,6 @@ export function TVControls({
           />
         </div>
       </div>
-
-      <div className={controlsStyles.irWindow} aria-hidden="true" />
 
       <div className={controlsStyles.transportGroup}>
         <div className={controlsStyles.cluster}>

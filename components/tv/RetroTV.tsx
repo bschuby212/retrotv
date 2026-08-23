@@ -141,6 +141,18 @@ export function RetroTV() {
 
         <div className={retroStyles.avInputs} aria-hidden="true">
           <div className={retroStyles.avJack}>
+            <span className={retroStyles.avJackLabel}>Pwr</span>
+            <div className={retroStyles.ledHousing}>
+              <div
+                className={`${retroStyles.standbyLed} ${
+                  !tv.isPowered
+                    ? retroStyles.standbyLedActive
+                    : retroStyles.standbyLedOn
+                }`}
+              />
+            </div>
+          </div>
+          <div className={retroStyles.avJack}>
             <span className={retroStyles.avJackLabel}>Video</span>
             <span
               className={`${retroStyles.avJackHole} ${retroStyles.avJackHoleVideo}`}

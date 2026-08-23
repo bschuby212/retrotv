@@ -74,7 +74,7 @@
 
 .playerLayer {
   z-index: 1;
-  inset: 1.5% 1.2%;
+  inset: 0;
   border-radius: inherit;
   overflow: hidden;
 }
@@ -91,45 +91,43 @@
 
 .playerHost iframe {
   position: absolute;
-  top: -6%;
-  left: -6%;
-  width: 112% !important;
-  height: 112% !important;
+  top: 50%;
+  left: 50%;
+  width: 100% !important;
+  height: 100% !important;
   border: none;
   pointer-events: none;
   display: block;
+  transform: translate(-50%, -50%) scale(1.42);
+  transform-origin: center;
 }
 
 .crtEdgeMask {
   position: absolute;
-  inset: 1.5% 1.2%;
+  inset: 0;
   z-index: 4;
   pointer-events: none;
   border-radius: inherit;
   background:
     linear-gradient(
       to right,
-      #040404 0%,
-      rgba(4, 4, 4, 0.75) 2.2%,
-      transparent 5%,
-      transparent 95%,
-      rgba(4, 4, 4, 0.75) 97.8%,
-      #040404 100%
+      rgba(4, 4, 4, 0.55) 0%,
+      transparent 1.8%,
+      transparent 98.2%,
+      rgba(4, 4, 4, 0.55) 100%
     ),
     linear-gradient(
       to bottom,
-      #040404 0%,
-      rgba(4, 4, 4, 0.7) 2.4%,
-      transparent 5.5%,
-      transparent 93.5%,
-      rgba(4, 4, 4, 0.78) 97.2%,
-      #040404 100%
+      rgba(4, 4, 4, 0.5) 0%,
+      transparent 2%,
+      transparent 97.5%,
+      rgba(4, 4, 4, 0.55) 100%
     );
   box-shadow:
-    inset 22px 0 26px rgba(0, 0, 0, 0.55),
-    inset -22px 0 26px rgba(0, 0, 0, 0.55),
-    inset 0 16px 22px rgba(0, 0, 0, 0.5),
-    inset 0 -20px 26px rgba(0, 0, 0, 0.62);
+    inset 14px 0 18px rgba(0, 0, 0, 0.35),
+    inset -14px 0 18px rgba(0, 0, 0, 0.35),
+    inset 0 10px 14px rgba(0, 0, 0, 0.3),
+    inset 0 -12px 16px rgba(0, 0, 0, 0.38);
 }
 
 .playbackShield {
@@ -147,14 +145,14 @@
 
 .contentLayer {
   z-index: 8;
-  inset: 1.5% 1.2%;
+  inset: 0;
   border-radius: inherit;
   overflow: hidden;
 }
 
 .loadingLayer {
   z-index: 9;
-  inset: 1.5% 1.2%;
+  inset: 0;
   border-radius: inherit;
   overflow: hidden;
   pointer-events: none;
