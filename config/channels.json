@@ -1,0 +1,20 @@
+{
+  "_instructions": "Paste YouTube playlist links in chat and ask the agent to update channels. You do not need to edit this file yourself.",
+  "channels": [
+    {
+      "channel": 2,
+      "name": "Pokémon",
+      "playlistUrl": ""
+    },
+    {
+      "channel": 3,
+      "name": "Yu-Gi-Oh!",
+      "playlistUrl": ""
+    },
+    {
+      "channel": 4,
+      "name": "Cartoons",
+      "playlistUrl": ""
+    }
+  ]
+}

@@ -25,20 +25,15 @@ Hardware labels are printed on the TV panel — no separate UI instructions need
 
 ## Configuration
 
-### Channels — `config/channels.ts`
+### Channels — just send links in chat
 
-Each channel is a show or collection backed by a YouTube playlist:
+You do not need to edit any code. Paste YouTube playlist links here in chat, tell me the show name and channel number, and I will add them.
 
-```ts
-export const channels = [
-  { channel: 2, name: "Pokémon", playlistId: "PLxxxxxxxx" },
-  { channel: 3, name: "Yu-Gi-Oh!", playlistId: "" },
-];
-```
+Example message:
 
-Leave `playlistId` blank to show a color-bar placeholder. Episode position is remembered per channel when you return.
+> Channel 2 Pokémon: https://www.youtube.com/playlist?list=PLxxxx
 
-Use the playlist ID from a YouTube playlist URL (`list=PL...`).
+Links are stored in [`config/channels.json`](config/channels.json). Full URLs work — the app extracts the playlist ID automatically.
 
 ### Behavior — `config/tvSettings.ts`
 
