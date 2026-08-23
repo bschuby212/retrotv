@@ -524,19 +524,21 @@ export function useTVControls({
     if (!channel || !isPoweredRef.current) return;
 
     if (channel.loop && channel.videoId) {
+      beginPlayerUiMask();
       seekTo(0);
       play();
       return;
     }
 
     if (channel.type === "playlist" && tvSettings.autoPlayNextEpisode) {
+      beginPlayerUiMask();
       return;
     }
 
     if (channel.type === "playlist" && !tvSettings.autoPlayNextEpisode) {
       pause();
     }
-  }, [pause, play, seekTo]);
+  }, [beginPlayerUiMask, pause, play, seekTo]);
 
   const handlePlayerError = useCallback(() => {
     const channel = channels[currentChannelIndexRef.current];
@@ -551,6 +553,7 @@ export function useTVControls({
         currentIndex < playlist.length - 1 &&
         errorSkipAttemptsRef.current < playlist.length
       ) {
+        beginPlayerUiMask();
         nextVideo();
         play();
         window.setTimeout(() => {
@@ -565,6 +568,7 @@ export function useTVControls({
 
     showNoSignal();
   }, [
+    beginPlayerUiMask,
     getPlaylist,
     getPlaylistIndex,
     nextVideo,

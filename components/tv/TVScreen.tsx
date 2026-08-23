@@ -92,18 +92,25 @@ export function TVScreen({
       >
         <YouTubePlayer
           containerId={YOUTUBE_CONTAINER_ID}
-          visible={showPlayer && !isChangingChannel}
+          visible={showPlayer && !isChangingChannel && !playerUiMasked}
         />
+
+        {showPlayer && !isChangingChannel && (
+          <div
+            className={`${screenStyles.layer} ${screenStyles.youtubeChromeBlocker}`}
+            aria-hidden="true"
+          >
+            <div className={screenStyles.chromeBlockerTop} />
+            <div className={screenStyles.chromeBlockerBottom} />
+            <div className={screenStyles.chromeBlockerShare} />
+          </div>
+        )}
 
         {showPlayer && playerUiMasked && (
           <div
-            className={`${screenStyles.layer} ${screenStyles.youtubeUiMaskLayer}`}
+            className={`${screenStyles.layer} ${screenStyles.youtubeLoadCover}`}
             aria-hidden="true"
-          >
-            <div className={screenStyles.youtubeUiMaskTop} />
-            <div className={screenStyles.youtubeUiMaskBottom} />
-            <div className={screenStyles.youtubeUiMaskCenter} />
-          </div>
+          />
         )}
 
         <div className={`${screenStyles.layer} ${screenStyles.contentLayer}`}>

@@ -77,51 +77,65 @@
   overflow: hidden;
 }
 
-.youtubeUiMaskLayer {
-  z-index: 2;
+.youtubeChromeBlocker {
+  z-index: 4;
   inset: 1.5% 1.2%;
   border-radius: inherit;
   overflow: hidden;
   pointer-events: none;
 }
 
-.youtubeUiMaskTop {
+.chromeBlockerTop {
   position: absolute;
   top: 0;
   left: 0;
   right: 0;
-  height: 12%;
+  height: 14%;
   background: linear-gradient(
     to bottom,
     #040404 0%,
-    #040404 58%,
+    #040404 72%,
+    rgba(4, 4, 4, 0.92) 88%,
     transparent 100%
   );
 }
 
-.youtubeUiMaskBottom {
+.chromeBlockerBottom {
   position: absolute;
   bottom: 0;
   left: 0;
   right: 0;
-  height: 16%;
+  height: 20%;
   background: linear-gradient(
     to top,
     #040404 0%,
-    #040404 52%,
+    #040404 68%,
+    rgba(4, 4, 4, 0.9) 84%,
     transparent 100%
   );
 }
 
-.youtubeUiMaskCenter {
+.chromeBlockerShare {
   position: absolute;
-  inset: 28% 22%;
-  background: radial-gradient(
-    ellipse at center,
-    rgba(4, 4, 4, 0.82) 0%,
-    rgba(4, 4, 4, 0.35) 45%,
-    transparent 72%
+  left: 0;
+  bottom: 0;
+  width: 22%;
+  height: 28%;
+  background: linear-gradient(
+    135deg,
+    #040404 0%,
+    #040404 55%,
+    rgba(4, 4, 4, 0.88) 75%,
+    transparent 100%
   );
+}
+
+.youtubeLoadCover {
+  z-index: 4;
+  inset: 1.5% 1.2%;
+  border-radius: inherit;
+  background: #040404;
+  pointer-events: none;
 }
 
 .transitionLayer {
@@ -158,7 +172,7 @@
   height: 100% !important;
   border: none;
   pointer-events: none;
-  transform: scale(1.18);
+  transform: scale(1.28) translate(-1.5%, 1%);
   transform-origin: center center;
 }
 
