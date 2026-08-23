@@ -38,28 +38,38 @@ export function TVButton({
           ? buttonStyles.transport
           : "";
 
+  const useWell = variant === "power" || variant === "transport";
+
+  const buttonEl = (
+    <button
+      type="button"
+      className={`${buttonStyles.button} ${variantClass} ${pressed ? buttonStyles.buttonPressed : ""}`}
+      onClick={handleClick}
+      onPointerDown={() => setPressed(true)}
+      onPointerUp={() => setPressed(false)}
+      onPointerLeave={() => setPressed(false)}
+      aria-label={ariaLabel}
+    >
+      {variant === "power" && (
+        <span className={buttonStyles.powerIcon} aria-hidden="true">
+          ⏻
+        </span>
+      )}
+      {icon && (
+        <span className={buttonStyles.buttonIcon} aria-hidden="true">
+          {icon}
+        </span>
+      )}
+    </button>
+  );
+
   return (
     <div className={buttonStyles.buttonWrap}>
-      <button
-        type="button"
-        className={`${buttonStyles.button} ${variantClass} ${pressed ? buttonStyles.buttonPressed : ""}`}
-        onClick={handleClick}
-        onPointerDown={() => setPressed(true)}
-        onPointerUp={() => setPressed(false)}
-        onPointerLeave={() => setPressed(false)}
-        aria-label={ariaLabel}
-      >
-        {variant === "power" && (
-          <span className={buttonStyles.powerIcon} aria-hidden="true">
-            ⏻
-          </span>
-        )}
-        {icon && (
-          <span className={buttonStyles.buttonIcon} aria-hidden="true">
-            {icon}
-          </span>
-        )}
-      </button>
+      {useWell ? (
+        <div className={buttonStyles.buttonWell}>{buttonEl}</div>
+      ) : (
+        buttonEl
+      )}
       {!hideLabel && label && (
         <span className={buttonStyles.label}>{label}</span>
       )}

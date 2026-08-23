@@ -10,23 +10,24 @@
     0deg,
     rgba(0, 0, 0, 0) 0,
     rgba(0, 0, 0, 0) 1px,
-    rgba(0, 0, 0, 0.18) 1px,
-    rgba(0, 0, 0, 0.18) 2px
+    rgba(0, 0, 0, 0.12) 1px,
+    rgba(0, 0, 0, 0.12) 2px
   );
-  opacity: 0.35;
+  opacity: 0.28;
   mix-blend-mode: multiply;
 }
 
 .vignette {
   background: radial-gradient(
-    ellipse at center,
-    transparent 55%,
-    rgba(0, 0, 0, 0.45) 100%
+    ellipse 88% 82% at 50% 48%,
+    transparent 50%,
+    rgba(0, 0, 0, 0.35) 88%,
+    rgba(0, 0, 0, 0.55) 100%
   );
 }
 
 .noise {
-  opacity: 0.04;
+  opacity: 0.025;
   background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
   animation: noiseShift 0.5s steps(2) infinite;
 }
@@ -52,19 +53,19 @@
 
 .glass {
   background: linear-gradient(
-    125deg,
-    rgba(255, 255, 255, 0.09) 0%,
-    rgba(255, 255, 255, 0.02) 28%,
-    transparent 45%,
+    118deg,
+    rgba(255, 248, 235, 0.035) 0%,
+    rgba(255, 248, 235, 0.012) 22%,
+    transparent 42%,
     transparent 100%
   );
 }
 
 .phosphor {
   background: radial-gradient(
-    circle at 30% 20%,
-    rgba(120, 200, 120, 0.02) 0%,
-    transparent 50%
+    circle at 32% 22%,
+    rgba(120, 200, 120, 0.018) 0%,
+    transparent 48%
   );
 }
 

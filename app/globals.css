@@ -26,10 +26,14 @@ button {
 }
 
 :root {
-  --tv-plastic-light: #a8a8a4;
-  --tv-plastic-mid: #8f8f8a;
-  --tv-plastic-dark: #6e6e69;
-  --tv-bezel-dark: #2a2a28;
+  --tv-plastic-highlight: #c4c0b8;
+  --tv-plastic-light: #b8b4ac;
+  --tv-plastic-mid: #9a968e;
+  --tv-plastic-dark: #7a766e;
+  --tv-plastic-shadow: #5c5852;
+  --tv-bezel-outer: #1a1918;
+  --tv-bezel-mid: #121110;
+  --tv-bezel-inner: #0a0908;
   --tv-room-bg: #1a1816;
   --tv-osd-color: #d8f0d0;
   --tv-osd-glow: rgba(180, 255, 160, 0.35);
@@ -42,30 +46,13 @@ button {
   justify-content: center;
   padding: 2rem 1rem;
   background:
+    radial-gradient(ellipse at 28% 42%, rgba(255, 210, 160, 0.06) 0%, transparent 45%),
     radial-gradient(ellipse at 50% 30%, rgba(45, 40, 35, 0.5) 0%, transparent 60%),
     var(--tv-room-bg);
-}
-
-.pageHint {
-  position: fixed;
-  bottom: 1rem;
-  left: 50%;
-  transform: translateX(-50%);
-  font-size: 0.75rem;
-  color: rgba(232, 228, 223, 0.35);
-  letter-spacing: 0.04em;
-  text-transform: uppercase;
-  pointer-events: none;
-  user-select: none;
 }
 
 @media (max-width: 640px) {
   .page {
     padding: 1rem 0.5rem;
-  }
-
-  .pageHint {
-    font-size: 0.65rem;
-    bottom: 0.5rem;
   }
 }

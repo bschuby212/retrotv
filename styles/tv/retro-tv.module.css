@@ -1,91 +1,280 @@
+/* Fine plastic grain — reusable noise tile */
 .retroTv {
+  --plastic-grain: url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='1.15' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23g)' opacity='0.35'/%3E%3C/svg%3E");
   position: relative;
   width: min(780px, 92vw);
   aspect-ratio: 1 / 0.88;
-  filter: drop-shadow(0 24px 40px rgba(0, 0, 0, 0.55));
+  filter: drop-shadow(0 28px 36px rgba(0, 0, 0, 0.45));
+}
+
+/* Contact shadow on surface */
+.retroTv::before {
+  content: "";
+  position: absolute;
+  bottom: -6px;
+  left: 6%;
+  right: 6%;
+  height: 18px;
+  background: radial-gradient(
+    ellipse at 50% 0%,
+    rgba(0, 0, 0, 0.55) 0%,
+    rgba(0, 0, 0, 0.25) 45%,
+    transparent 72%
+  );
+  pointer-events: none;
+  z-index: 0;
 }
 
 .body {
   position: relative;
   width: 100%;
   height: 100%;
-  border-radius: 28px 28px 22px 22px;
-  background:
-    url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E"),
-    linear-gradient(165deg, var(--tv-plastic-light) 0%, var(--tv-plastic-mid) 42%, var(--tv-plastic-dark) 100%);
+  /* Asymmetric molded corners — softer top, heavier bottom */
+  border-radius: 30px 28px 20px 22px / 26px 24px 16px 18px;
+  background-color: var(--tv-plastic-mid);
+  background-image:
+    var(--plastic-grain),
+    radial-gradient(
+      ellipse 85% 55% at 18% 12%,
+      rgba(255, 235, 210, 0.14) 0%,
+      transparent 55%
+    ),
+    radial-gradient(
+      ellipse 70% 60% at 88% 55%,
+      rgba(60, 58, 54, 0.22) 0%,
+      transparent 50%
+    ),
+    linear-gradient(
+      168deg,
+      var(--tv-plastic-highlight) 0%,
+      var(--tv-plastic-light) 14%,
+      var(--tv-plastic-mid) 48%,
+      var(--tv-plastic-dark) 82%,
+      var(--tv-plastic-shadow) 100%
+    );
+  background-blend-mode: overlay, normal, multiply, normal;
   box-shadow:
-    inset 0 2px 0 rgba(255, 255, 255, 0.22),
-    inset 0 -3px 6px rgba(0, 0, 0, 0.18),
-    0 2px 0 rgba(255, 255, 255, 0.08);
+    inset 0 1px 0 rgba(255, 248, 235, 0.28),
+    inset 0 -4px 8px rgba(0, 0, 0, 0.2),
+    inset 2px 0 6px rgba(255, 230, 200, 0.06),
+    inset -3px 0 10px rgba(0, 0, 0, 0.12),
+    0 1px 0 rgba(255, 255, 255, 0.06);
   overflow: hidden;
+  z-index: 1;
 }
 
+/* Front face projection — chassis lip */
 .body::before {
+  content: "";
+  position: absolute;
+  inset: 3px;
+  border-radius: 27px 25px 17px 19px / 23px 21px 14px 16px;
+  box-shadow:
+    inset 0 2px 4px rgba(255, 245, 230, 0.12),
+    inset 0 -2px 6px rgba(0, 0, 0, 0.15);
+  pointer-events: none;
+  z-index: 1;
+}
+
+/* Outer edge definition */
+.body::after {
   content: "";
   position: absolute;
   inset: 0;
   border-radius: inherit;
-  box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.12);
+  box-shadow:
+    inset 0 0 0 1px rgba(0, 0, 0, 0.14),
+    inset 0 0 0 2px rgba(255, 248, 240, 0.04);
   pointer-events: none;
+  z-index: 1;
 }
 
 .brandPlate {
   position: absolute;
-  top: 3.5%;
-  right: 6%;
-  font-size: clamp(0.55rem, 1.2vw, 0.7rem);
-  font-weight: 700;
-  letter-spacing: 0.18em;
-  color: rgba(40, 40, 38, 0.55);
+  top: 3.8%;
+  right: 7%;
+  z-index: 4;
+  font-family: "Arial Narrow", "Helvetica Neue", Arial, sans-serif;
+  font-size: clamp(0.48rem, 1vw, 0.58rem);
+  font-weight: 600;
+  font-stretch: condensed;
+  letter-spacing: 0.24em;
   text-transform: uppercase;
+  color: rgba(55, 52, 48, 0.32);
+  text-shadow:
+    0 1px 0 rgba(255, 250, 240, 0.22),
+    0 -0.5px 0 rgba(0, 0, 0, 0.18);
   user-select: none;
 }
 
+/* Outer bezel recess — gray case → black surround */
 .bezelWell {
   position: absolute;
-  background: linear-gradient(180deg, #1e1e1c 0%, #0f0f0e 100%);
+  z-index: 2;
+  background:
+    linear-gradient(
+      175deg,
+      #222120 0%,
+      var(--tv-bezel-outer) 8%,
+      var(--tv-bezel-mid) 55%,
+      var(--tv-bezel-inner) 100%
+    );
   box-shadow:
-    inset 0 4px 12px rgba(0, 0, 0, 0.85),
-    inset 0 1px 0 rgba(255, 255, 255, 0.06);
+    inset 0 5px 14px rgba(0, 0, 0, 0.92),
+    inset 0 2px 4px rgba(0, 0, 0, 0.6),
+    inset 0 -1px 0 rgba(255, 255, 255, 0.04),
+    0 2px 3px rgba(0, 0, 0, 0.25);
+}
+
+/* Upper bezel catch-light */
+.bezelWell::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: linear-gradient(
+    180deg,
+    rgba(255, 255, 255, 0.07) 0%,
+    rgba(255, 255, 255, 0.02) 6%,
+    transparent 18%
+  );
+  pointer-events: none;
+}
+
+/* Inner CRT lip — thick black plastic ring */
+.bezelWell::after {
+  content: "";
+  position: absolute;
+  inset: 2.2%;
+  border-radius: inherit;
+  background: linear-gradient(
+    180deg,
+    #0e0d0c 0%,
+    #060605 100%
+  );
+  box-shadow:
+    inset 0 3px 8px rgba(0, 0, 0, 0.95),
+    inset 0 0 0 1px rgba(0, 0, 0, 0.8),
+    inset 0 -1px 0 rgba(255, 255, 255, 0.03);
+  pointer-events: none;
+}
+
+.bezelShadow {
+  position: absolute;
+  z-index: 1;
+  pointer-events: none;
+  box-shadow:
+    0 4px 12px rgba(0, 0, 0, 0.35),
+    inset 0 1px 0 rgba(255, 240, 220, 0.04);
 }
 
 .speakerGrille {
   position: absolute;
-  left: 7%;
-  right: 7%;
-  bottom: 14%;
-  height: 8%;
-  border-radius: 4px;
+  left: 8%;
+  right: 8%;
+  bottom: 14.2%;
+  height: 7.5%;
+  z-index: 3;
+  border-radius: 3px 3px 5px 5px;
+  background: linear-gradient(
+    180deg,
+    rgba(0, 0, 0, 0.12) 0%,
+    rgba(0, 0, 0, 0.06) 100%
+  );
+  box-shadow:
+    inset 0 3px 6px rgba(0, 0, 0, 0.55),
+    inset 0 1px 0 rgba(255, 255, 255, 0.04),
+    inset 0 -1px 0 rgba(0, 0, 0, 0.2),
+    0 1px 0 rgba(255, 248, 240, 0.05);
+  overflow: hidden;
+}
+
+.speakerGrille::before {
+  content: "";
+  position: absolute;
+  inset: 3px 4px;
+  border-radius: 2px;
   background:
+    radial-gradient(circle at 50% 120%, rgba(0, 0, 0, 0.65) 0%, transparent 55%),
     repeating-linear-gradient(
       90deg,
-      transparent 0,
-      transparent 3px,
-      rgba(0, 0, 0, 0.55) 3px,
-      rgba(0, 0, 0, 0.55) 4px
-    ),
-    repeating-linear-gradient(
-      0deg,
-      rgba(0, 0, 0, 0.15) 0,
-      rgba(0, 0, 0, 0.15) 2px,
-      transparent 2px,
-      transparent 5px
+      rgba(0, 0, 0, 0.75) 0,
+      rgba(0, 0, 0, 0.75) 1px,
+      rgba(30, 28, 26, 0.35) 1px,
+      rgba(30, 28, 26, 0.35) 3.5px,
+      rgba(0, 0, 0, 0.6) 3.5px,
+      rgba(0, 0, 0, 0.6) 4.5px
     );
-  box-shadow:
-    inset 0 2px 4px rgba(0, 0, 0, 0.5),
-    inset 0 -1px 0 rgba(255, 255, 255, 0.04);
-  opacity: 0.85;
+  box-shadow: inset 0 2px 5px rgba(0, 0, 0, 0.7);
+}
+
+.speakerGrille::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    90deg,
+    rgba(255, 240, 220, 0.04) 0%,
+    transparent 25%,
+    transparent 75%,
+    rgba(0, 0, 0, 0.08) 100%
+  );
+  pointer-events: none;
 }
 
 .controlsArea {
   position: absolute;
-  left: 0;
-  right: 0;
-  bottom: 2.5%;
+  left: 5%;
+  right: 5%;
+  bottom: 2%;
+  z-index: 4;
   display: flex;
   justify-content: center;
   align-items: flex-end;
-  padding: 0 5%;
+}
+
+.controlPanelInset {
+  width: 100%;
+  padding: 0.45rem 0.55rem 0.35rem;
+  border-radius: 5px 5px 7px 7px;
+  background: linear-gradient(
+    180deg,
+    rgba(0, 0, 0, 0.1) 0%,
+    rgba(0, 0, 0, 0.04) 40%,
+    rgba(255, 248, 235, 0.03) 100%
+  );
+  box-shadow:
+    inset 0 2px 5px rgba(0, 0, 0, 0.28),
+    inset 0 -1px 0 rgba(255, 248, 235, 0.07),
+    inset 0 0 0 1px rgba(0, 0, 0, 0.1),
+    0 1px 0 rgba(255, 248, 240, 0.06);
+}
+
+.feet {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 0;
+  display: flex;
+  justify-content: space-between;
+  padding: 0 11% 0;
+  pointer-events: none;
+}
+
+.foot {
+  width: 11%;
+  height: 5px;
+  margin-bottom: -1px;
+  border-radius: 0 0 2px 2px;
+  background: linear-gradient(
+    180deg,
+    var(--tv-plastic-dark) 0%,
+    var(--tv-plastic-shadow) 100%
+  );
+  box-shadow:
+    0 2px 4px rgba(0, 0, 0, 0.45),
+    inset 0 1px 0 rgba(255, 248, 235, 0.06);
 }
 
 @media (max-width: 640px) {

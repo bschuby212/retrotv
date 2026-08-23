@@ -79,9 +79,9 @@ export function RetroTV() {
       aria-label="Retro CRT television"
     >
       <div className={retroStyles.body}>
-        <span className={retroStyles.brandPlate}>GenericTV</span>
+        <span className={retroStyles.brandPlate}>RetroTV</span>
         <div
-          className={retroStyles.bezelWell}
+          className={`${retroStyles.bezelWell} ${retroStyles.bezelShadow}`}
           style={bezelStyle}
           aria-hidden="true"
         />
@@ -96,15 +96,21 @@ export function RetroTV() {
           onChannelDown={tv.channelDown}
         />
         <div className={retroStyles.speakerGrille} aria-hidden="true" />
-        <div
-          className={`${controlsStyles.standbyLed} ${
-            !tv.isPowered
-              ? controlsStyles.standbyLedActive
-              : controlsStyles.standbyLedOn
-          }`}
-          aria-hidden="true"
-        />
+        <div className={controlsStyles.ledHousing} aria-hidden="true">
+          <div
+            className={`${controlsStyles.standbyLed} ${
+              !tv.isPowered
+                ? controlsStyles.standbyLedActive
+                : controlsStyles.standbyLedOn
+            }`}
+          />
+        </div>
+        <div className={retroStyles.feet} aria-hidden="true">
+          <span className={retroStyles.foot} />
+          <span className={retroStyles.foot} />
+        </div>
         <div className={retroStyles.controlsArea}>
+          <div className={retroStyles.controlPanelInset}>
           <TVControls
             isPowered={tv.isPowered}
             togglePower={tv.togglePower}
@@ -117,6 +123,7 @@ export function RetroTV() {
             episodePrevious={tv.episodePrevious}
             episodeNext={tv.episodeNext}
           />
+          </div>
         </div>
       </div>
     </div>

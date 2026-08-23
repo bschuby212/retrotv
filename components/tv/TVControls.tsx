@@ -82,7 +82,7 @@ export function TVControls({
           <span className={controlsStyles.clusterLabel}>Play</span>
           <TVButton
             variant="transport"
-            icon="▶❚"
+            icon="▶‖"
             ariaLabel="Play or pause"
             onClick={togglePlayPause}
             hideLabel
@@ -102,7 +102,7 @@ export function TVControls({
           <span className={controlsStyles.clusterLabel}>Prev</span>
           <TVButton
             variant="transport"
-            icon="|◀◀"
+            icon="◀◀"
             ariaLabel="Previous episode"
             onClick={episodePrevious}
             hideLabel
@@ -112,7 +112,7 @@ export function TVControls({
           <span className={controlsStyles.clusterLabel}>Next</span>
           <TVButton
             variant="transport"
-            icon="▶▶|"
+            icon="▶▶"
             ariaLabel="Next episode"
             onClick={episodeNext}
             hideLabel
