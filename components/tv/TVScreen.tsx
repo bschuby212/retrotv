@@ -5,6 +5,7 @@ import { isChannelPlayable } from "@/config/channels";
 import { CRTOSD } from "@/components/tv/CRTDOSD";
 import { CRTOverlay } from "@/components/tv/CRTOverlay";
 import { LoadingScreen } from "@/components/tv/LoadingScreen";
+import { PlaybackShield } from "@/components/tv/PlaybackShield";
 import { PlaceholderScreen } from "@/components/tv/PlaceholderScreen";
 import { StaticTransition } from "@/components/tv/StaticTransition";
 import { YouTubePlayer } from "@/components/tv/YouTubePlayer";
@@ -22,6 +23,7 @@ interface TVScreenProps {
   isChangingChannel: boolean;
   isLoading: boolean;
   loadingProgress: number;
+  isPlaybackShielded: boolean;
   hasSignal: boolean;
   osd: OSDState;
   onChannelUp: () => void;
@@ -35,6 +37,7 @@ export function TVScreen({
   isChangingChannel,
   isLoading,
   loadingProgress,
+  isPlaybackShielded,
   hasSignal,
   osd,
   onChannelUp,
@@ -99,6 +102,8 @@ export function TVScreen({
             containerId={YOUTUBE_CONTAINER_ID}
             visible={showPlayer}
           />
+
+          <PlaybackShield active={isPlaybackShielded} />
 
           <div className={`${screenStyles.layer} ${screenStyles.contentLayer}`}>
             {showPlaceholder && (

@@ -103,6 +103,7 @@ export function RetroTV() {
           isChangingChannel={tv.isChangingChannel}
           isLoading={tv.isLoading}
           loadingProgress={tv.loadingProgress}
+          isPlaybackShielded={tv.isPlaybackShielded}
           hasSignal={tv.hasSignal}
           osd={tv.osd}
           onChannelUp={tv.channelUp}

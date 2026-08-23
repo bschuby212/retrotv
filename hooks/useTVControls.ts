@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useRef, useState } from "react";
+import { flushSync } from "react-dom";
 import { channels, isChannelPlayable } from "@/config/channels";
 import { tvSettings } from "@/config/tvSettings";
 import { truncateTitle } from "@/lib/youtubeApi";
@@ -80,6 +81,7 @@ export function useTVControls({
   const [isChangingChannel, setIsChangingChannel] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [loadingProgress, setLoadingProgress] = useState(0);
+  const [isPlaybackShielded, setPlaybackShielded] = useState(true);
   const [captionsEnabled, setCaptionsEnabledState] = useState(false);
   const [osd, setOsd] = useState<OSDState>({ type: null });
   const [hasSignal, setHasSignal] = useState(true);
@@ -96,6 +98,11 @@ export function useTVControls({
   const playTriggeredRef = useRef(false);
   const rampTriggeredRef = useRef(false);
   const isLoadingRef = useRef(false);
+  const isStoppedRef = useRef(false);
+  const hasSignalRef = useRef(true);
+  const shieldRevealTimerRef = useRef<ReturnType<typeof setTimeout> | null>(
+    null
+  );
   const channelLockRef = useRef(false);
   const episodePositionRef = useRef<Record<number, number>>({});
   const errorSkipAttemptsRef = useRef(0);
@@ -114,6 +121,7 @@ export function useTVControls({
     volumeRef.current = volume;
     captionsEnabledRef.current = captionsEnabled;
     isLoadingRef.current = isLoading;
+    hasSignalRef.current = hasSignal;
   }, [
     isPowered,
     powerPhase,
@@ -121,6 +129,7 @@ export function useTVControls({
     volume,
     captionsEnabled,
     isLoading,
+    hasSignal,
   ]);
 
   const clearChannelOsdTimer = useCallback(() => {
@@ -150,6 +159,37 @@ export function useTVControls({
       transportOsdTimerRef.current = null;
     }
   }, []);
+
+  const coverPlayback = useCallback(() => {
+    if (shieldRevealTimerRef.current) {
+      clearTimeout(shieldRevealTimerRef.current);
+      shieldRevealTimerRef.current = null;
+    }
+    flushSync(() => {
+      setPlaybackShielded(true);
+    });
+  }, []);
+
+  const scheduleReveal = useCallback(() => {
+    if (shieldRevealTimerRef.current) {
+      clearTimeout(shieldRevealTimerRef.current);
+    }
+
+    shieldRevealTimerRef.current = setTimeout(() => {
+      shieldRevealTimerRef.current = null;
+      if (
+        !isPoweredRef.current ||
+        powerPhaseRef.current !== "on" ||
+        isLoadingRef.current ||
+        isStoppedRef.current ||
+        !hasSignalRef.current
+      ) {
+        return;
+      }
+      if (getPlayerState() !== 1) return;
+      setPlaybackShielded(false);
+    }, tvSettings.shieldRevealDelayMs);
+  }, [getPlayerState]);
 
   const endLoading = useCallback(() => {
     if (loadTimerRef.current) {
@@ -214,7 +254,10 @@ export function useTVControls({
     isLoadingRef.current = false;
     setIsLoading(false);
     setLoadingProgress(1);
-  }, [rampVolume]);
+    if (!isStoppedRef.current && getPlayerState() === 1) {
+      scheduleReveal();
+    }
+  }, [getPlayerState, rampVolume, scheduleReveal]);
 
   const attemptFinishLoading = useCallback(() => {
     const elapsed = Date.now() - loadStartedAtRef.current;
@@ -236,6 +279,8 @@ export function useTVControls({
   }, [finishLoading, getPlayerState]);
 
   const beginLoading = useCallback(() => {
+    coverPlayback();
+    isStoppedRef.current = false;
     loadStartedAtRef.current = Date.now();
     playTriggeredRef.current = false;
     rampTriggeredRef.current = false;
@@ -291,6 +336,7 @@ export function useTVControls({
   }, [
     attemptFinishLoading,
     cancelVolumeRamp,
+    coverPlayback,
     getPlayerState,
     setPlayerVolume,
     triggerLoadPlayback,
@@ -413,20 +459,24 @@ export function useTVControls({
   const showNoSignal = useCallback(() => {
     clearChannelOsdTimer();
     clearEpisodeOsdTimer();
+    coverPlayback();
+    hasSignalRef.current = false;
     endLoading();
     setHasSignal(false);
     setOsd({ type: null });
-  }, [clearChannelOsdTimer, clearEpisodeOsdTimer, endLoading]);
+  }, [clearChannelOsdTimer, clearEpisodeOsdTimer, coverPlayback, endLoading]);
 
   const loadChannelSource = useCallback(
     (channel: Channel) => {
       if (!isChannelPlayable(channel)) {
+        coverPlayback();
         stop();
         showNoSignal();
         return;
       }
 
       errorSkipAttemptsRef.current = 0;
+      hasSignalRef.current = true;
       setHasSignal(true);
       beginLoading();
 
@@ -442,6 +492,7 @@ export function useTVControls({
     },
     [
       beginLoading,
+      coverPlayback,
       getSavedEpisodeIndex,
       loadPlaylist,
       loadVideo,
@@ -458,6 +509,9 @@ export function useTVControls({
       if (!channel) return;
 
       if (!channel.sourceUrl || channel.type === "unconfigured") {
+        coverPlayback();
+        isStoppedRef.current = true;
+        hasSignalRef.current = true;
         setHasSignal(true);
         stop();
         if (showOsd) showChannelOsd(channel);
@@ -477,7 +531,7 @@ export function useTVControls({
 
       if (showOsd) showChannelOsd(channel);
     },
-    [loadChannelSource, playerReady, showChannelOsd, showNoSignal, stop]
+    [coverPlayback, loadChannelSource, playerReady, showChannelOsd, showNoSignal, stop]
   );
 
   const performChannelChange = useCallback(
@@ -561,13 +615,15 @@ export function useTVControls({
     const playing = state === 1;
 
     if (playing) {
+      coverPlayback();
       pause();
       showTransportOsd("pause");
     } else {
+      isStoppedRef.current = false;
       play();
       showTransportOsd("play");
     }
-  }, [getPlayerState, pause, play, showTransportOsd]);
+  }, [coverPlayback, getPlayerState, pause, play, showTransportOsd]);
 
   const stopPlayback = useCallback(() => {
     if (!isPoweredRef.current || !isTvInteractive(powerPhaseRef.current)) return;
@@ -575,10 +631,12 @@ export function useTVControls({
     const channel = channels[currentChannelIndexRef.current];
     if (!isChannelPlayable(channel)) return;
 
+    coverPlayback();
+    isStoppedRef.current = true;
     seekTo(0);
     pause();
     showTransportOsd("stop");
-  }, [pause, seekTo, showTransportOsd]);
+  }, [coverPlayback, pause, seekTo, showTransportOsd]);
 
   const episodePrevious = useCallback(() => {
     if (!isPoweredRef.current || !isTvInteractive(powerPhaseRef.current)) return;
@@ -648,6 +706,8 @@ export function useTVControls({
     const channel = channels[currentChannelIndexRef.current];
     if (!channel || !isPoweredRef.current) return;
 
+    coverPlayback();
+
     if (channel.loop && channel.videoId) {
       seekTo(0);
       play();
@@ -659,9 +719,10 @@ export function useTVControls({
     }
 
     if (channel.type === "playlist" && !tvSettings.autoPlayNextEpisode) {
+      isStoppedRef.current = true;
       pause();
     }
-  }, [pause, play, seekTo]);
+  }, [coverPlayback, pause, play, seekTo]);
 
   const handlePlayerError = useCallback(() => {
     const channel = channels[currentChannelIndexRef.current];
@@ -713,28 +774,38 @@ export function useTVControls({
 
   const handlePlayerStateChange = useCallback(
     (state: number) => {
-      if (!isLoadingRef.current) return;
-
-      // Keep the iframe playing under the loader so YouTube chrome never
-      // becomes the first visible frame when the overlay lifts.
-      if (state === -1 || state === 2 || state === 5) {
-        play();
+      if (state === 0) {
+        coverPlayback();
       }
 
-      if (state === 1) {
-        const elapsed = Date.now() - loadStartedAtRef.current;
+      if (isLoadingRef.current) {
         if (
-          elapsed >=
-          tvSettings.loadDurationMs * tvSettings.loadVolumeFadeAtProgress
+          !isStoppedRef.current &&
+          (state === -1 || state === 2 || state === 5)
         ) {
-          triggerLoadVolumeFade();
+          play();
         }
-        if (elapsed >= tvSettings.loadDurationMs) {
-          attemptFinishLoading();
+
+        if (state === 1) {
+          const elapsed = Date.now() - loadStartedAtRef.current;
+          if (
+            elapsed >=
+            tvSettings.loadDurationMs * tvSettings.loadVolumeFadeAtProgress
+          ) {
+            triggerLoadVolumeFade();
+          }
+          if (elapsed >= tvSettings.loadDurationMs) {
+            attemptFinishLoading();
+          }
         }
+        return;
+      }
+
+      if (state === 1 && !isStoppedRef.current) {
+        scheduleReveal();
       }
     },
-    [attemptFinishLoading, play, triggerLoadVolumeFade]
+    [attemptFinishLoading, coverPlayback, play, scheduleReveal, triggerLoadVolumeFade]
   );
 
   const togglePower = useCallback(() => {
@@ -751,6 +822,7 @@ export function useTVControls({
     }
 
     if (isPoweredRef.current) {
+      coverPlayback();
       setPowerPhase("shuttingDown");
       endLoading();
       pause();
@@ -762,6 +834,8 @@ export function useTVControls({
         setOsd({ type: null });
       }, tvSettings.powerOffDurationMs);
     } else {
+      coverPlayback();
+      isStoppedRef.current = false;
       setIsPowered(true);
       setPowerPhase("booting");
 
@@ -776,6 +850,7 @@ export function useTVControls({
       }, tvSettings.powerOnDurationMs);
     }
   }, [
+    coverPlayback,
     endLoading,
     loadCurrentChannel,
     pause,
@@ -805,6 +880,9 @@ export function useTVControls({
       if (loadTimerRef.current) clearTimeout(loadTimerRef.current);
       if (loadExtendTimerRef.current) clearTimeout(loadExtendTimerRef.current);
       if (loadRafRef.current !== null) cancelAnimationFrame(loadRafRef.current);
+      if (shieldRevealTimerRef.current) {
+        clearTimeout(shieldRevealTimerRef.current);
+      }
       cancelVolumeRamp();
     };
   }, [
@@ -823,6 +901,7 @@ export function useTVControls({
     isChangingChannel,
     isLoading,
     loadingProgress,
+    isPlaybackShielded,
     captionsEnabled,
     osd,
     playerReady,

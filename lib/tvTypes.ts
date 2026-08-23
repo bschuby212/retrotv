@@ -95,6 +95,7 @@ export interface TVControlsState {
   isChangingChannel: boolean;
   isLoading: boolean;
   loadingProgress: number;
+  isPlaybackShielded: boolean;
   captionsEnabled: boolean;
   osd: OSDState;
   playerReady: boolean;

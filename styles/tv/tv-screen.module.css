@@ -79,6 +79,22 @@
   overflow: hidden;
 }
 
+.playbackShield {
+  position: absolute;
+  inset: 1.5% 1.2%;
+  width: auto;
+  height: auto;
+  z-index: 2;
+  pointer-events: none;
+  background: #040404;
+  opacity: 1;
+  border-radius: inherit;
+}
+
+.playbackShieldOff {
+  opacity: 0;
+}
+
 .playerHost {
   position: absolute;
   inset: 0;
