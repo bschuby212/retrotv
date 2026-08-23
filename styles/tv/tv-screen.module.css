@@ -97,7 +97,7 @@
   height: 100% !important;
   border: none;
   pointer-events: none;
-  transform: translate(-50%, -50%) scale(1.12);
+  transform: translate(-50%, -50%) scale(1.22);
   transform-origin: center;
 }
 

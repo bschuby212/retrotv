@@ -14,8 +14,8 @@ export const tvSettings = {
   channelChangeLockMs: 300,
   maxEpisodeTitleLength: 28,
   loadDurationMs: 2000,
-  loadPlayAtProgress: 6 / 7,
+  loadPlayAtProgress: 0,
   loadVolumeFadeAtProgress: 6 / 7,
   loadVolumeFadeMs: 286,
-  loadMaxExtendMs: 400,
+  loadMaxExtendMs: 2500,
 } as const;

@@ -114,7 +114,8 @@ export function useYouTubePlayer({
         width: "100%",
         host: "https://www.youtube.com",
         playerVars: {
-          autoplay: 0,
+          autoplay: 1,
+          mute: 1,
           cc_load_policy: 1,
           controls: 0,
           disablekb: 1,
@@ -260,15 +261,23 @@ export function useYouTubePlayer({
   );
 
   const loadVideo = useCallback((videoId: string, startSeconds = 0) => {
-    if (!playerRef.current || !videoId) return;
+    const player = playerRef.current;
+    if (!player || !videoId) return;
     lastPlaylistIndexRef.current = -1;
-    playerRef.current.loadVideoById({ videoId, startSeconds });
+    player.mute();
+    player.setVolume(0);
+    player.loadVideoById({ videoId, startSeconds });
+    player.playVideo();
   }, []);
 
   const loadPlaylist = useCallback((playlistId: string, index = 0) => {
-    if (!playerRef.current || !playlistId) return;
+    const player = playerRef.current;
+    if (!player || !playlistId) return;
     lastPlaylistIndexRef.current = index;
-    playerRef.current.loadPlaylist(playlistId, index, 0);
+    player.mute();
+    player.setVolume(0);
+    player.loadPlaylist(playlistId, index, 0);
+    player.playVideo();
   }, []);
 
   const nextVideo = useCallback(() => {
