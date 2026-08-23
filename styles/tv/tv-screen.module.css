@@ -1,0 +1,205 @@
+.screen {
+  position: absolute;
+  overflow: hidden;
+  z-index: 2;
+}
+
+.screenInner {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  background: #050505;
+  overflow: hidden;
+  transform: perspective(900px) rotateX(1.2deg);
+  transform-origin: center center;
+}
+
+.screenInner::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  box-shadow:
+    inset 0 0 30px rgba(0, 0, 0, 0.75),
+    inset 0 2px 8px rgba(0, 0, 0, 0.5);
+  pointer-events: none;
+  z-index: 20;
+}
+
+.off .screenInner {
+  background: #030303;
+}
+
+.layer {
+  position: absolute;
+  inset: 0;
+}
+
+.playerLayer {
+  z-index: 1;
+}
+
+.contentLayer {
+  z-index: 2;
+}
+
+.transitionLayer {
+  z-index: 3;
+}
+
+.powerLayer {
+  z-index: 4;
+}
+
+.overlayLayer {
+  z-index: 5;
+}
+
+.osdLayer {
+  position: absolute;
+  inset: 0;
+  z-index: 10;
+  pointer-events: none;
+  border-radius: inherit;
+  overflow: hidden;
+}
+
+.playerHost {
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+
+.playerHost iframe {
+  width: 100% !important;
+  height: 100% !important;
+  border: none;
+  pointer-events: none;
+}
+
+.hidden {
+  visibility: hidden;
+  opacity: 0;
+}
+
+.noSignal {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  background: #080808;
+}
+
+.noSignalText {
+  font-family: var(--font-osd), monospace;
+  font-size: clamp(1.4rem, 4vw, 2.2rem);
+  color: var(--tv-osd-color);
+  text-shadow:
+    0 0 8px var(--tv-osd-glow),
+    0 0 2px rgba(255, 255, 255, 0.5);
+  letter-spacing: 0.15em;
+  animation: noSignalFlicker 3s infinite;
+}
+
+@keyframes noSignalFlicker {
+  0%,
+  92%,
+  100% {
+    opacity: 1;
+  }
+  93% {
+    opacity: 0.7;
+  }
+  95% {
+    opacity: 1;
+  }
+  97% {
+    opacity: 0.85;
+  }
+}
+
+.poweredOff .screenInner {
+  transform: perspective(900px) rotateX(1.2deg);
+}
+
+.poweredOff .playerLayer,
+.poweredOff .contentLayer {
+  opacity: 0;
+}
+
+.shuttingDown .screenInner {
+  animation: crtShutDown 450ms ease-in forwards;
+}
+
+.booting .screenInner {
+  animation: crtBootFlicker 600ms ease-out forwards;
+}
+
+@keyframes crtShutDown {
+  0% {
+    transform: perspective(900px) rotateX(1.2deg) scaleY(1);
+    opacity: 1;
+  }
+  40% {
+    transform: perspective(900px) rotateX(1.2deg) scaleY(0.04);
+    opacity: 0.9;
+  }
+  100% {
+    transform: perspective(900px) rotateX(1.2deg) scaleY(0.002);
+    opacity: 0;
+  }
+}
+
+@keyframes crtBootFlicker {
+  0% {
+    opacity: 0.2;
+  }
+  20% {
+    opacity: 0.5;
+  }
+  35% {
+    opacity: 0.25;
+  }
+  50% {
+    opacity: 0.7;
+  }
+  65% {
+    opacity: 0.4;
+  }
+  80% {
+    opacity: 0.85;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+.hum {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0;
+  background: radial-gradient(
+    ellipse at center,
+    rgba(120, 180, 255, 0.03) 0%,
+    transparent 70%
+  );
+  transition: opacity 0.4s ease;
+  z-index: 4;
+}
+
+.humActive {
+  opacity: 1;
+  animation: crtHum 4s ease-in-out infinite;
+}
+
+@keyframes crtHum {
+  0%,
+  100% {
+    opacity: 0.6;
+  }
+  50% {
+    opacity: 1;
+  }
+}

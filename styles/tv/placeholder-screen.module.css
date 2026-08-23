@@ -1,0 +1,72 @@
+.placeholder {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  background: #0a0a0a;
+}
+
+.colorBars {
+  flex: 1;
+  display: flex;
+}
+
+.bar {
+  flex: 1;
+}
+
+.bar:nth-child(1) {
+  background: #f0f0f0;
+}
+.bar:nth-child(2) {
+  background: #f0d020;
+}
+.bar:nth-child(3) {
+  background: #20c0f0;
+}
+.bar:nth-child(4) {
+  background: #20f020;
+}
+.bar:nth-child(5) {
+  background: #c020f0;
+}
+.bar:nth-child(6) {
+  background: #f02020;
+}
+.bar:nth-child(7) {
+  background: #101010;
+}
+
+.placeholderInfo {
+  padding: 8% 6%;
+  background: linear-gradient(180deg, #111 0%, #080808 100%);
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.placeholderChannel {
+  font-family: var(--font-osd), monospace;
+  font-size: clamp(0.9rem, 2.5vw, 1.2rem);
+  color: var(--tv-osd-color);
+  letter-spacing: 0.1em;
+  text-shadow: 0 0 4px var(--tv-osd-glow);
+  margin-bottom: 0.3em;
+}
+
+.placeholderHint {
+  font-family: var(--font-osd), monospace;
+  font-size: clamp(0.6rem, 1.5vw, 0.75rem);
+  color: rgba(200, 220, 190, 0.45);
+  letter-spacing: 0.06em;
+}
+
+.placeholderPattern {
+  position: absolute;
+  inset: 0;
+  opacity: 0.03;
+  background: repeating-conic-gradient(
+    #fff 0% 25%,
+    #000 0% 50%
+  );
+  background-size: 8px 8px;
+  pointer-events: none;
+}

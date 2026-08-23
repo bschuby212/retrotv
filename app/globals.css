@@ -1,0 +1,71 @@
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html,
+body {
+  height: 100%;
+}
+
+body {
+  background: #1a1816;
+  color: #e8e4df;
+  font-family: system-ui, -apple-system, sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+button {
+  font: inherit;
+  border: none;
+  background: none;
+  cursor: pointer;
+}
+
+:root {
+  --tv-plastic-light: #a8a8a4;
+  --tv-plastic-mid: #8f8f8a;
+  --tv-plastic-dark: #6e6e69;
+  --tv-bezel-dark: #2a2a28;
+  --tv-room-bg: #1a1816;
+  --tv-osd-color: #d8f0d0;
+  --tv-osd-glow: rgba(180, 255, 160, 0.35);
+}
+
+.page {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem 1rem;
+  background:
+    radial-gradient(ellipse at 50% 30%, rgba(45, 40, 35, 0.5) 0%, transparent 60%),
+    var(--tv-room-bg);
+}
+
+.pageHint {
+  position: fixed;
+  bottom: 1rem;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 0.75rem;
+  color: rgba(232, 228, 223, 0.35);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  pointer-events: none;
+  user-select: none;
+}
+
+@media (max-width: 640px) {
+  .page {
+    padding: 1rem 0.5rem;
+  }
+
+  .pageHint {
+    font-size: 0.65rem;
+    bottom: 0.5rem;
+  }
+}

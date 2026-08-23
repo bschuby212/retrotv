@@ -1,0 +1,96 @@
+.osd {
+  position: absolute;
+  top: 8%;
+  right: 8%;
+  text-align: right;
+  pointer-events: none;
+  font-family: var(--font-osd), "Courier New", monospace;
+  color: var(--tv-osd-color);
+  text-shadow:
+    0 0 8px var(--tv-osd-glow),
+    0 0 2px rgba(0, 0, 0, 0.9),
+    0 0 1px rgba(255, 255, 255, 0.6);
+  animation: osdAppear 120ms ease-out;
+  z-index: 1;
+}
+
+.osdCenter {
+  top: 50%;
+  left: 50%;
+  right: auto;
+  transform: translate(-50%, -50%);
+  text-align: center;
+}
+
+.channelNumber {
+  font-size: clamp(1.1rem, 2.8vw, 1.5rem);
+  letter-spacing: 0.12em;
+  margin-bottom: 0.15em;
+}
+
+.channelName {
+  font-size: clamp(0.85rem, 2vw, 1.1rem);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.volumeLabel {
+  font-size: clamp(0.9rem, 2.2vw, 1.15rem);
+  letter-spacing: 0.1em;
+  margin-bottom: 0.4em;
+}
+
+.muteLabel {
+  font-size: clamp(1.2rem, 3vw, 1.6rem);
+  letter-spacing: 0.18em;
+}
+
+.meter {
+  display: flex;
+  gap: 2px;
+  justify-content: flex-end;
+}
+
+.meterCenter {
+  justify-content: center;
+}
+
+.volumeOsd {
+  top: 55%;
+  transform: translate(-50%, -50%);
+}
+
+.segment {
+  width: clamp(6px, 1.2vw, 8px);
+  height: clamp(10px, 2vw, 14px);
+  background: rgba(40, 60, 40, 0.5);
+  box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.4);
+}
+
+.segmentFilled {
+  background: var(--tv-osd-color);
+  box-shadow:
+    0 0 4px var(--tv-osd-glow),
+    inset 0 -1px 0 rgba(0, 0, 0, 0.2);
+}
+
+.noSignalOsd {
+  font-size: clamp(1.2rem, 3.5vw, 1.8rem);
+  letter-spacing: 0.2em;
+}
+
+@keyframes osdAppear {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@media (max-width: 480px) {
+  .osd {
+    top: 6%;
+    right: 6%;
+  }
+}

@@ -1,0 +1,95 @@
+.retroTv {
+  position: relative;
+  width: min(780px, 92vw);
+  aspect-ratio: 1 / 0.88;
+  filter: drop-shadow(0 24px 40px rgba(0, 0, 0, 0.55));
+}
+
+.body {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  border-radius: 28px 28px 22px 22px;
+  background:
+    url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E"),
+    linear-gradient(165deg, var(--tv-plastic-light) 0%, var(--tv-plastic-mid) 42%, var(--tv-plastic-dark) 100%);
+  box-shadow:
+    inset 0 2px 0 rgba(255, 255, 255, 0.22),
+    inset 0 -3px 6px rgba(0, 0, 0, 0.18),
+    0 2px 0 rgba(255, 255, 255, 0.08);
+  overflow: hidden;
+}
+
+.body::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.12);
+  pointer-events: none;
+}
+
+.brandPlate {
+  position: absolute;
+  top: 3.5%;
+  right: 6%;
+  font-size: clamp(0.55rem, 1.2vw, 0.7rem);
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  color: rgba(40, 40, 38, 0.55);
+  text-transform: uppercase;
+  user-select: none;
+}
+
+.bezelWell {
+  position: absolute;
+  background: linear-gradient(180deg, #1e1e1c 0%, #0f0f0e 100%);
+  box-shadow:
+    inset 0 4px 12px rgba(0, 0, 0, 0.85),
+    inset 0 1px 0 rgba(255, 255, 255, 0.06);
+}
+
+.speakerGrille {
+  position: absolute;
+  left: 7%;
+  right: 7%;
+  bottom: 14%;
+  height: 8%;
+  border-radius: 4px;
+  background:
+    repeating-linear-gradient(
+      90deg,
+      transparent 0,
+      transparent 3px,
+      rgba(0, 0, 0, 0.55) 3px,
+      rgba(0, 0, 0, 0.55) 4px
+    ),
+    repeating-linear-gradient(
+      0deg,
+      rgba(0, 0, 0, 0.15) 0,
+      rgba(0, 0, 0, 0.15) 2px,
+      transparent 2px,
+      transparent 5px
+    );
+  box-shadow:
+    inset 0 2px 4px rgba(0, 0, 0, 0.5),
+    inset 0 -1px 0 rgba(255, 255, 255, 0.04);
+  opacity: 0.85;
+}
+
+.controlsArea {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 2.5%;
+  display: flex;
+  justify-content: center;
+  align-items: flex-end;
+  padding: 0 5%;
+}
+
+@media (max-width: 640px) {
+  .retroTv {
+    width: min(780px, 96vw);
+  }
+}
