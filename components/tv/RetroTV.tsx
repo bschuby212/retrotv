@@ -142,9 +142,7 @@ export function RetroTV() {
             <div className={retroStyles.ledHousing}>
               <div
                 className={`${retroStyles.standbyLed} ${
-                  !tv.isPowered
-                    ? retroStyles.standbyLedActive
-                    : retroStyles.standbyLedOn
+                  tv.isPowered ? retroStyles.standbyLedActive : ""
                 }`}
               />
             </div>
