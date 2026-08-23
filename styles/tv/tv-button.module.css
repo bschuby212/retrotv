@@ -7,8 +7,8 @@
 
 .button {
   position: relative;
-  width: clamp(18px, 2.4vw, 22px);
-  height: clamp(11px, 1.45vw, 14px);
+  width: clamp(20px, 2.65vw, 26px);
+  height: clamp(13px, 1.7vw, 17px);
   padding: 0;
   border: 1px solid #4a4640;
   border-radius: 2px;
@@ -59,18 +59,18 @@
 }
 
 .power {
-  width: clamp(20px, 2.7vw, 24px);
-  height: clamp(12px, 1.65vw, 16px);
+  width: clamp(24px, 3.1vw, 28px);
+  height: clamp(14px, 1.85vw, 18px);
 }
 
 .narrow {
-  width: clamp(12px, 1.65vw, 15px);
-  height: clamp(10px, 1.3vw, 12px);
+  width: clamp(16px, 2.1vw, 20px);
+  height: clamp(13px, 1.65vw, 16px);
 }
 
 .transport {
-  width: clamp(16px, 2.1vw, 20px);
-  height: clamp(10px, 1.3vw, 12px);
+  width: clamp(20px, 2.65vw, 26px);
+  height: clamp(13px, 1.65vw, 16px);
 }
 
 .powerIcon {
@@ -93,7 +93,7 @@
   align-items: center;
   justify-content: center;
   font-family: "Arial Narrow", "Helvetica Neue", Arial, sans-serif;
-  font-size: clamp(0.3rem, 0.68vw, 0.38rem);
+  font-size: clamp(0.34rem, 0.75vw, 0.42rem);
   font-weight: 700;
   font-stretch: condensed;
   color: #2a2824;
@@ -102,12 +102,12 @@
 }
 
 .narrow .buttonIcon {
-  font-size: clamp(0.34rem, 0.75vw, 0.42rem);
+  font-size: clamp(0.38rem, 0.82vw, 0.46rem);
   font-weight: 800;
 }
 
 .transport .buttonIcon {
-  font-size: clamp(0.26rem, 0.58vw, 0.32rem);
+  font-size: clamp(0.3rem, 0.66vw, 0.36rem);
   letter-spacing: -0.05em;
 }
 
@@ -125,17 +125,17 @@
 
 @media (max-width: 480px) {
   .narrow {
-    width: 12px;
-    height: 9px;
+    width: 15px;
+    height: 12px;
   }
 
   .transport {
-    width: 15px;
-    height: 9px;
+    width: 18px;
+    height: 12px;
   }
 
   .power {
-    width: 18px;
-    height: 12px;
+    width: 22px;
+    height: 14px;
   }
 }
