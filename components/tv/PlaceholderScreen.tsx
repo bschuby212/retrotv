@@ -27,7 +27,7 @@ export function PlaceholderScreen({
           CH {formatted} — {channelName.toUpperCase()}
         </div>
         <div className={placeholderStyles.placeholderHint}>
-          NO VIDEO ID — ADD YOUTUBE ID IN CONFIG
+          NO PLAYLIST — ADD PLAYLIST ID IN CONFIG
         </div>
       </div>
       <div className={placeholderStyles.placeholderPattern} aria-hidden="true" />

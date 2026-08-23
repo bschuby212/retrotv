@@ -55,6 +55,52 @@
   justify-content: center;
 }
 
+.episodeNumber {
+  font-size: clamp(0.8rem, 1.9vw, 1rem);
+  letter-spacing: 0.1em;
+  margin-top: 0.35em;
+}
+
+.episodeTitle {
+  font-size: clamp(0.65rem, 1.5vw, 0.82rem);
+  letter-spacing: 0.04em;
+  margin-top: 0.25em;
+  opacity: 0.85;
+  max-width: 16ch;
+  margin-left: auto;
+  line-height: 1.2;
+}
+
+.volumeHeader {
+  font-size: clamp(0.85rem, 2vw, 1.05rem);
+  letter-spacing: 0.14em;
+  margin-bottom: 0.35em;
+}
+
+.volumeValue {
+  font-size: clamp(1rem, 2.4vw, 1.25rem);
+  letter-spacing: 0.08em;
+  margin-top: 0.3em;
+}
+
+.blockMeter {
+  display: flex;
+  gap: 1px;
+  font-family: var(--font-osd), monospace;
+  font-size: clamp(0.75rem, 1.8vw, 0.95rem);
+  letter-spacing: 0.02em;
+  line-height: 1;
+}
+
+.blockFilled {
+  color: var(--tv-osd-color);
+  text-shadow: 0 0 4px var(--tv-osd-glow);
+}
+
+.blockEmpty {
+  color: rgba(180, 200, 170, 0.25);
+}
+
 .volumeOsd {
   top: 55%;
   transform: translate(-50%, -50%);

@@ -1,13 +1,14 @@
 export interface Channel {
   channel: number;
   name: string;
-  youtubeId: string;
+  playlistId: string;
 }
 
 export type PowerPhase = "off" | "booting" | "on" | "shuttingDown";
 
 export type OSDType =
   | "channel"
+  | "episode"
   | "volume"
   | "mute"
   | "noSignal"
@@ -20,13 +21,25 @@ export interface ChannelOSDPayload {
   channelName: string;
 }
 
+export interface EpisodeOSDPayload {
+  channelNumber: number;
+  channelName: string;
+  episodeNumber: number;
+  episodeTitle?: string;
+}
+
 export interface VolumeOSDPayload {
   volume: number;
 }
 
+export type OSDPayload =
+  | ChannelOSDPayload
+  | EpisodeOSDPayload
+  | VolumeOSDPayload;
+
 export interface OSDState {
   type: OSDType;
-  payload?: ChannelOSDPayload | VolumeOSDPayload;
+  payload?: OSDPayload;
 }
 
 export interface TVScreenConfig {
@@ -43,10 +56,13 @@ export interface TVControlsActions {
   channelDown: () => void;
   volumeUp: () => void;
   volumeDown: () => void;
+  episodePrevious: () => void;
+  episodeNext: () => void;
 }
 
 export interface TVControlsInternal {
   handlePlayerError: () => void;
+  handlePlaylistIndexChange: () => void;
 }
 
 export interface TVControlsState {

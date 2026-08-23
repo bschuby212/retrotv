@@ -9,50 +9,94 @@ interface TVControlsProps extends TVControlsActions {
 }
 
 export function TVControls({
-  isPowered,
   togglePower,
   channelUp,
   channelDown,
   volumeUp,
   volumeDown,
+  episodePrevious,
+  episodeNext,
 }: TVControlsProps) {
   return (
-    <>
-      <div
-        className={`${controlsStyles.standbyLed} ${
-          !isPowered
-            ? controlsStyles.standbyLedActive
-            : controlsStyles.standbyLedOn
-        }`}
-        aria-hidden="true"
-      />
-      <div className={controlsStyles.controls}>
+    <div className={controlsStyles.panel}>
+      <div className={controlsStyles.cluster}>
+        <span className={controlsStyles.clusterLabel}>Power</span>
         <TVButton
-          label="Power"
           variant="power"
+          ariaLabel="Power"
           onClick={togglePower}
+          hideLabel
         />
-        <div className={controlsStyles.divider} aria-hidden="true" />
-        <div className={controlsStyles.buttonGroup}>
+      </div>
+
+      <div className={controlsStyles.gap} aria-hidden="true" />
+
+      <div className={controlsStyles.cluster}>
+        <span className={controlsStyles.clusterLabel}>Volume</span>
+        <div className={controlsStyles.buttonPair}>
           <TVButton
-            label="Ch ▼"
-            variant="channelDown"
-            icon="▼"
-            onClick={channelDown}
+            variant="narrow"
+            icon="−"
+            ariaLabel="Volume down"
+            onClick={volumeDown}
+            hideLabel
           />
           <TVButton
-            label="Ch ▲"
-            variant="channelUp"
-            icon="▲"
-            onClick={channelUp}
+            variant="narrow"
+            icon="+"
+            ariaLabel="Volume up"
+            onClick={volumeUp}
+            hideLabel
           />
-        </div>
-        <div className={controlsStyles.divider} aria-hidden="true" />
-        <div className={controlsStyles.buttonGroup}>
-          <TVButton label="Vol ▼" icon="−" onClick={volumeDown} />
-          <TVButton label="Vol ▲" icon="+" onClick={volumeUp} />
         </div>
       </div>
-    </>
+
+      <div className={controlsStyles.gapWide} aria-hidden="true" />
+
+      <div className={controlsStyles.cluster}>
+        <span className={controlsStyles.clusterLabel}>Channel</span>
+        <div className={controlsStyles.buttonPair}>
+          <TVButton
+            variant="narrow"
+            icon="−"
+            ariaLabel="Channel down"
+            onClick={channelDown}
+            hideLabel
+          />
+          <TVButton
+            variant="narrow"
+            icon="+"
+            ariaLabel="Channel up"
+            onClick={channelUp}
+            hideLabel
+          />
+        </div>
+      </div>
+
+      <div className={controlsStyles.gapWide} aria-hidden="true" />
+
+      <div className={controlsStyles.transportGroup}>
+        <div className={controlsStyles.cluster}>
+          <span className={controlsStyles.clusterLabel}>Prev</span>
+          <TVButton
+            variant="transport"
+            icon="|◀◀"
+            ariaLabel="Previous episode"
+            onClick={episodePrevious}
+            hideLabel
+          />
+        </div>
+        <div className={controlsStyles.cluster}>
+          <span className={controlsStyles.clusterLabel}>Next</span>
+          <TVButton
+            variant="transport"
+            icon="▶▶|"
+            ariaLabel="Next episode"
+            onClick={episodeNext}
+            hideLabel
+          />
+        </div>
+      </div>
+    </div>
   );
 }

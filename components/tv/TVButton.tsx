@@ -4,11 +4,13 @@ import { useCallback, useState } from "react";
 import buttonStyles from "@/styles/tv/tv-button.module.css";
 
 interface TVButtonProps {
-  label: string;
+  label?: string;
   icon?: string;
-  variant?: "default" | "power" | "channelUp" | "channelDown";
+  variant?: "default" | "power" | "narrow" | "transport";
   onClick?: () => void;
   onClickSound?: () => void;
+  ariaLabel: string;
+  hideLabel?: boolean;
 }
 
 export function TVButton({
@@ -17,6 +19,8 @@ export function TVButton({
   variant = "default",
   onClick,
   onClickSound,
+  ariaLabel,
+  hideLabel = false,
 }: TVButtonProps) {
   const [pressed, setPressed] = useState(false);
 
@@ -25,21 +29,13 @@ export function TVButton({
     onClick?.();
   }, [onClick, onClickSound]);
 
-  const handlePointerDown = useCallback(() => {
-    setPressed(true);
-  }, []);
-
-  const handlePointerUp = useCallback(() => {
-    setPressed(false);
-  }, []);
-
   const variantClass =
     variant === "power"
       ? buttonStyles.power
-      : variant === "channelUp"
-        ? buttonStyles.channelUp
-        : variant === "channelDown"
-          ? buttonStyles.channelDown
+      : variant === "narrow"
+        ? buttonStyles.narrow
+        : variant === "transport"
+          ? buttonStyles.transport
           : "";
 
   return (
@@ -48,23 +44,25 @@ export function TVButton({
         type="button"
         className={`${buttonStyles.button} ${variantClass} ${pressed ? buttonStyles.buttonPressed : ""}`}
         onClick={handleClick}
-        onPointerDown={handlePointerDown}
-        onPointerUp={handlePointerUp}
-        onPointerLeave={handlePointerUp}
-        aria-label={label}
+        onPointerDown={() => setPressed(true)}
+        onPointerUp={() => setPressed(false)}
+        onPointerLeave={() => setPressed(false)}
+        aria-label={ariaLabel}
       >
-        {icon && (
-          <span className={buttonStyles.buttonIcon} aria-hidden="true">
-            {icon}
-          </span>
-        )}
         {variant === "power" && (
           <span className={buttonStyles.powerIcon} aria-hidden="true">
             ⏻
           </span>
         )}
+        {icon && (
+          <span className={buttonStyles.buttonIcon} aria-hidden="true">
+            {icon}
+          </span>
+        )}
       </button>
-      <span className={buttonStyles.label}>{label}</span>
+      {!hideLabel && label && (
+        <span className={buttonStyles.label}>{label}</span>
+      )}
     </div>
   );
 }

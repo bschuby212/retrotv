@@ -1,3 +1,10 @@
+export interface YouTubeVideoData {
+  video_id: string;
+  title: string;
+  author: string;
+  video_url: string;
+}
+
 export interface YouTubePlayer {
   playVideo: () => void;
   pauseVideo: () => void;
@@ -12,6 +19,21 @@ export interface YouTubePlayer {
   cueVideoById: (
     videoId: string | { videoId: string; startSeconds?: number }
   ) => void;
+  loadPlaylist: (
+    playlistId: string | { list: string; index?: number; startSeconds?: number },
+    index?: number,
+    startSeconds?: number
+  ) => void;
+  cuePlaylist: (
+    playlistId: string | { list: string; index?: number; startSeconds?: number },
+    index?: number,
+    startSeconds?: number
+  ) => void;
+  nextVideo: () => void;
+  previousVideo: () => void;
+  getPlaylistIndex: () => number;
+  getPlaylist: () => string[];
+  getVideoData: () => YouTubeVideoData;
   getPlayerState: () => number;
   destroy: () => void;
 }
@@ -97,4 +119,9 @@ export function loadYouTubeIframeAPI(): Promise<void> {
 
 export function isYouTubeEmbedError(code: number): boolean {
   return [2, 5, 100, 101, 150].includes(code);
+}
+
+export function truncateTitle(title: string, maxLength: number): string {
+  if (title.length <= maxLength) return title;
+  return `${title.slice(0, maxLength - 1).trim()}…`;
 }

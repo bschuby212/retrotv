@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useRef } from "react";
+import { useEffect, useRef } from "react";
 import type { TVControlsActions } from "@/lib/tvTypes";
 
 interface UseKeyboardControlsOptions {
@@ -65,6 +65,14 @@ export function useKeyboardControls({
         case "ArrowRight":
           event.preventDefault();
           actionsRef.current.volumeUp();
+          break;
+        case "[":
+          event.preventDefault();
+          actionsRef.current.episodePrevious();
+          break;
+        case "]":
+          event.preventDefault();
+          actionsRef.current.episodeNext();
           break;
       }
     };

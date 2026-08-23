@@ -7,6 +7,12 @@ interface VolumeOSDProps {
   muted?: boolean;
 }
 
+function buildBlockMeter(filledCount: number): string {
+  const filled = "█".repeat(filledCount);
+  const empty = "░".repeat(SEGMENT_COUNT - filledCount);
+  return filled + empty;
+}
+
 export function VolumeOSD({ volume, muted = false }: VolumeOSDProps) {
   const filledCount = Math.round((volume / 100) * SEGMENT_COUNT);
 
@@ -28,17 +34,11 @@ export function VolumeOSD({ volume, muted = false }: VolumeOSDProps) {
       role="status"
       aria-live="polite"
     >
-      <div className={osdStyles.volumeLabel}>VOLUME {volume}</div>
-      <div className={`${osdStyles.meter} ${osdStyles.meterCenter}`} aria-hidden="true">
-        {Array.from({ length: SEGMENT_COUNT }, (_, i) => (
-          <div
-            key={i}
-            className={`${osdStyles.segment} ${
-              i < filledCount ? osdStyles.segmentFilled : ""
-            }`}
-          />
-        ))}
+      <div className={osdStyles.volumeHeader}>VOLUME</div>
+      <div className={osdStyles.blockMeter} aria-hidden="true">
+        {buildBlockMeter(filledCount)}
       </div>
+      <div className={osdStyles.volumeValue}>{volume}</div>
     </div>
   );
 }

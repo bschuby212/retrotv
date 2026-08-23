@@ -1,6 +1,6 @@
 # Retro CRT TV
 
-Interactive late-90s CRT television built with Next.js, TypeScript, and CSS Modules. YouTube playback is driven by the IFrame Player API so physical controls and keyboard shortcuts behave like a real TV.
+Interactive late-90s CRT television built with Next.js, TypeScript, and CSS Modules. Each channel maps to a YouTube playlist; physical controls and keyboard shortcuts navigate shows and episodes.
 
 ## Getting started
 
@@ -16,56 +16,51 @@ Open [http://localhost:3000](http://localhost:3000).
 | Input | Action |
 |---|---|
 | Power button / Space | Toggle power |
-| Ch ▲ / Arrow Up | Channel up |
-| Ch ▼ / Arrow Down | Channel down |
-| Vol ▲ / Arrow Right | Volume up (+5) |
-| Vol ▼ / Arrow Left | Volume down (−5) |
+| Channel + / − / ↑ / ↓ | Switch show playlist |
+| Volume + / − / → / ← | Volume ±5 |
+| Prev `\|◀◀` / `[` | Previous episode in playlist |
+| Next `▶▶\|` / `]` | Next episode in playlist |
+
+Hardware labels are printed on the TV panel — no separate UI instructions needed.
 
 ## Configuration
 
 ### Channels — `config/channels.ts`
 
-Add, remove, reorder, or rename channels here:
+Each channel is a show or collection backed by a YouTube playlist:
 
 ```ts
 export const channels = [
-  { channel: 2, name: "Pokémon", youtubeId: "YOUR_VIDEO_ID" },
-  { channel: 3, name: "Yu-Gi-Oh!", youtubeId: "" },
+  { channel: 2, name: "Pokémon", playlistId: "PLxxxxxxxx" },
+  { channel: 3, name: "Yu-Gi-Oh!", playlistId: "" },
 ];
 ```
 
-Leave `youtubeId` blank to show a color-bar placeholder screen. Use the video ID only (e.g. `Bkm_tBed4KQ` from a live URL).
+Leave `playlistId` blank to show a color-bar placeholder. Episode position is remembered per channel when you return.
 
-### Screen alignment — `config/tvScreen.ts`
-
-When you add a transparent TV frame PNG, adjust these values so the video lines up with the screen cutout:
-
-```ts
-export const tvScreenConfig = {
-  screenTop: "8.5%",
-  screenLeft: "7%",
-  screenWidth: "86%",
-  screenHeight: "58%",
-  screenBorderRadius: "18px 18px 22px 22px",
-};
-```
+Use the playlist ID from a YouTube playlist URL (`list=PL...`).
 
 ### Behavior — `config/tvSettings.ts`
 
+- `autoPlayNextEpisode` — let playlist continue when an episode ends (default: `true`)
 - `enableScrollChannelChange` — mouse wheel channel change (default: `false`)
 - Volume step, OSD timings, transition durations
+
+### Screen alignment — `config/tvScreen.ts`
+
+When you add a transparent TV frame PNG, adjust these values so video aligns with the screen cutout.
 
 ## Architecture
 
 ```
 RetroTV
 ├── TVScreen (positioned aperture + effect stack)
-│   ├── YouTubePlayer
+│   ├── YouTubePlayer (playlist API)
 │   ├── PlaceholderScreen
 │   ├── StaticTransition
 │   ├── CRTOverlay
-│   └── CRTOSD (channel / volume / mute)
-└── TVControls (physical buttons + standby LED)
+│   └── CRTOSD (channel / episode / volume / mute)
+└── TVControls (power, volume, channel, prev/next episode)
 ```
 
 Hooks: `useTVControls`, `useYouTubePlayer`, `useKeyboardControls`

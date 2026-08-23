@@ -34,8 +34,9 @@ export function TVScreen({
   onChannelUp,
   onChannelDown,
 }: TVScreenProps) {
-  const showPlaceholder = !currentChannel.youtubeId;
-  const showPlayer = Boolean(currentChannel.youtubeId) && isPowered && hasSignal;
+  const showPlaceholder = !currentChannel.playlistId;
+  const showPlayer =
+    Boolean(currentChannel.playlistId) && isPowered && hasSignal;
   const showNoSignalOverlay =
     isPowered && powerPhase === "on" && !showPlaceholder && !hasSignal;
 
