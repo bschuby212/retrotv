@@ -79,7 +79,7 @@
   z-index: 0;
 }
 
-@media (max-width: 640px) {
+@media (max-width: 768px) {
   .backgroundWrap {
     transform: scale(var(--room-bg-scale-mobile, 2.5));
     transform-origin: center var(--room-focal-y-mobile, 56%);
@@ -94,7 +94,7 @@
   }
 }
 
-@media (max-width: 450px) {
+@media (max-width: 480px) {
   .scene {
     --room-focal-y-mobile: 54%;
     --room-bg-scale-mobile: 2.65;
@@ -112,7 +112,7 @@
   }
 }
 
-@media (min-width: 641px) and (max-width: 1366px) {
+@media (min-width: 769px) and (max-width: 1366px) {
   .background {
     object-position: var(--room-focal-x, 50%) var(--room-focal-y, calc(48% + 60px));
   }
