@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useRef, useState } from "react";
 import {
+  disablePlayerCaptions,
   isYouTubeEmbedError,
   loadYouTubeIframeAPI,
   type YouTubePlayer,
@@ -84,15 +85,26 @@ export function useYouTubePlayer({
             typeof window !== "undefined" ? window.location.origin : undefined,
         },
         events: {
-          onReady: () => {
+          onReady: (event) => {
             if (!mounted) return;
+            disablePlayerCaptions(event.target);
             setPlayerReady(true);
             callbacksRef.current.onReady?.();
+          },
+          onApiChange: (event) => {
+            disablePlayerCaptions(event.target);
           },
           onStateChange: (event) => {
             callbacksRef.current.onStateChange?.(event.data);
 
             const playerState = window.YT!.PlayerState;
+
+            if (
+              event.data === playerState.PLAYING ||
+              event.data === playerState.CUED
+            ) {
+              disablePlayerCaptions(event.target);
+            }
 
             if (event.data === playerState.ENDED) {
               callbacksRef.current.onVideoEnded?.();
@@ -198,6 +210,7 @@ export function useYouTubePlayer({
     player.mute();
     player.setVolume(0);
     player.loadVideoById({ videoId, startSeconds });
+    disablePlayerCaptions(player);
     player.playVideo();
   }, []);
 
@@ -208,6 +221,7 @@ export function useYouTubePlayer({
     player.mute();
     player.setVolume(0);
     player.loadPlaylist(playlistId, index, 0);
+    disablePlayerCaptions(player);
     player.playVideo();
   }, []);
 

@@ -135,6 +135,19 @@ export function isYouTubeEmbedError(code: number): boolean {
   return [2, 5, 100, 101, 150].includes(code);
 }
 
+/** Force captions off for the current video (cc_load_policy alone is not enough). */
+export function disablePlayerCaptions(player: YouTubePlayer): void {
+  try {
+    const modules = player.getOptions();
+    if (!modules.includes("captions")) return;
+
+    player.setOption("captions", "track", {});
+    player.setOption("captions", "reload", true);
+  } catch {
+    // Captions module not ready yet.
+  }
+}
+
 export function truncateTitle(title: string, maxLength: number): string {
   if (title.length <= maxLength) return title;
   return `${title.slice(0, maxLength - 1).trim()}…`;
