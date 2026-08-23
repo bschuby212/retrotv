@@ -34,6 +34,7 @@ export function RetroTV() {
     cancelVolumeRamp: youtube.cancelVolumeRamp,
     loadVideo: youtube.loadVideo,
     loadPlaylist: youtube.loadPlaylist,
+    loadPlaylistEntry: youtube.loadPlaylistEntry,
     nextVideo: youtube.nextVideo,
     previousVideo: youtube.previousVideo,
     getPlaylistIndex: youtube.getPlaylistIndex,
@@ -115,10 +116,7 @@ export function RetroTV() {
           <div className={retroStyles.vcrSection} aria-hidden="true">
             <div className={retroStyles.vcrRecess}>
               <div className={retroStyles.vcrFlap}>
-                <span className={retroStyles.vcrLabel}>
-                  VHS  DIGITAL TRACKING
-                </span>
-                <div className={retroStyles.vcrSlotOpening} />
+                <span className={retroStyles.vcrLogo}>VHS</span>
               </div>
             </div>
           </div>
@@ -144,9 +142,7 @@ export function RetroTV() {
             <div className={retroStyles.ledHousing}>
               <div
                 className={`${retroStyles.standbyLed} ${
-                  !tv.isPowered
-                    ? retroStyles.standbyLedActive
-                    : retroStyles.standbyLedOn
+                  tv.isPowered ? retroStyles.standbyLedActive : ""
                 }`}
               />
             </div>

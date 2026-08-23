@@ -25,6 +25,7 @@ interface UseTVControlsOptions {
   cancelVolumeRamp: () => void;
   loadVideo: (videoId: string, startSeconds?: number) => void;
   loadPlaylist: (playlistId: string, index?: number) => void;
+  loadPlaylistEntry: (videoId: string, playlistId: string, index?: number) => void;
   nextVideo: () => void;
   previousVideo: () => void;
   getPlaylistIndex: () => number;
@@ -63,6 +64,7 @@ export function useTVControls({
   cancelVolumeRamp,
   loadVideo,
   loadPlaylist,
+  loadPlaylistEntry,
   nextVideo,
   previousVideo,
   getPlaylistIndex,
@@ -101,6 +103,7 @@ export function useTVControls({
   const expectedVideoIdRef = useRef<string | null>(null);
   const channelLockRef = useRef(false);
   const episodePositionRef = useRef<Record<number, number>>({});
+  const loadWatchdogRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const errorSkipAttemptsRef = useRef(0);
   const isPoweredRef = useRef(isPowered);
   const powerPhaseRef = useRef(powerPhase);
@@ -145,7 +148,25 @@ export function useTVControls({
     }
   }, []);
 
+  const clearLoadWatchdog = useCallback(() => {
+    if (loadWatchdogRef.current) {
+      clearTimeout(loadWatchdogRef.current);
+      loadWatchdogRef.current = null;
+    }
+  }, []);
+
+  const revealPlayback = useCallback(() => {
+    const shield = playbackShieldRef.current;
+    if (shield) {
+      shield.dataset.active = "false";
+    }
+    setPlaybackShielded(false);
+  }, [playbackShieldRef]);
+
+  const isPlayerActive = useCallback((state: number) => state === 1 || state === 3, []);
+
   const coverPlayback = useCallback(() => {
+    clearLoadWatchdog();
     if (shieldRevealTimerRef.current) {
       clearTimeout(shieldRevealTimerRef.current);
       shieldRevealTimerRef.current = null;
@@ -156,7 +177,7 @@ export function useTVControls({
       shield.dataset.active = "true";
     }
     setPlaybackShielded(true);
-  }, [playbackShieldRef]);
+  }, [clearLoadWatchdog, playbackShieldRef]);
 
   const canRevealPlayback = useCallback(() => {
     if (
@@ -168,7 +189,7 @@ export function useTVControls({
     ) {
       return false;
     }
-    if (getPlayerState() !== 1) return false;
+    if (!isPlayerActive(getPlayerState())) return false;
 
     const expectedId = expectedVideoIdRef.current;
     if (expectedId) {
@@ -177,7 +198,7 @@ export function useTVControls({
     }
 
     return true;
-  }, [getPlayerState, getVideoData]);
+  }, [getPlayerState, getVideoData, isPlayerActive]);
 
   const scheduleReveal = useCallback(() => {
     if (shieldRevealTimerRef.current) {
@@ -185,48 +206,32 @@ export function useTVControls({
     }
 
     const generation = sourceGenerationRef.current;
-    const startedAt = getCurrentTime();
-
-    const attemptReveal = (pass: number) => {
-      shieldRevealTimerRef.current = setTimeout(() => {
-        shieldRevealTimerRef.current = null;
-        if (generation !== sourceGenerationRef.current) return;
-        if (!canRevealPlayback()) return;
-
-        const now = getCurrentTime();
-        if (now <= startedAt && pass < 2) {
-          attemptReveal(pass + 1);
-          return;
-        }
-        if (now <= startedAt && getPlayerState() !== 1) return;
-
-        const shield = playbackShieldRef.current;
-        if (shield) {
-          shield.dataset.active = "false";
-        }
-        setPlaybackShielded(false);
-      }, tvSettings.shieldRevealDelayMs);
-    };
-
-    attemptReveal(0);
-  }, [canRevealPlayback, getCurrentTime, getPlayerState, playbackShieldRef]);
+    shieldRevealTimerRef.current = setTimeout(() => {
+      shieldRevealTimerRef.current = null;
+      if (generation !== sourceGenerationRef.current) return;
+      if (!canRevealPlayback()) return;
+      revealPlayback();
+    }, tvSettings.shieldRevealDelayMs);
+  }, [canRevealPlayback, revealPlayback]);
 
   const endLoading = useCallback(() => {
+    clearLoadWatchdog();
     rampTriggeredRef.current = false;
     cancelVolumeRamp();
     isLoadingRef.current = false;
-  }, [cancelVolumeRamp]);
+  }, [cancelVolumeRamp, clearLoadWatchdog]);
 
   const finishLoading = useCallback(() => {
+    clearLoadWatchdog();
     if (!rampTriggeredRef.current) {
       rampTriggeredRef.current = true;
       rampVolume(volumeRef.current, tvSettings.loadVolumeFadeMs);
     }
     isLoadingRef.current = false;
-    if (!isStoppedRef.current && getPlayerState() === 1) {
+    if (!isStoppedRef.current && isPlayerActive(getPlayerState())) {
       scheduleReveal();
     }
-  }, [getPlayerState, rampVolume, scheduleReveal]);
+  }, [clearLoadWatchdog, getPlayerState, isPlayerActive, rampVolume, scheduleReveal]);
 
   const beginLoading = useCallback(() => {
     coverPlayback();
@@ -347,6 +352,7 @@ export function useTVControls({
   );
 
   const showNoSignal = useCallback(() => {
+    clearLoadWatchdog();
     clearChannelOsdTimer();
     clearEpisodeOsdTimer();
     coverPlayback();
@@ -354,7 +360,35 @@ export function useTVControls({
     endLoading();
     setHasSignal(false);
     setOsd({ type: null });
-  }, [clearChannelOsdTimer, clearEpisodeOsdTimer, coverPlayback, endLoading]);
+  }, [clearChannelOsdTimer, clearEpisodeOsdTimer, clearLoadWatchdog, coverPlayback, endLoading]);
+
+  const armLoadWatchdog = useCallback(() => {
+    clearLoadWatchdog();
+    loadWatchdogRef.current = setTimeout(() => {
+      loadWatchdogRef.current = null;
+      if (!isLoadingRef.current) return;
+
+      const state = getPlayerState();
+      if (isPlayerActive(state)) {
+        finishLoading();
+        return;
+      }
+
+      if (state === -1 || state === 5) {
+        play();
+        return;
+      }
+
+      showNoSignal();
+    }, tvSettings.playbackStartTimeoutMs);
+  }, [
+    clearLoadWatchdog,
+    finishLoading,
+    getPlayerState,
+    isPlayerActive,
+    play,
+    showNoSignal,
+  ]);
 
   const loadChannelSource = useCallback(
     (channel: Channel) => {
@@ -371,20 +405,27 @@ export function useTVControls({
         channel.type === "playlist" ? null : channel.videoId ?? null;
       setHasSignal(true);
       beginLoading();
+      armLoadWatchdog();
 
       if (channel.type === "playlist" && channel.playlistId) {
         const savedIndex = getSavedEpisodeIndex(channel);
-        loadPlaylist(channel.playlistId, savedIndex);
+        if (channel.videoId) {
+          loadPlaylistEntry(channel.videoId, channel.playlistId, savedIndex);
+        } else {
+          loadPlaylist(channel.playlistId, savedIndex);
+        }
         syncPlaylistIndex();
       } else if (channel.videoId) {
         loadVideo(channel.videoId, 0);
       }
     },
     [
+      armLoadWatchdog,
       beginLoading,
       coverPlayback,
       getSavedEpisodeIndex,
       loadPlaylist,
+      loadPlaylistEntry,
       loadVideo,
       showNoSignal,
       stop,
@@ -534,6 +575,7 @@ export function useTVControls({
     if (channel.type !== "playlist" || !channel.playlistId || !playerReady) return;
 
     beginLoading();
+    armLoadWatchdog();
     previousVideo();
 
     window.setTimeout(() => {
@@ -543,6 +585,7 @@ export function useTVControls({
     }, 150);
   }, [
     beginLoading,
+    armLoadWatchdog,
     getPlaylistIndex,
     playerReady,
     previousVideo,
@@ -557,6 +600,7 @@ export function useTVControls({
     if (channel.type !== "playlist" || !channel.playlistId || !playerReady) return;
 
     beginLoading();
+    armLoadWatchdog();
     nextVideo();
 
     window.setTimeout(() => {
@@ -566,6 +610,7 @@ export function useTVControls({
     }, 150);
   }, [
     beginLoading,
+    armLoadWatchdog,
     getPlaylistIndex,
     nextVideo,
     playerReady,
@@ -607,41 +652,73 @@ export function useTVControls({
     }
   }, [coverPlayback, pause, play, seekTo]);
 
-  const handlePlayerError = useCallback(() => {
-    const channel = channels[currentChannelIndexRef.current];
+  const handlePlayerError = useCallback(
+    (code?: number) => {
+      const channel = channels[currentChannelIndexRef.current];
 
-    if (channel.type === "playlist" && channel.playlistId) {
-      const playlist = getPlaylist();
-      const currentIndex = getPlaylistIndex();
-      errorSkipAttemptsRef.current += 1;
-
-      if (
-        playlist.length > 0 &&
-        currentIndex < playlist.length - 1 &&
-        errorSkipAttemptsRef.current < playlist.length
-      ) {
-        beginLoading();
-        nextVideo();
-        window.setTimeout(() => {
-          const index = getPlaylistIndex();
-          saveEpisodeIndex(channel, index);
+      if (channel.type === "playlist" && channel.playlistId) {
+        if (errorSkipAttemptsRef.current === 0) {
+          errorSkipAttemptsRef.current += 1;
+          hasSignalRef.current = true;
           setHasSignal(true);
-          showEpisodeOsd(channel, index);
-        }, 200);
-        return;
-      }
-    }
+          beginLoading();
+          armLoadWatchdog();
+          loadPlaylist(channel.playlistId, getSavedEpisodeIndex(channel));
+          return;
+        }
 
-    showNoSignal();
-  }, [
-    beginLoading,
-    getPlaylist,
-    getPlaylistIndex,
-    nextVideo,
-    saveEpisodeIndex,
-    showEpisodeOsd,
-    showNoSignal,
-  ]);
+        if (channel.videoId && errorSkipAttemptsRef.current === 1) {
+          errorSkipAttemptsRef.current += 1;
+          hasSignalRef.current = true;
+          setHasSignal(true);
+          beginLoading();
+          armLoadWatchdog();
+          loadVideo(channel.videoId, 0);
+          return;
+        }
+
+        const playlist = getPlaylist();
+        const currentIndex = getPlaylistIndex();
+        errorSkipAttemptsRef.current += 1;
+
+        if (
+          playlist.length > 0 &&
+          currentIndex < playlist.length - 1 &&
+          errorSkipAttemptsRef.current < playlist.length + 2
+        ) {
+          beginLoading();
+          armLoadWatchdog();
+          nextVideo();
+          window.setTimeout(() => {
+            const index = getPlaylistIndex();
+            saveEpisodeIndex(channel, index);
+            setHasSignal(true);
+            showEpisodeOsd(channel, index);
+          }, 200);
+          return;
+        }
+      }
+
+      if (code === 153) {
+        console.warn("[RetroTV] YouTube embed error 153 — check Referrer-Policy");
+      }
+
+      showNoSignal();
+    },
+    [
+      armLoadWatchdog,
+      beginLoading,
+      getPlaylist,
+      getPlaylistIndex,
+      getSavedEpisodeIndex,
+      loadPlaylist,
+      loadVideo,
+      nextVideo,
+      saveEpisodeIndex,
+      showEpisodeOsd,
+      showNoSignal,
+    ]
+  );
 
   const handlePlayerStateChange = useCallback(
     (state: number) => {
@@ -657,17 +734,17 @@ export function useTVControls({
           play();
         }
 
-        if (state === 1) {
+        if (isPlayerActive(state)) {
           finishLoading();
         }
         return;
       }
 
-      if (state === 1 && !isStoppedRef.current) {
+      if (isPlayerActive(state) && !isStoppedRef.current) {
         scheduleReveal();
       }
     },
-    [coverPlayback, finishLoading, play, scheduleReveal]
+    [coverPlayback, finishLoading, isPlayerActive, play, scheduleReveal]
   );
 
   const togglePower = useCallback(() => {
@@ -738,6 +815,7 @@ export function useTVControls({
       clearEpisodeOsdTimer();
       clearVolumeOsdTimer();
       clearTransportOsdTimer();
+      clearLoadWatchdog();
       if (powerTimerRef.current) clearTimeout(powerTimerRef.current);
       if (shieldRevealTimerRef.current) {
         clearTimeout(shieldRevealTimerRef.current);
@@ -749,6 +827,7 @@ export function useTVControls({
     clearEpisodeOsdTimer,
     clearVolumeOsdTimer,
     clearTransportOsdTimer,
+    clearLoadWatchdog,
     cancelVolumeRamp,
   ]);
 

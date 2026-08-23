@@ -186,7 +186,7 @@
 .vcrSection {
   position: relative;
   width: 100%;
-  height: 20px;
+  height: 30px;
   flex-shrink: 0;
 }
 
@@ -194,34 +194,45 @@
   position: relative;
   width: 100%;
   height: 100%;
-  padding: 3px 4px 4px;
-  border-radius: 3px;
+  padding: 4px 5px 5px;
+  border-radius: 4px;
   background: linear-gradient(
     180deg,
-    rgba(0, 0, 0, 0.12) 0%,
-    rgba(0, 0, 0, 0.06) 100%
+    rgba(0, 0, 0, 0.18) 0%,
+    rgba(0, 0, 0, 0.08) 100%
   );
   box-shadow:
-    inset 0 2px 5px rgba(0, 0, 0, 0.42),
-    inset 0 0 0 1px rgba(0, 0, 0, 0.2),
-    0 1px 0 rgba(255, 248, 235, 0.04);
+    inset 0 3px 7px rgba(0, 0, 0, 0.48),
+    inset 0 0 0 1px rgba(0, 0, 0, 0.24),
+    0 1px 0 rgba(255, 248, 235, 0.05);
 }
 
 .vcrFlap {
   position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   width: 100%;
   height: 100%;
-  border-radius: 2px;
-  background: linear-gradient(
-    180deg,
-    #b4b0a8 0%,
-    #a49f97 42%,
-    #908c84 100%
-  );
+  border-radius: 3px;
+  background:
+    linear-gradient(
+      90deg,
+      rgba(255, 255, 255, 0.05) 0%,
+      transparent 10%,
+      transparent 90%,
+      rgba(0, 0, 0, 0.05) 100%
+    ),
+    linear-gradient(
+      180deg,
+      #b8b3aa 0%,
+      #a8a39a 35%,
+      #969188 100%
+    );
   box-shadow:
-    inset 0 1px 0 rgba(255, 250, 240, 0.28),
-    inset 0 -2px 3px rgba(0, 0, 0, 0.18),
-    0 1px 1px rgba(0, 0, 0, 0.12);
+    inset 0 2px 0 rgba(255, 250, 240, 0.22),
+    inset 0 -3px 6px rgba(0, 0, 0, 0.28),
+    inset 0 0 0 1px rgba(0, 0, 0, 0.12);
   overflow: hidden;
 }
 
@@ -230,36 +241,24 @@
   position: absolute;
   inset: 0;
   border-radius: inherit;
-  box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.14);
+  box-shadow: inset 0 0 0 1px rgba(255, 248, 235, 0.06);
   pointer-events: none;
 }
 
-.vcrSlotOpening {
-  position: absolute;
-  left: 5%;
-  right: 5%;
-  bottom: 0;
-  height: 14%;
-  background: linear-gradient(
-    180deg,
-    rgba(20, 18, 16, 0.7) 0%,
-    #080706 100%
-  );
-  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.85);
-}
-
-.vcrLabel {
-  position: absolute;
-  top: 28%;
-  left: 50%;
-  transform: translateX(-50%);
-  font-family: "Arial Narrow", Arial, sans-serif;
-  font-size: clamp(0.16rem, 0.38vw, 0.2rem);
-  font-weight: 600;
-  letter-spacing: 0.14em;
-  color: rgba(40, 38, 36, 0.32);
-  white-space: nowrap;
+.vcrLogo {
+  position: relative;
+  z-index: 1;
+  font-family: "Arial Narrow", "Helvetica Neue", Arial, sans-serif;
+  font-size: clamp(0.34rem, 0.78vw, 0.44rem);
+  font-weight: 800;
+  font-stretch: condensed;
+  letter-spacing: 0.28em;
+  text-indent: 0.28em;
+  color: rgba(38, 36, 32, 0.42);
   user-select: none;
+  text-shadow:
+    0 1px 0 rgba(255, 248, 235, 0.18),
+    0 -0.5px 0 rgba(0, 0, 0, 0.22);
 }
 
 .controlsArea {
@@ -469,23 +468,122 @@
     inset 0 1px 0 rgba(255, 248, 235, 0.05);
 }
 
-/* Mobile: phones and small screens */
-@media (max-width: 640px) {
+/* Phone */
+@media (max-width: 480px) {
   .retroTv {
-    width: 360px;
+    width: min(360px, calc(100vw - 24px));
+    aspect-ratio: 1.05 / 1;
+    min-height: unset;
+  }
+
+  .lowerCenter {
+    top: 77.6%;
+    gap: 10px;
+    padding-bottom: 0;
+  }
+
+  .controlsArea {
+    min-height: 0;
+  }
+
+  .avInputs {
+    bottom: 2.4%;
+    left: 16%;
+    gap: 5px;
+  }
+
+  .headphoneJack {
+    bottom: 2.4%;
+    right: 19%;
   }
 }
 
-/* Laptop: tablets and typical laptop widths */
-@media (min-width: 641px) and (max-width: 1366px) {
+/* Tablet portrait */
+@media (min-width: 481px) and (max-width: 768px) {
   .retroTv {
-    width: 620px;
+    width: min(400px, calc(100vw - 48px));
+    aspect-ratio: 1.05 / 1;
+    min-height: auto;
+  }
+
+  .lowerCenter {
+    top: 77.6%;
+    gap: 12px;
+    padding-bottom: 0;
+  }
+
+  .controlsArea {
+    min-height: 0;
+  }
+
+  .avInputs {
+    bottom: 2.4%;
+    left: 18%;
+    gap: 6px;
+  }
+
+  .headphoneJack {
+    bottom: 2.4%;
+    right: 21%;
   }
 }
 
-/* Desktop: large monitors */
-@media (min-width: 1367px) {
+/* Tablet landscape / small laptop */
+@media (min-width: 769px) and (max-width: 1024px) {
   .retroTv {
-    width: 880px;
+    width: min(480px, calc(100vw - 56px));
+    aspect-ratio: 1.05 / 1;
+    min-height: auto;
+  }
+
+  .lowerCenter {
+    top: 77.6%;
+    gap: 12px;
+    padding-bottom: 0;
+  }
+
+  .controlsArea {
+    min-height: 0;
+  }
+
+  .avInputs {
+    bottom: 2.4%;
+    left: 18%;
+    gap: 6px;
+  }
+
+  .headphoneJack {
+    bottom: 2.4%;
+    right: 21%;
+  }
+}
+
+/* Laptop and desktop: always cap at 620px */
+@media (min-width: 1025px) {
+  .retroTv {
+    width: min(620px, calc(100vw - 48px));
+    aspect-ratio: 1.05 / 1;
+    min-height: auto;
+  }
+
+  .lowerCenter {
+    top: 77.6%;
+    gap: 12px;
+    padding-bottom: 0;
+  }
+
+  .controlsArea {
+    min-height: 0;
+  }
+
+  .avInputs {
+    bottom: 2.4%;
+    left: 18%;
+    gap: 6px;
+  }
+
+  .headphoneJack {
+    bottom: 2.4%;
+    right: 21%;
   }
 }

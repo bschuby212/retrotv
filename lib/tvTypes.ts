@@ -80,7 +80,7 @@ export interface TVControlsActions {
 }
 
 export interface TVControlsInternal {
-  handlePlayerError: () => void;
+  handlePlayerError: (code?: number) => void;
   handlePlaylistIndexChange: () => void;
   handleVideoEnded: () => void;
   handlePlayerStateChange: (state: number) => void;

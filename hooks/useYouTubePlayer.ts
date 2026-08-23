@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useRef, useState } from "react";
 import {
-  isYouTubeEmbedError,
+  disablePlayerCaptions,
   loadYouTubeIframeAPI,
   type YouTubePlayer,
   type YouTubeVideoData,
@@ -84,15 +84,26 @@ export function useYouTubePlayer({
             typeof window !== "undefined" ? window.location.origin : undefined,
         },
         events: {
-          onReady: () => {
+          onReady: (event) => {
             if (!mounted) return;
+            disablePlayerCaptions(event.target);
             setPlayerReady(true);
             callbacksRef.current.onReady?.();
+          },
+          onApiChange: (event) => {
+            disablePlayerCaptions(event.target);
           },
           onStateChange: (event) => {
             callbacksRef.current.onStateChange?.(event.data);
 
             const playerState = window.YT!.PlayerState;
+
+            if (
+              event.data === playerState.PLAYING ||
+              event.data === playerState.CUED
+            ) {
+              disablePlayerCaptions(event.target);
+            }
 
             if (event.data === playerState.ENDED) {
               callbacksRef.current.onVideoEnded?.();
@@ -111,9 +122,7 @@ export function useYouTubePlayer({
             }
           },
           onError: (event) => {
-            if (isYouTubeEmbedError(event.data)) {
-              callbacksRef.current.onError?.(event.data);
-            }
+            callbacksRef.current.onError?.(event.data);
           },
         },
       });
@@ -198,6 +207,7 @@ export function useYouTubePlayer({
     player.mute();
     player.setVolume(0);
     player.loadVideoById({ videoId, startSeconds });
+    disablePlayerCaptions(player);
     player.playVideo();
   }, []);
 
@@ -208,8 +218,29 @@ export function useYouTubePlayer({
     player.mute();
     player.setVolume(0);
     player.loadPlaylist(playlistId, index, 0);
+    disablePlayerCaptions(player);
     player.playVideo();
   }, []);
+
+  const loadPlaylistEntry = useCallback(
+    (videoId: string, playlistId: string, index = 0) => {
+      const player = playerRef.current;
+      if (!player || !videoId || !playlistId) return;
+      lastPlaylistIndexRef.current = index;
+      player.mute();
+      player.setVolume(0);
+      player.loadVideoById({
+        videoId,
+        list: playlistId,
+        listType: "playlist",
+        index,
+        startSeconds: 0,
+      });
+      disablePlayerCaptions(player);
+      player.playVideo();
+    },
+    []
+  );
 
   const nextVideo = useCallback(() => {
     if (!playerRef.current) return;
@@ -291,6 +322,7 @@ export function useYouTubePlayer({
     cancelVolumeRamp,
     loadVideo,
     loadPlaylist,
+    loadPlaylistEntry,
     nextVideo,
     previousVideo,
     getPlaylistIndex,

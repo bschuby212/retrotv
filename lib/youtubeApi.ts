@@ -12,6 +12,14 @@ export interface YouTubeCaptionTrack {
   name?: string;
 }
 
+export interface YouTubePlaylistVideoOptions {
+  videoId: string;
+  startSeconds?: number;
+  list?: string;
+  listType?: "playlist" | "user_uploads" | "search";
+  index?: number;
+}
+
 export interface YouTubePlayer {
   playVideo: () => void;
   pauseVideo: () => void;
@@ -21,10 +29,10 @@ export interface YouTubePlayer {
   setVolume: (volume: number) => void;
   getVolume: () => number;
   loadVideoById: (
-    videoId: string | { videoId: string; startSeconds?: number }
+    videoId: string | YouTubePlaylistVideoOptions
   ) => void;
   cueVideoById: (
-    videoId: string | { videoId: string; startSeconds?: number }
+    videoId: string | YouTubePlaylistVideoOptions
   ) => void;
   loadPlaylist: (
     playlistId: string | { list: string; index?: number; startSeconds?: number },
@@ -132,7 +140,20 @@ export function loadYouTubeIframeAPI(): Promise<void> {
 }
 
 export function isYouTubeEmbedError(code: number): boolean {
-  return [2, 5, 100, 101, 150].includes(code);
+  return [2, 5, 100, 101, 150, 153].includes(code);
+}
+
+/** Force captions off for the current video (cc_load_policy alone is not enough). */
+export function disablePlayerCaptions(player: YouTubePlayer): void {
+  try {
+    const modules = player.getOptions();
+    if (!modules.includes("captions")) return;
+
+    player.setOption("captions", "track", {});
+    player.setOption("captions", "reload", true);
+  } catch {
+    // Captions module not ready yet.
+  }
 }
 
 export function truncateTitle(title: string, maxLength: number): string {
