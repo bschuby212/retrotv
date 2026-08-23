@@ -19,7 +19,7 @@ interface TVScreenProps {
   powerPhase: PowerPhase;
   currentChannel: Channel;
   isChangingChannel: boolean;
-  playerUiMasked: boolean;
+  isPlayerPlaying: boolean;
   hasSignal: boolean;
   osd: OSDState;
   onChannelUp: () => void;
@@ -31,7 +31,7 @@ export function TVScreen({
   powerPhase,
   currentChannel,
   isChangingChannel,
-  playerUiMasked,
+  isPlayerPlaying,
   hasSignal,
   osd,
   onChannelUp,
@@ -39,6 +39,12 @@ export function TVScreen({
 }: TVScreenProps) {
   const playable = isChannelPlayable(currentChannel);
   const showPlayer = playable && isPowered && hasSignal;
+  const revealIframe =
+    showPlayer && !isChangingChannel && isPlayerPlaying;
+  const showChromeMask = showPlayer && !isChangingChannel && isPlayerPlaying;
+  const showStandbyCover =
+    showPlayer && !isChangingChannel && !isPlayerPlaying;
+
   const showNoSignalOverlay =
     isPowered &&
     powerPhase === "on" &&
@@ -92,21 +98,10 @@ export function TVScreen({
       >
         <YouTubePlayer
           containerId={YOUTUBE_CONTAINER_ID}
-          visible={showPlayer && !isChangingChannel && !playerUiMasked}
+          visible={revealIframe}
         />
 
-        {showPlayer && !isChangingChannel && (
-          <div
-            className={`${screenStyles.layer} ${screenStyles.youtubeChromeBlocker}`}
-            aria-hidden="true"
-          >
-            <div className={screenStyles.chromeBlockerTop} />
-            <div className={screenStyles.chromeBlockerBottom} />
-            <div className={screenStyles.chromeBlockerShare} />
-          </div>
-        )}
-
-        {showPlayer && playerUiMasked && (
+        {showStandbyCover && (
           <div
             className={`${screenStyles.layer} ${screenStyles.youtubeLoadCover}`}
             aria-hidden="true"
@@ -134,6 +129,18 @@ export function TVScreen({
         <div className={`${screenStyles.layer} ${screenStyles.overlayLayer}`}>
           <CRTOverlay isPowered={isPowered} powerPhase={powerPhase} />
         </div>
+
+        {showChromeMask && (
+          <div
+            className={`${screenStyles.layer} ${screenStyles.youtubeChromeBlocker}`}
+            aria-hidden="true"
+          >
+            <div className={screenStyles.chromeBlockerTop} />
+            <div className={screenStyles.chromeBlockerBottom} />
+            <div className={screenStyles.chromeBlockerLeft} />
+            <div className={screenStyles.chromeBlockerRight} />
+          </div>
+        )}
       </div>
 
       {isPowered && (

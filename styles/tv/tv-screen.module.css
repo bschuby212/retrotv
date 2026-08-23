@@ -64,10 +64,26 @@
 
 .playerLayer {
   z-index: 1;
-  /* Slight inset so video feels behind glass */
   inset: 1.5% 1.2%;
   border-radius: inherit;
   overflow: hidden;
+}
+
+.playerHost {
+  position: absolute;
+  inset: -14% -5% -40% -5%;
+  overflow: hidden;
+  clip-path: inset(9% 1.5% 38% 1.5% round 2px);
+  pointer-events: none;
+}
+
+.playerHost iframe {
+  width: 100% !important;
+  height: 100% !important;
+  border: none;
+  pointer-events: none;
+  transform: scale(1.06);
+  transform-origin: center 42%;
 }
 
 .contentLayer {
@@ -78,7 +94,7 @@
 }
 
 .youtubeChromeBlocker {
-  z-index: 4;
+  z-index: 9;
   inset: 1.5% 1.2%;
   border-radius: inherit;
   overflow: hidden;
@@ -90,14 +106,8 @@
   top: 0;
   left: 0;
   right: 0;
-  height: 14%;
-  background: linear-gradient(
-    to bottom,
-    #040404 0%,
-    #040404 72%,
-    rgba(4, 4, 4, 0.92) 88%,
-    transparent 100%
-  );
+  height: 10%;
+  background: #030303;
 }
 
 .chromeBlockerBottom {
@@ -105,45 +115,38 @@
   bottom: 0;
   left: 0;
   right: 0;
-  height: 20%;
-  background: linear-gradient(
-    to top,
-    #040404 0%,
-    #040404 68%,
-    rgba(4, 4, 4, 0.9) 84%,
-    transparent 100%
-  );
+  height: 18%;
+  background: #030303;
 }
 
-.chromeBlockerShare {
+.chromeBlockerLeft {
   position: absolute;
   left: 0;
   bottom: 0;
-  width: 22%;
-  height: 28%;
-  background: linear-gradient(
-    135deg,
-    #040404 0%,
-    #040404 55%,
-    rgba(4, 4, 4, 0.88) 75%,
-    transparent 100%
-  );
+  width: 16%;
+  height: 24%;
+  background: #030303;
+}
+
+.chromeBlockerRight {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  width: 14%;
+  height: 16%;
+  background: #030303;
 }
 
 .youtubeLoadCover {
-  z-index: 4;
+  z-index: 8;
   inset: 1.5% 1.2%;
   border-radius: inherit;
-  background: #040404;
+  background: #030303;
   pointer-events: none;
 }
 
 .transitionLayer {
   z-index: 3;
-}
-
-.powerLayer {
-  z-index: 4;
 }
 
 .overlayLayer {
@@ -159,26 +162,10 @@
   overflow: hidden;
 }
 
-.playerHost {
-  width: 100%;
-  height: 100%;
-  pointer-events: none;
-  border-radius: inherit;
-  overflow: hidden;
-}
-
-.playerHost iframe {
-  width: 100% !important;
-  height: 100% !important;
-  border: none;
-  pointer-events: none;
-  transform: scale(1.28) translate(-1.5%, 1%);
-  transform-origin: center center;
-}
-
 .hidden {
   visibility: hidden;
   opacity: 0;
+  clip-path: inset(50%);
 }
 
 .noSignal {

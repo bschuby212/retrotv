@@ -94,6 +94,7 @@ export interface TVControlsState {
   volume: number;
   isChangingChannel: boolean;
   playerUiMasked: boolean;
+  isPlayerPlaying: boolean;
   captionsEnabled: boolean;
   osd: OSDState;
   playerReady: boolean;

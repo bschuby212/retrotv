@@ -75,6 +75,7 @@ export function useTVControls({
   const [volume, setVolume] = useState<number>(tvSettings.defaultVolume);
   const [isChangingChannel, setIsChangingChannel] = useState(false);
   const [playerUiMasked, setPlayerUiMasked] = useState(false);
+  const [isPlayerPlaying, setIsPlayerPlaying] = useState(false);
   const [captionsEnabled, setCaptionsEnabledState] = useState(false);
   const [osd, setOsd] = useState<OSDState>({ type: null });
   const [hasSignal, setHasSignal] = useState(true);
@@ -592,8 +593,12 @@ export function useTVControls({
 
   const handlePlayerStateChange = useCallback(
     (state: number) => {
+      setIsPlayerPlaying(state === 1);
+
       if (state === 1) {
         endPlayerUiMask();
+      } else if (state === 0 || state === 2 || state === 3 || state === 5) {
+        setPlayerUiMasked(true);
       }
     },
     [endPlayerUiMask]
@@ -614,6 +619,7 @@ export function useTVControls({
 
     if (isPoweredRef.current) {
       setPowerPhase("shuttingDown");
+      setIsPlayerPlaying(false);
       pause();
       stop();
 
@@ -681,6 +687,7 @@ export function useTVControls({
     volume,
     isChangingChannel,
     playerUiMasked,
+    isPlayerPlaying,
     captionsEnabled,
     osd,
     playerReady,
