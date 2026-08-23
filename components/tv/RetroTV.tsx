@@ -125,7 +125,6 @@ export function RetroTV() {
 
           <div className={retroStyles.controlsArea}>
             <TVControls
-              isPowered={tv.isPowered}
               togglePower={tv.togglePower}
               channelUp={tv.channelUp}
               channelDown={tv.channelDown}

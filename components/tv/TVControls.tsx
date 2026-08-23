@@ -4,12 +4,9 @@ import { TVButton } from "@/components/tv/TVButton";
 import type { TVControlsActions } from "@/lib/tvTypes";
 import controlsStyles from "@/styles/tv/tv-controls.module.css";
 
-interface TVControlsProps extends TVControlsActions {
-  isPowered: boolean;
-}
+interface TVControlsProps extends TVControlsActions {}
 
 export function TVControls({
-  isPowered,
   togglePower,
   channelUp,
   channelDown,
