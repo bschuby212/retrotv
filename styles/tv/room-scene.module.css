@@ -5,22 +5,22 @@
   height: 100dvh;
   overflow: hidden;
   background: #120e0c;
-  --cabinet-anchor: 16%;
-  --cabinet-anchor-mobile: 12%;
-  --cabinet-anchor-wide: 15%;
+  --cabinet-anchor: 20%;
+  --cabinet-anchor-mobile: 16%;
+  --cabinet-anchor-wide: 19%;
   --room-focal-x: 50%;
-  --room-focal-y: 45%;
-  --room-focal-y-mobile: 43%;
-  --room-focal-y-wide: 44%;
-  --room-bg-scale: 1.95;
+  --room-focal-y: 48%;
+  --room-focal-y-mobile: 46%;
+  --room-focal-y-wide: 47%;
+  --room-bg-scale: 2.15;
 }
 
 .backgroundWrap {
   position: absolute;
   inset: 0;
   overflow: hidden;
-  transform: scale(var(--room-bg-scale, 1.95));
-  transform-origin: center 45%;
+  transform: scale(var(--room-bg-scale, 2.15));
+  transform-origin: center 48%;
 }
 
 .background {
@@ -36,7 +36,7 @@
 .tvMount {
   position: absolute;
   left: 50%;
-  bottom: var(--cabinet-anchor, 11%);
+  bottom: var(--cabinet-anchor, 20%);
   transform: translateX(-50%);
   z-index: 2;
   display: flex;
@@ -80,30 +80,30 @@
 
 @media (max-width: 640px) {
   .background {
-    object-position: var(--room-focal-x, 50%) var(--room-focal-y-mobile, 43%);
+    object-position: var(--room-focal-x, 50%) var(--room-focal-y-mobile, 46%);
   }
 
   .tvMount {
-    bottom: var(--cabinet-anchor-mobile, 12%);
+    bottom: var(--cabinet-anchor-mobile, 16%);
   }
 }
 
 @media (min-width: 641px) and (max-width: 1366px) {
   .background {
-    object-position: var(--room-focal-x, 50%) var(--room-focal-y, 45%);
+    object-position: var(--room-focal-x, 50%) var(--room-focal-y, 48%);
   }
 
   .tvMount {
-    bottom: var(--cabinet-anchor, 16%);
+    bottom: var(--cabinet-anchor, 20%);
   }
 }
 
 @media (min-width: 1920px) {
   .background {
-    object-position: var(--room-focal-x, 50%) var(--room-focal-y-wide, 44%);
+    object-position: var(--room-focal-x, 50%) var(--room-focal-y-wide, 47%);
   }
 
   .tvMount {
-    bottom: var(--cabinet-anchor-wide, 15%);
+    bottom: var(--cabinet-anchor-wide, 19%);
   }
 }
