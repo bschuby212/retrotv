@@ -13,7 +13,7 @@
   --room-focal-y-mobile: 54%;
   --room-focal-y-wide: calc(47% + 60px);
   --room-bg-scale: 2.15;
-  --room-bg-scale-mobile: 1.55;
+  --room-bg-scale-mobile: 1.4;
 }
 
 .backgroundWrap {
@@ -82,11 +82,11 @@
 @media (max-width: 480px) {
   .scene {
     --room-focal-y-mobile: 54%;
-    --room-bg-scale-mobile: 1.55;
+    --room-bg-scale-mobile: 1.4;
   }
 
   .backgroundWrap {
-    transform: scale(var(--room-bg-scale-mobile, 1.55));
+    transform: scale(var(--room-bg-scale-mobile, 1.4));
     transform-origin: center var(--room-focal-y-mobile, 54%);
   }
 
@@ -97,13 +97,13 @@
   .tvMount {
     top: 50%;
     bottom: auto;
-    transform: translate(-50%, calc(-50% - 20px));
+    transform: translate(-50%, calc(-50% - 44px));
   }
 }
 
 @media (min-width: 481px) and (max-width: 768px) {
   .backgroundWrap {
-    transform: scale(1.6);
+    transform: scale(1.45);
     transform-origin: center 52%;
   }
 
@@ -114,13 +114,13 @@
   .tvMount {
     top: 50%;
     bottom: auto;
-    transform: translate(-50%, calc(-50% - 20px));
+    transform: translate(-50%, calc(-50% - 40px));
   }
 }
 
 @media (min-width: 769px) and (max-width: 1024px) {
   .backgroundWrap {
-    transform: scale(1.65);
+    transform: scale(1.5);
     transform-origin: center 52%;
   }
 
@@ -131,7 +131,7 @@
   .tvMount {
     top: 50%;
     bottom: auto;
-    transform: translate(-50%, calc(-50% - 16px));
+    transform: translate(-50%, calc(-50% - 32px));
   }
 }
 

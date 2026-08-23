@@ -47,7 +47,7 @@ button {
   --room-focal-y-mobile: 54%;
   --room-focal-y-wide: calc(47% + 60px);
   --room-bg-scale: 2.15;
-  --room-bg-scale-mobile: 1.55;
+  --room-bg-scale-mobile: 1.4;
 }
 
 .page {
