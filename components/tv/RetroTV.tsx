@@ -87,6 +87,9 @@ export function RetroTV() {
       aria-label="Retro CRT television"
     >
       <div className={retroStyles.shell}>
+        <div className={retroStyles.faceSeam} aria-hidden="true" />
+        <div className={retroStyles.lowerChassis} aria-hidden="true" />
+
         <div
           className={retroStyles.bezelWell}
           style={bezelStyle}
@@ -108,12 +111,44 @@ export function RetroTV() {
 
         <span className={retroStyles.brandPlate}>RETROTV</span>
 
-        <div className={retroStyles.vcrSection} aria-hidden="true">
-          <div className={retroStyles.vcrRecess}>
-            <div className={retroStyles.vcrFlap}>
-              <span className={retroStyles.vcrLabel}>VHS  DIGITAL TRACKING</span>
-              <div className={retroStyles.vcrSlotOpening} />
+        <div
+          className={`${retroStyles.speaker} ${retroStyles.speakerLeft}`}
+          aria-hidden="true"
+        >
+          <div className={retroStyles.speakerGrille} />
+        </div>
+        <div
+          className={`${retroStyles.speaker} ${retroStyles.speakerRight}`}
+          aria-hidden="true"
+        >
+          <div className={retroStyles.speakerGrille} />
+        </div>
+
+        <div className={retroStyles.lowerCenter}>
+          <div className={retroStyles.vcrSection} aria-hidden="true">
+            <div className={retroStyles.vcrRecess}>
+              <div className={retroStyles.vcrFlap}>
+                <span className={retroStyles.vcrLabel}>
+                  VHS  DIGITAL TRACKING
+                </span>
+                <div className={retroStyles.vcrSlotOpening} />
+              </div>
             </div>
+          </div>
+
+          <div className={retroStyles.controlsArea}>
+            <TVControls
+              isPowered={tv.isPowered}
+              togglePower={tv.togglePower}
+              channelUp={tv.channelUp}
+              channelDown={tv.channelDown}
+              volumeUp={tv.volumeUp}
+              volumeDown={tv.volumeDown}
+              togglePlayPause={tv.togglePlayPause}
+              stopPlayback={tv.stopPlayback}
+              episodePrevious={tv.episodePrevious}
+              episodeNext={tv.episodeNext}
+            />
           </div>
         </div>
 
@@ -127,13 +162,13 @@ export function RetroTV() {
           <div className={retroStyles.avJack}>
             <span className={retroStyles.avJackLabel}>L</span>
             <span
-              className={`${retroStyles.avJackHole} ${retroStyles.avJackHoleAudio}`}
+              className={`${retroStyles.avJackHole} ${retroStyles.avJackHoleAudioL}`}
             />
           </div>
           <div className={retroStyles.avJack}>
             <span className={retroStyles.avJackLabel}>R</span>
             <span
-              className={`${retroStyles.avJackHole} ${retroStyles.avJackHoleAudio}`}
+              className={`${retroStyles.avJackHole} ${retroStyles.avJackHoleAudioR}`}
             />
           </div>
         </div>
@@ -143,34 +178,7 @@ export function RetroTV() {
           <span className={retroStyles.headphoneHole} />
         </div>
 
-        <div className={retroStyles.ledHousing} aria-hidden="true">
-          <div
-            className={`${retroStyles.standbyLed} ${
-              !tv.isPowered
-                ? retroStyles.standbyLedActive
-                : retroStyles.standbyLedOn
-            }`}
-          />
-        </div>
-
-        <div className={retroStyles.controlsArea}>
-          <div className={retroStyles.controlPanelInset}>
-            <TVControls
-              isPowered={tv.isPowered}
-              togglePower={tv.togglePower}
-              channelUp={tv.channelUp}
-              channelDown={tv.channelDown}
-              volumeUp={tv.volumeUp}
-              volumeDown={tv.volumeDown}
-              togglePlayPause={tv.togglePlayPause}
-              stopPlayback={tv.stopPlayback}
-              episodePrevious={tv.episodePrevious}
-              episodeNext={tv.episodeNext}
-              toggleCaptions={tv.toggleCaptions}
-              captionsEnabled={tv.captionsEnabled}
-            />
-          </div>
-        </div>
+        <div className={retroStyles.bottomLip} aria-hidden="true" />
 
         <div className={retroStyles.feet} aria-hidden="true">
           <span className={retroStyles.foot} />

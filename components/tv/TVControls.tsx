@@ -3,13 +3,14 @@
 import { TVButton } from "@/components/tv/TVButton";
 import type { TVControlsActions } from "@/lib/tvTypes";
 import controlsStyles from "@/styles/tv/tv-controls.module.css";
+import retroStyles from "@/styles/tv/retro-tv.module.css";
 
-interface TVControlsProps extends TVControlsActions {
+interface TVControlsProps extends Omit<TVControlsActions, "toggleCaptions"> {
   isPowered: boolean;
-  captionsEnabled: boolean;
 }
 
 export function TVControls({
+  isPowered,
   togglePower,
   channelUp,
   channelDown,
@@ -19,22 +20,29 @@ export function TVControls({
   stopPlayback,
   episodePrevious,
   episodeNext,
-  toggleCaptions,
-  captionsEnabled,
 }: TVControlsProps) {
   return (
     <div className={controlsStyles.panel}>
-      <div className={controlsStyles.cluster}>
-        <span className={controlsStyles.clusterLabel}>Power</span>
-        <TVButton
-          variant="power"
-          ariaLabel="Power"
-          onClick={togglePower}
-          hideLabel
-        />
+      <div className={controlsStyles.powerCluster}>
+        <div className={controlsStyles.cluster}>
+          <span className={controlsStyles.clusterLabel}>Power</span>
+          <TVButton
+            variant="power"
+            ariaLabel="Power"
+            onClick={togglePower}
+            hideLabel
+          />
+        </div>
+        <div className={retroStyles.ledHousing} aria-hidden="true">
+          <div
+            className={`${retroStyles.standbyLed} ${
+              !isPowered
+                ? retroStyles.standbyLedActive
+                : retroStyles.standbyLedOn
+            }`}
+          />
+        </div>
       </div>
-
-      <div className={controlsStyles.gap} aria-hidden="true" />
 
       <div className={controlsStyles.cluster}>
         <span className={controlsStyles.clusterLabel}>Vol</span>
@@ -56,8 +64,6 @@ export function TVControls({
         </div>
       </div>
 
-      <div className={controlsStyles.gap} aria-hidden="true" />
-
       <div className={controlsStyles.cluster}>
         <span className={controlsStyles.clusterLabel}>Ch</span>
         <div className={controlsStyles.buttonPair}>
@@ -78,7 +84,7 @@ export function TVControls({
         </div>
       </div>
 
-      <div className={controlsStyles.gapWide} aria-hidden="true" />
+      <div className={controlsStyles.irWindow} aria-hidden="true" />
 
       <div className={controlsStyles.transportGroup}>
         <div className={controlsStyles.cluster}>
@@ -118,17 +124,6 @@ export function TVControls({
             icon="▶▶"
             ariaLabel="Next episode"
             onClick={episodeNext}
-            hideLabel
-          />
-        </div>
-        <div className={controlsStyles.cluster}>
-          <span className={controlsStyles.clusterLabel}>CC</span>
-          <TVButton
-            variant="transport"
-            icon="CC"
-            ariaLabel="Toggle captions"
-            onClick={toggleCaptions}
-            active={captionsEnabled}
             hideLabel
           />
         </div>

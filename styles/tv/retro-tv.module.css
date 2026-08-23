@@ -6,31 +6,31 @@
   aspect-ratio: 0.9 / 1;
   z-index: 1;
   filter:
-    drop-shadow(0 16px 24px rgba(0, 0, 0, 0.42))
-    drop-shadow(0 4px 8px rgba(0, 0, 0, 0.28));
+    drop-shadow(0 18px 22px rgba(0, 0, 0, 0.5))
+    drop-shadow(0 4px 6px rgba(0, 0, 0, 0.35));
 }
 
 .shell {
   position: relative;
   width: 100%;
   height: 100%;
-  border-radius: 18px 18px 14px 14px / 16px 16px 12px 12px;
+  border-radius: 16px 16px 12px 12px / 14px 14px 10px 10px;
   background-color: var(--tv-plastic-mid);
   background-image:
     var(--plastic-grain),
     radial-gradient(
-      ellipse 80% 50% at 14% 10%,
-      rgba(255, 230, 190, 0.18) 0%,
+      ellipse 80% 50% at 12% 8%,
+      rgba(255, 230, 190, 0.16) 0%,
       transparent 52%
     ),
     radial-gradient(
-      ellipse 55% 45% at 92% 48%,
-      rgba(180, 60, 40, 0.06) 0%,
+      ellipse 50% 40% at 93% 48%,
+      rgba(180, 50, 35, 0.05) 0%,
       transparent 50%
     ),
     radial-gradient(
-      ellipse 60% 55% at 88% 55%,
-      rgba(50, 48, 44, 0.18) 0%,
+      ellipse 60% 55% at 88% 70%,
+      rgba(40, 38, 34, 0.2) 0%,
       transparent 48%
     ),
     linear-gradient(
@@ -43,10 +43,10 @@
     );
   background-blend-mode: overlay, normal, normal, multiply, normal;
   box-shadow:
-    inset 0 1px 0 rgba(255, 248, 235, 0.3),
-    inset 0 -5px 10px rgba(0, 0, 0, 0.22),
+    inset 0 1px 0 rgba(255, 248, 235, 0.32),
+    inset 0 -6px 12px rgba(0, 0, 0, 0.28),
     inset 2px 0 5px rgba(255, 230, 200, 0.05),
-    inset -3px 0 8px rgba(0, 0, 0, 0.1),
+    inset -3px 0 8px rgba(0, 0, 0, 0.12),
     0 1px 0 rgba(255, 255, 255, 0.05);
   overflow: hidden;
 }
@@ -55,7 +55,7 @@
   content: "";
   position: absolute;
   inset: 2px;
-  border-radius: 16px 16px 12px 12px / 14px 14px 10px 10px;
+  border-radius: 14px 14px 10px 10px / 12px 12px 8px 8px;
   box-shadow:
     inset 0 2px 4px rgba(255, 245, 230, 0.1),
     inset 0 -2px 5px rgba(0, 0, 0, 0.14);
@@ -69,27 +69,56 @@
   inset: 0;
   border-radius: inherit;
   box-shadow:
-    inset 0 0 0 1px rgba(0, 0, 0, 0.12),
+    inset 0 0 0 1px rgba(0, 0, 0, 0.14),
     inset 0 0 0 2px rgba(255, 248, 240, 0.04);
   pointer-events: none;
   z-index: 1;
 }
 
-/* Narrow recessed bezel ring */
+.faceSeam {
+  position: absolute;
+  inset: 1.6% 1.4% 7.5%;
+  border-radius: 12px 12px 4px 4px / 10px 10px 3px 3px;
+  box-shadow:
+    inset 0 0 0 1px rgba(0, 0, 0, 0.08),
+    0 1px 0 rgba(255, 248, 235, 0.05);
+  pointer-events: none;
+  z-index: 2;
+}
+
+.lowerChassis {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 61%;
+  bottom: 0;
+  pointer-events: none;
+  z-index: 2;
+  background: linear-gradient(
+    180deg,
+    rgba(0, 0, 0, 0.05) 0%,
+    transparent 18%
+  );
+  box-shadow: inset 0 1px 0 rgba(0, 0, 0, 0.12);
+}
+
 .bezelWell {
   position: absolute;
   z-index: 2;
-  background: linear-gradient(
-    175deg,
-    #2a2826 0%,
-    var(--tv-bezel-outer) 6%,
-    var(--tv-bezel-mid) 50%,
-    var(--tv-bezel-inner) 100%
-  );
+  background:
+    var(--plastic-grain),
+    linear-gradient(
+      175deg,
+      #2c2a28 0%,
+      #1a1918 8%,
+      #121110 55%,
+      #0a0908 100%
+    );
+  background-blend-mode: overlay, normal;
   box-shadow:
     inset 0 4px 10px rgba(0, 0, 0, 0.92),
     inset 0 1px 3px rgba(0, 0, 0, 0.55),
-    0 1px 2px rgba(0, 0, 0, 0.2);
+    0 2px 6px rgba(0, 0, 0, 0.35);
 }
 
 .bezelWell::before {
@@ -99,9 +128,13 @@
   border-radius: inherit;
   background: linear-gradient(
     180deg,
-    rgba(255, 255, 255, 0.06) 0%,
-    transparent 14%
+    rgba(255, 255, 255, 0.08) 0%,
+    rgba(255, 255, 255, 0.02) 8%,
+    transparent 16%
   );
+  box-shadow:
+    inset 1px 0 0 rgba(255, 255, 255, 0.04),
+    inset -1px 0 0 rgba(0, 0, 0, 0.35);
   pointer-events: none;
 }
 
@@ -110,57 +143,105 @@
   position: absolute;
   inset: 2%;
   border-radius: inherit;
-  background: linear-gradient(180deg, #0c0b0a 0%, #050504 100%);
+  background: linear-gradient(180deg, #141312 0%, #070706 100%);
   box-shadow:
-    inset 0 2px 6px rgba(0, 0, 0, 0.95),
-    inset 0 0 0 1px rgba(0, 0, 0, 0.75);
+    inset 0 3px 8px rgba(0, 0, 0, 0.95),
+    inset 0 0 0 1px rgba(0, 0, 0, 0.8);
   pointer-events: none;
 }
 
 .brandPlate {
   position: absolute;
-  top: 63.5%;
+  top: 58.6%;
   left: 50%;
   transform: translateX(-50%);
   z-index: 4;
   font-family: "Arial Narrow", "Helvetica Neue", Arial, sans-serif;
-  font-size: clamp(0.42rem, 1.1vw, 0.54rem);
-  font-weight: 700;
+  font-size: clamp(0.48rem, 1.2vw, 0.6rem);
+  font-weight: 800;
   font-stretch: condensed;
-  letter-spacing: 0.28em;
+  letter-spacing: 0.18em;
   text-transform: uppercase;
-  color: rgba(48, 46, 42, 0.38);
+  color: rgba(36, 34, 32, 0.52);
   text-shadow:
-    0 1px 0 rgba(255, 250, 240, 0.18),
-    0 -0.5px 0 rgba(0, 0, 0, 0.2);
+    0 1px 0 rgba(255, 250, 240, 0.22),
+    0 -0.5px 0 rgba(0, 0, 0, 0.28);
   user-select: none;
   white-space: nowrap;
 }
 
-/* VHS cassette slot */
-.vcrSection {
+.speaker {
   position: absolute;
-  top: 66%;
-  left: 12%;
-  right: 12%;
-  height: 6%;
+  top: 62.4%;
+  width: 16.5%;
+  height: 29%;
   z-index: 3;
+  border-radius: 5px 5px 7px 7px;
+  overflow: hidden;
+  background: linear-gradient(
+    180deg,
+    rgba(0, 0, 0, 0.12) 0%,
+    rgba(0, 0, 0, 0.06) 100%
+  );
+  box-shadow:
+    inset 0 3px 7px rgba(0, 0, 0, 0.55),
+    inset 0 0 0 1px rgba(0, 0, 0, 0.16),
+    0 1px 0 rgba(255, 248, 240, 0.05);
+}
+
+.speakerLeft {
+  left: 4.2%;
+}
+
+.speakerRight {
+  right: 4.2%;
+}
+
+.speakerGrille {
+  position: absolute;
+  inset: 5px 4px;
+  border-radius: 3px;
+  background-color: #1a1816;
+  background-image:
+    radial-gradient(circle at 50% 50%, rgba(255, 248, 235, 0.12) 0.4px, transparent 0.55px),
+    radial-gradient(circle, rgba(0, 0, 0, 0.95) 0.55px, transparent 0.65px);
+  background-size: 3.2px 3.2px;
+  background-position: 0 0, 1.6px 1.6px;
+  box-shadow: inset 0 3px 6px rgba(0, 0, 0, 0.8);
+}
+
+.lowerCenter {
+  position: absolute;
+  top: 62.2%;
+  left: 22%;
+  right: 22%;
+  bottom: 7.5%;
+  z-index: 4;
+  display: flex;
+  flex-direction: column;
+  gap: 4%;
+}
+
+.vcrSection {
+  position: relative;
+  height: 22%;
+  flex-shrink: 0;
 }
 
 .vcrRecess {
   position: relative;
   width: 100%;
   height: 100%;
-  padding: 2px;
+  padding: 3px 4px 4px;
   border-radius: 3px;
   background: linear-gradient(
     180deg,
-    rgba(0, 0, 0, 0.1) 0%,
+    rgba(0, 0, 0, 0.12) 0%,
     rgba(0, 0, 0, 0.06) 100%
   );
   box-shadow:
-    inset 0 2px 5px rgba(0, 0, 0, 0.4),
-    inset 0 0 0 1px rgba(0, 0, 0, 0.18),
+    inset 0 2px 5px rgba(0, 0, 0, 0.42),
+    inset 0 0 0 1px rgba(0, 0, 0, 0.2),
     0 1px 0 rgba(255, 248, 235, 0.04);
 }
 
@@ -171,15 +252,14 @@
   border-radius: 2px;
   background: linear-gradient(
     180deg,
-    #c4c0b8 0%,
-    #b8b4ac 35%,
-    #a8a49c 70%,
-    #9a9690 100%
+    #b4b0a8 0%,
+    #a49f97 42%,
+    #908c84 100%
   );
   box-shadow:
-    inset 0 1px 0 rgba(255, 250, 240, 0.35),
-    inset 0 -2px 4px rgba(0, 0, 0, 0.15),
-    0 1px 2px rgba(0, 0, 0, 0.12);
+    inset 0 1px 0 rgba(255, 250, 240, 0.28),
+    inset 0 -2px 3px rgba(0, 0, 0, 0.18),
+    0 1px 1px rgba(0, 0, 0, 0.12);
   overflow: hidden;
 }
 
@@ -188,78 +268,54 @@
   position: absolute;
   inset: 0;
   border-radius: inherit;
-  box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.12);
+  box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.14);
   pointer-events: none;
 }
 
 .vcrSlotOpening {
   position: absolute;
-  left: 6%;
-  right: 6%;
+  left: 5%;
+  right: 5%;
   bottom: 0;
-  height: 22%;
-  border-radius: 0 0 1px 1px;
+  height: 14%;
   background: linear-gradient(
     180deg,
-    #1a1816 0%,
-    #0a0908 60%,
-    #040403 100%
+    rgba(20, 18, 16, 0.7) 0%,
+    #080706 100%
   );
-  box-shadow:
-    inset 0 3px 6px rgba(0, 0, 0, 0.9),
-    inset 0 0 0 1px rgba(0, 0, 0, 0.7);
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.85);
 }
 
 .vcrLabel {
   position: absolute;
-  top: 22%;
+  top: 28%;
   left: 50%;
   transform: translateX(-50%);
   font-family: "Arial Narrow", Arial, sans-serif;
-  font-size: clamp(0.26rem, 0.62vw, 0.32rem);
+  font-size: clamp(0.2rem, 0.48vw, 0.26rem);
   font-weight: 600;
-  letter-spacing: 0.16em;
-  color: rgba(40, 38, 36, 0.45);
+  letter-spacing: 0.14em;
+  color: rgba(40, 38, 36, 0.32);
   white-space: nowrap;
   user-select: none;
-  text-shadow: 0 0.5px 0 rgba(255, 250, 240, 0.12);
 }
 
-/* Control strip */
 .controlsArea {
-  position: absolute;
-  left: 10%;
-  right: 10%;
-  bottom: 9%;
-  z-index: 5;
+  position: relative;
+  flex: 1;
   display: flex;
+  align-items: center;
   justify-content: center;
-  align-items: flex-end;
+  min-height: 0;
 }
 
-.controlPanelInset {
-  width: 100%;
-  padding: 0.2rem 0.15rem 0.15rem;
-  border-radius: 4px 4px 5px 5px;
-  background: linear-gradient(
-    180deg,
-    rgba(0, 0, 0, 0.08) 0%,
-    rgba(0, 0, 0, 0.03) 100%
-  );
-  box-shadow:
-    inset 0 2px 4px rgba(0, 0, 0, 0.22),
-    inset 0 -1px 0 rgba(255, 248, 235, 0.05),
-    inset 0 0 0 1px rgba(0, 0, 0, 0.08);
-}
-
-/* Decorative AV inputs — lower left */
 .avInputs {
   position: absolute;
-  left: 8%;
-  bottom: 3.5%;
-  z-index: 3;
+  left: 22.5%;
+  bottom: 3.2%;
+  z-index: 4;
   display: flex;
-  gap: 5px;
+  gap: 6px;
   align-items: flex-end;
 }
 
@@ -267,100 +323,105 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 1px;
+  gap: 2px;
 }
 
 .avJackLabel {
   font-family: "Arial Narrow", Arial, sans-serif;
-  font-size: clamp(0.22rem, 0.5vw, 0.28rem);
-  font-weight: 600;
-  letter-spacing: 0.06em;
-  color: rgba(48, 46, 42, 0.26);
+  font-size: clamp(0.18rem, 0.42vw, 0.24rem);
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  color: rgba(42, 40, 36, 0.32);
   text-transform: uppercase;
   user-select: none;
 }
 
 .avJackHole {
-  width: clamp(7px, 1.2vw, 9px);
-  height: clamp(7px, 1.2vw, 9px);
+  position: relative;
+  width: clamp(8px, 1.15vw, 11px);
+  height: clamp(8px, 1.15vw, 11px);
   border-radius: 50%;
   background: radial-gradient(
-    circle at 40% 35%,
-    #3a3834 0%,
-    #1a1816 55%,
-    #080807 100%
-  );
-  box-shadow:
-    inset 0 2px 3px rgba(0, 0, 0, 0.8),
-    0 1px 0 rgba(255, 248, 235, 0.04);
-}
-
-.avJackHoleVideo {
-  background: radial-gradient(
-    circle at 40% 35%,
-    #4a4030 0%,
-    #2a2418 55%,
-    #100e08 100%
-  );
-}
-
-.avJackHoleAudio {
-  background: radial-gradient(
-    circle at 40% 35%,
-    #3a3834 0%,
-    #222018 55%,
-    #0a0908 100%
-  );
-}
-
-/* Headphone jack — lower right */
-.headphoneJack {
-  position: absolute;
-  right: 8%;
-  bottom: 3.5%;
-  z-index: 3;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 1px;
-}
-
-.headphoneHole {
-  width: clamp(6px, 1vw, 8px);
-  height: clamp(6px, 1vw, 8px);
-  border-radius: 50%;
-  background: radial-gradient(
-    circle at 40% 35%,
-    #3a3834 0%,
-    #141210 60%,
-    #060605 100%
+    circle at 40% 32%,
+    #4a4844 0%,
+    #1c1a18 55%,
+    #080706 100%
   );
   box-shadow:
     inset 0 2px 3px rgba(0, 0, 0, 0.85),
-    0 1px 0 rgba(255, 248, 235, 0.03);
+    0 0 0 1px rgba(0, 0, 0, 0.28),
+    0 1px 0 rgba(255, 248, 235, 0.06);
 }
 
-/* Standby LED */
-.ledHousing {
+.avJackHole::after {
+  content: "";
   position: absolute;
-  right: 18%;
-  bottom: 11%;
-  z-index: 6;
-  width: 9px;
-  height: 9px;
+  top: 50%;
+  left: 50%;
+  width: 38%;
+  height: 38%;
+  transform: translate(-50%, -50%);
+  border-radius: 50%;
+  box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.5);
+}
+
+.avJackHoleVideo::after {
+  background: radial-gradient(circle at 40% 35%, #c4b070 0%, #8a7028 100%);
+}
+
+.avJackHoleAudioL::after {
+  background: radial-gradient(circle at 40% 35%, #d8d4cc 0%, #9a968e 100%);
+}
+
+.avJackHoleAudioR::after {
+  background: radial-gradient(circle at 40% 35%, #b06058 0%, #7a3028 100%);
+}
+
+.headphoneJack {
+  position: absolute;
+  right: 22.5%;
+  bottom: 3.2%;
+  z-index: 4;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+}
+
+.headphoneHole {
+  width: clamp(7px, 1vw, 9px);
+  height: clamp(7px, 1vw, 9px);
+  border-radius: 50%;
+  background: radial-gradient(
+    circle at 38% 32%,
+    #2a2826 0%,
+    #0c0b0a 55%,
+    #040403 100%
+  );
+  box-shadow:
+    inset 0 2px 3px rgba(0, 0, 0, 0.9),
+    0 0 0 1.5px rgba(90, 86, 80, 0.35),
+    0 0 0 2.5px rgba(0, 0, 0, 0.18),
+    0 1px 0 rgba(255, 248, 235, 0.05);
+}
+
+.ledHousing {
+  width: 7px;
+  height: 7px;
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
-  background: rgba(0, 0, 0, 0.18);
+  margin-top: 9px;
+  background: rgba(0, 0, 0, 0.2);
   box-shadow:
-    inset 0 2px 3px rgba(0, 0, 0, 0.5),
-    inset 0 0 0 1px rgba(0, 0, 0, 0.2);
+    inset 0 2px 3px rgba(0, 0, 0, 0.55),
+    inset 0 0 0 1px rgba(0, 0, 0, 0.22);
 }
 
 .standbyLed {
-  width: 4px;
-  height: 4px;
+  width: 3.5px;
+  height: 3.5px;
   border-radius: 50%;
   background: radial-gradient(
     circle at 40% 35%,
@@ -390,8 +451,8 @@
 .standbyLedOn {
   background: radial-gradient(
     circle at 40% 35%,
-    #1a2820 0%,
-    #0a1008 70%,
+    #2a3a28 0%,
+    #0a1208 70%,
     #060806 100%
   );
   box-shadow:
@@ -400,31 +461,46 @@
   opacity: 0.55;
 }
 
-/* Molded feet */
+.bottomLip {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 4.8%;
+  z-index: 2;
+  pointer-events: none;
+  background: linear-gradient(
+    180deg,
+    transparent 0%,
+    rgba(0, 0, 0, 0.18) 100%
+  );
+  box-shadow: inset 0 1px 0 rgba(0, 0, 0, 0.16);
+}
+
 .feet {
   position: absolute;
   bottom: 0;
   left: 0;
   right: 0;
-  z-index: 0;
+  z-index: 3;
   display: flex;
   justify-content: space-between;
-  padding: 0 14% 0;
+  padding: 0 13% 0;
   pointer-events: none;
 }
 
 .foot {
-  width: 10%;
-  height: 4px;
-  margin-bottom: -1px;
+  width: 11%;
+  height: 5px;
+  margin-bottom: -2px;
   border-radius: 0 0 2px 2px;
   background: linear-gradient(
     180deg,
     var(--tv-plastic-dark) 0%,
-    var(--tv-plastic-shadow) 100%
+    #4a4640 100%
   );
   box-shadow:
-    0 2px 3px rgba(0, 0, 0, 0.4),
+    0 3px 4px rgba(0, 0, 0, 0.5),
     inset 0 1px 0 rgba(255, 248, 235, 0.05);
 }
 

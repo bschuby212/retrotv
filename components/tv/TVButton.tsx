@@ -40,7 +40,7 @@ export function TVButton({
           ? buttonStyles.transport
           : "";
 
-  const useWell = variant === "power" || variant === "transport";
+  const useWell = true;
 
   const buttonEl = (
     <button
