@@ -93,8 +93,7 @@ export interface TVControlsState {
   currentChannelIndex: number;
   volume: number;
   isChangingChannel: boolean;
-  playerUiMasked: boolean;
-  isPlayerPlaying: boolean;
+  isTuningIn: boolean;
   captionsEnabled: boolean;
   osd: OSDState;
   playerReady: boolean;

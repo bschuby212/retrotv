@@ -96,7 +96,7 @@ export function RetroTV() {
           powerPhase={tv.powerPhase}
           currentChannel={tv.currentChannel}
           isChangingChannel={tv.isChangingChannel}
-          isPlayerPlaying={tv.isPlayerPlaying}
+          isTuningIn={tv.isTuningIn}
           hasSignal={tv.hasSignal}
           osd={tv.osd}
           onChannelUp={tv.channelUp}

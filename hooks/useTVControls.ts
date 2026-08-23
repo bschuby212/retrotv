@@ -74,8 +74,7 @@ export function useTVControls({
   const [currentChannelIndex, setCurrentChannelIndex] = useState(0);
   const [volume, setVolume] = useState<number>(tvSettings.defaultVolume);
   const [isChangingChannel, setIsChangingChannel] = useState(false);
-  const [playerUiMasked, setPlayerUiMasked] = useState(false);
-  const [isPlayerPlaying, setIsPlayerPlaying] = useState(false);
+  const [isTuningIn, setIsTuningIn] = useState(false);
   const [captionsEnabled, setCaptionsEnabledState] = useState(false);
   const [osd, setOsd] = useState<OSDState>({ type: null });
   const [hasSignal, setHasSignal] = useState(true);
@@ -85,8 +84,9 @@ export function useTVControls({
   const volumeOsdTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const transportOsdTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const powerTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-  const playerUiMaskTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-  const playerUiMaskClearTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const tuneInStartedAtRef = useRef(0);
+  const tuneInEndTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const tuneInMaxTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const channelLockRef = useRef(false);
   const episodePositionRef = useRef<Record<number, number>>({});
   const errorSkipAttemptsRef = useRef(0);
@@ -134,35 +134,43 @@ export function useTVControls({
     }
   }, []);
 
-  const beginPlayerUiMask = useCallback(() => {
-    if (playerUiMaskClearTimerRef.current) {
-      clearTimeout(playerUiMaskClearTimerRef.current);
-      playerUiMaskClearTimerRef.current = null;
+  const beginTuneIn = useCallback(() => {
+    if (tuneInEndTimerRef.current) {
+      clearTimeout(tuneInEndTimerRef.current);
+      tuneInEndTimerRef.current = null;
     }
-    if (playerUiMaskTimerRef.current) {
-      clearTimeout(playerUiMaskTimerRef.current);
+    if (tuneInMaxTimerRef.current) {
+      clearTimeout(tuneInMaxTimerRef.current);
     }
 
-    setPlayerUiMasked(true);
-    playerUiMaskTimerRef.current = setTimeout(() => {
-      setPlayerUiMasked(false);
-      playerUiMaskTimerRef.current = null;
-    }, tvSettings.playerUiMaskMaxMs);
+    tuneInStartedAtRef.current = Date.now();
+    setIsTuningIn(true);
+
+    tuneInMaxTimerRef.current = setTimeout(() => {
+      setIsTuningIn(false);
+      tuneInMaxTimerRef.current = null;
+    }, tvSettings.tuneInMaxMs);
   }, []);
 
-  const endPlayerUiMask = useCallback(() => {
-    if (playerUiMaskClearTimerRef.current) {
-      clearTimeout(playerUiMaskClearTimerRef.current);
+  const tryEndTuneIn = useCallback(() => {
+    if (tuneInEndTimerRef.current) {
+      clearTimeout(tuneInEndTimerRef.current);
     }
 
-    playerUiMaskClearTimerRef.current = setTimeout(() => {
-      setPlayerUiMasked(false);
-      if (playerUiMaskTimerRef.current) {
-        clearTimeout(playerUiMaskTimerRef.current);
-        playerUiMaskTimerRef.current = null;
+    const elapsed = Date.now() - tuneInStartedAtRef.current;
+    const waitMs = Math.max(
+      tvSettings.tuneInSettleMs,
+      tvSettings.tuneInMinMs - elapsed
+    );
+
+    tuneInEndTimerRef.current = setTimeout(() => {
+      setIsTuningIn(false);
+      if (tuneInMaxTimerRef.current) {
+        clearTimeout(tuneInMaxTimerRef.current);
+        tuneInMaxTimerRef.current = null;
       }
-      playerUiMaskClearTimerRef.current = null;
-    }, tvSettings.playerUiMaskClearMs);
+      tuneInEndTimerRef.current = null;
+    }, waitMs);
   }, []);
 
   const reapplyCaptionsIfEnabled = useCallback(() => {
@@ -295,7 +303,7 @@ export function useTVControls({
 
       errorSkipAttemptsRef.current = 0;
       setHasSignal(true);
-      beginPlayerUiMask();
+      beginTuneIn();
 
       if (channel.type === "playlist" && channel.playlistId) {
         const savedIndex = getSavedEpisodeIndex(channel);
@@ -312,7 +320,7 @@ export function useTVControls({
       reapplyCaptionsIfEnabled();
     },
     [
-      beginPlayerUiMask,
+      beginTuneIn,
       getSavedEpisodeIndex,
       loadPlaylist,
       loadVideo,
@@ -364,7 +372,7 @@ export function useTVControls({
 
       channelLockRef.current = true;
       setIsChangingChannel(true);
-      beginPlayerUiMask();
+      beginTuneIn();
 
       const nextIndex = wrapIndex(
         currentChannelIndexRef.current + direction,
@@ -378,7 +386,7 @@ export function useTVControls({
         channelLockRef.current = false;
       }, tvSettings.channelTransitionMs);
     },
-    [beginPlayerUiMask, loadCurrentChannel]
+    [beginTuneIn, loadCurrentChannel]
   );
 
   const channelUp = useCallback(() => {
@@ -458,7 +466,7 @@ export function useTVControls({
     const channel = channels[currentChannelIndexRef.current];
     if (channel.type !== "playlist" || !channel.playlistId || !playerReady) return;
 
-    beginPlayerUiMask();
+    beginTuneIn();
     previousVideo();
     play();
 
@@ -469,7 +477,7 @@ export function useTVControls({
       reapplyCaptionsIfEnabled();
     }, 150);
   }, [
-    beginPlayerUiMask,
+    beginTuneIn,
     getPlaylistIndex,
     play,
     playerReady,
@@ -485,7 +493,7 @@ export function useTVControls({
     const channel = channels[currentChannelIndexRef.current];
     if (channel.type !== "playlist" || !channel.playlistId || !playerReady) return;
 
-    beginPlayerUiMask();
+    beginTuneIn();
     nextVideo();
     play();
 
@@ -496,7 +504,7 @@ export function useTVControls({
       reapplyCaptionsIfEnabled();
     }, 150);
   }, [
-    beginPlayerUiMask,
+    beginTuneIn,
     getPlaylistIndex,
     nextVideo,
     play,
@@ -525,21 +533,21 @@ export function useTVControls({
     if (!channel || !isPoweredRef.current) return;
 
     if (channel.loop && channel.videoId) {
-      beginPlayerUiMask();
+      beginTuneIn();
       seekTo(0);
       play();
       return;
     }
 
     if (channel.type === "playlist" && tvSettings.autoPlayNextEpisode) {
-      beginPlayerUiMask();
+      beginTuneIn();
       return;
     }
 
     if (channel.type === "playlist" && !tvSettings.autoPlayNextEpisode) {
       pause();
     }
-  }, [beginPlayerUiMask, pause, play, seekTo]);
+  }, [beginTuneIn, pause, play, seekTo]);
 
   const handlePlayerError = useCallback(() => {
     const channel = channels[currentChannelIndexRef.current];
@@ -554,7 +562,7 @@ export function useTVControls({
         currentIndex < playlist.length - 1 &&
         errorSkipAttemptsRef.current < playlist.length
       ) {
-        beginPlayerUiMask();
+        beginTuneIn();
         nextVideo();
         play();
         window.setTimeout(() => {
@@ -569,7 +577,7 @@ export function useTVControls({
 
     showNoSignal();
   }, [
-    beginPlayerUiMask,
+    beginTuneIn,
     getPlaylist,
     getPlaylistIndex,
     nextVideo,
@@ -593,15 +601,11 @@ export function useTVControls({
 
   const handlePlayerStateChange = useCallback(
     (state: number) => {
-      setIsPlayerPlaying(state === 1);
-
       if (state === 1) {
-        endPlayerUiMask();
-      } else if (state === 0 || state === 2 || state === 3 || state === 5) {
-        setPlayerUiMasked(true);
+        tryEndTuneIn();
       }
     },
-    [endPlayerUiMask]
+    [tryEndTuneIn]
   );
 
   const togglePower = useCallback(() => {
@@ -619,7 +623,7 @@ export function useTVControls({
 
     if (isPoweredRef.current) {
       setPowerPhase("shuttingDown");
-      setIsPlayerPlaying(false);
+      setIsTuningIn(false);
       pause();
       stop();
 
@@ -668,10 +672,8 @@ export function useTVControls({
       clearVolumeOsdTimer();
       clearTransportOsdTimer();
       if (powerTimerRef.current) clearTimeout(powerTimerRef.current);
-      if (playerUiMaskTimerRef.current) clearTimeout(playerUiMaskTimerRef.current);
-      if (playerUiMaskClearTimerRef.current) {
-        clearTimeout(playerUiMaskClearTimerRef.current);
-      }
+      if (tuneInEndTimerRef.current) clearTimeout(tuneInEndTimerRef.current);
+      if (tuneInMaxTimerRef.current) clearTimeout(tuneInMaxTimerRef.current);
     };
   }, [
     clearChannelOsdTimer,
@@ -686,8 +688,7 @@ export function useTVControls({
     currentChannelIndex,
     volume,
     isChangingChannel,
-    playerUiMasked,
-    isPlayerPlaying,
+    isTuningIn,
     captionsEnabled,
     osd,
     playerReady,

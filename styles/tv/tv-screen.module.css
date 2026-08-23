@@ -70,11 +70,11 @@
 }
 
 .playerHost {
-  position: absolute;
-  inset: -14% -5% -40% -5%;
-  overflow: hidden;
-  clip-path: inset(9% 1.5% 38% 1.5% round 2px);
+  width: 100%;
+  height: 100%;
   pointer-events: none;
+  border-radius: inherit;
+  overflow: hidden;
 }
 
 .playerHost iframe {
@@ -82,8 +82,6 @@
   height: 100% !important;
   border: none;
   pointer-events: none;
-  transform: scale(1.06);
-  transform-origin: center 42%;
 }
 
 .contentLayer {
@@ -93,55 +91,11 @@
   overflow: hidden;
 }
 
-.youtubeChromeBlocker {
-  z-index: 9;
+.tuningLayer {
+  z-index: 7;
   inset: 1.5% 1.2%;
   border-radius: inherit;
   overflow: hidden;
-  pointer-events: none;
-}
-
-.chromeBlockerTop {
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 10%;
-  background: #030303;
-}
-
-.chromeBlockerBottom {
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  height: 18%;
-  background: #030303;
-}
-
-.chromeBlockerLeft {
-  position: absolute;
-  left: 0;
-  bottom: 0;
-  width: 16%;
-  height: 24%;
-  background: #030303;
-}
-
-.chromeBlockerRight {
-  position: absolute;
-  right: 0;
-  bottom: 0;
-  width: 14%;
-  height: 16%;
-  background: #030303;
-}
-
-.youtubeLoadCover {
-  z-index: 8;
-  inset: 1.5% 1.2%;
-  border-radius: inherit;
-  background: #030303;
   pointer-events: none;
 }
 
@@ -165,7 +119,6 @@
 .hidden {
   visibility: hidden;
   opacity: 0;
-  clip-path: inset(50%);
 }
 
 .noSignal {

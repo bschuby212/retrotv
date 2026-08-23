@@ -6,6 +6,7 @@ import { CRTOSD } from "@/components/tv/CRTDOSD";
 import { CRTOverlay } from "@/components/tv/CRTOverlay";
 import { PlaceholderScreen } from "@/components/tv/PlaceholderScreen";
 import { StaticTransition } from "@/components/tv/StaticTransition";
+import { TuningScreen } from "@/components/tv/TuningScreen";
 import { YouTubePlayer } from "@/components/tv/YouTubePlayer";
 import { tvScreenConfig } from "@/config/tvScreen";
 import { tvSettings } from "@/config/tvSettings";
@@ -19,7 +20,7 @@ interface TVScreenProps {
   powerPhase: PowerPhase;
   currentChannel: Channel;
   isChangingChannel: boolean;
-  isPlayerPlaying: boolean;
+  isTuningIn: boolean;
   hasSignal: boolean;
   osd: OSDState;
   onChannelUp: () => void;
@@ -31,7 +32,7 @@ export function TVScreen({
   powerPhase,
   currentChannel,
   isChangingChannel,
-  isPlayerPlaying,
+  isTuningIn,
   hasSignal,
   osd,
   onChannelUp,
@@ -39,11 +40,6 @@ export function TVScreen({
 }: TVScreenProps) {
   const playable = isChannelPlayable(currentChannel);
   const showPlayer = playable && isPowered && hasSignal;
-  const revealIframe =
-    showPlayer && !isChangingChannel && isPlayerPlaying;
-  const showChromeMask = showPlayer && !isChangingChannel && isPlayerPlaying;
-  const showStandbyCover =
-    showPlayer && !isChangingChannel && !isPlayerPlaying;
 
   const showNoSignalOverlay =
     isPowered &&
@@ -98,15 +94,8 @@ export function TVScreen({
       >
         <YouTubePlayer
           containerId={YOUTUBE_CONTAINER_ID}
-          visible={revealIframe}
+          visible={showPlayer}
         />
-
-        {showStandbyCover && (
-          <div
-            className={`${screenStyles.layer} ${screenStyles.youtubeLoadCover}`}
-            aria-hidden="true"
-          />
-        )}
 
         <div className={`${screenStyles.layer} ${screenStyles.contentLayer}`}>
           {showPlaceholder && (
@@ -130,17 +119,9 @@ export function TVScreen({
           <CRTOverlay isPowered={isPowered} powerPhase={powerPhase} />
         </div>
 
-        {showChromeMask && (
-          <div
-            className={`${screenStyles.layer} ${screenStyles.youtubeChromeBlocker}`}
-            aria-hidden="true"
-          >
-            <div className={screenStyles.chromeBlockerTop} />
-            <div className={screenStyles.chromeBlockerBottom} />
-            <div className={screenStyles.chromeBlockerLeft} />
-            <div className={screenStyles.chromeBlockerRight} />
-          </div>
-        )}
+        <div className={`${screenStyles.layer} ${screenStyles.tuningLayer}`}>
+          <TuningScreen active={showPlayer && isTuningIn} />
+        </div>
       </div>
 
       {isPowered && (
