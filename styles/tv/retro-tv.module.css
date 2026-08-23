@@ -472,29 +472,29 @@
 @media (max-width: 480px) {
   .retroTv {
     width: min(360px, calc(100vw - 24px));
-    aspect-ratio: 0.86 / 1;
-    min-height: 400px;
+    aspect-ratio: 1.05 / 1;
+    min-height: unset;
   }
 
   .lowerCenter {
-    top: 75.8%;
-    gap: 11px;
-    padding-bottom: 8px;
+    top: 77.6%;
+    gap: 10px;
+    padding-bottom: 0;
   }
 
   .controlsArea {
-    min-height: 40px;
+    min-height: 0;
   }
 
   .avInputs {
-    bottom: 3.8%;
-    left: 14%;
-    gap: 4px;
+    bottom: 2.4%;
+    left: 16%;
+    gap: 5px;
   }
 
   .headphoneJack {
-    bottom: 3.8%;
-    right: 18%;
+    bottom: 2.4%;
+    right: 19%;
   }
 }
 
