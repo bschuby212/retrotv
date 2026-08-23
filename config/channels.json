@@ -42,6 +42,27 @@
       "sourceUrl": "https://www.youtube.com/watch?v=h-AEPFNIJFc",
       "type": "video",
       "loop": true
+    },
+    {
+      "channel": 8,
+      "name": "POKÉMON TV",
+      "sourceUrl": "https://www.youtube.com/watch?v=z3hMX65Khtg&list=PLo60BvbiWBuqUwSRFou3pbPV2IAWaP0rg",
+      "type": "playlist",
+      "loop": false
+    },
+    {
+      "channel": 9,
+      "name": "NARUTO SHIPPUDEN",
+      "sourceUrl": "https://www.youtube.com/watch?v=yFkooFGaDJQ",
+      "type": "video",
+      "loop": false
+    },
+    {
+      "channel": 10,
+      "name": "NARUTO TV",
+      "sourceUrl": "https://www.youtube.com/watch?v=luFYz4zAG9c",
+      "type": "video",
+      "loop": false
     }
   ]
 }

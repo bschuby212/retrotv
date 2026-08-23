@@ -92,6 +92,8 @@ function resolveChannel(entry: ChannelEntry): Channel {
 
       if (playlistId && !videoId) {
         type = entry.type === "playlist" ? "playlist" : "playlist";
+      } else if (playlistId && entry.type === "playlist") {
+        type = "playlist";
       } else if (videoId) {
         type = entry.type === "video" || entry.type === "live" ? entry.type : "video";
       } else if (!entry.type || entry.type === "unconfigured") {
