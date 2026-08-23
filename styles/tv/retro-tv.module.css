@@ -471,13 +471,47 @@
 /* Mobile: phones and small screens */
 @media (max-width: 640px) {
   .retroTv {
-    width: 360px;
+    width: min(360px, calc(100vw - 24px));
+    aspect-ratio: 0.9 / 1;
+  }
+
+  .lowerCenter {
+    top: 76.4%;
+    gap: 10px;
+    padding-bottom: 6px;
+  }
+
+  .controlsArea {
+    min-height: 38px;
+  }
+
+  .avInputs {
+    bottom: 3.8%;
+    left: 14%;
+    gap: 4px;
+  }
+
+  .headphoneJack {
+    bottom: 3.8%;
+    right: 18%;
   }
 }
 
 @media (max-width: 450px) {
   .retroTv {
-    width: min(360px, calc(100vw - 24px), calc((100dvh - 24px) * 1.05));
+    width: min(360px, calc(100vw - 24px));
+    aspect-ratio: 0.86 / 1;
+    min-height: 400px;
+  }
+
+  .lowerCenter {
+    top: 75.8%;
+    gap: 11px;
+    padding-bottom: 8px;
+  }
+
+  .controlsArea {
+    min-height: 40px;
   }
 }
 

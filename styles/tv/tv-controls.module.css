@@ -38,11 +38,25 @@
 
 @media (max-width: 640px) {
   .panel {
-    gap: 0.42rem;
-    max-width: 96%;
+    gap: 0.34rem;
+    max-width: 100%;
   }
 
   .clusterLabel {
     font-size: 0.22rem;
+  }
+}
+
+@media (max-width: 450px) {
+  .panel {
+    gap: 0.24rem;
+  }
+
+  .cluster {
+    gap: 4px;
+  }
+
+  .buttonPair {
+    gap: 2px;
   }
 }

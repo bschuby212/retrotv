@@ -124,19 +124,45 @@
   white-space: nowrap;
 }
 
-@media (max-width: 480px) {
-  .narrow {
-    width: 15px;
-    height: 12px;
-  }
-
-  .transport {
-    width: 18px;
-    height: 12px;
-  }
-
+@media (max-width: 640px) {
   .power {
     width: 22px;
     height: 14px;
+  }
+
+  .narrow {
+    width: 14px;
+    height: 11px;
+  }
+
+  .transport {
+    width: 17px;
+    height: 11px;
+  }
+
+  .narrow .buttonIcon {
+    font-size: 0.36rem;
+    transform: scale(1.05);
+  }
+
+  .transport .buttonIcon {
+    font-size: 0.28rem;
+  }
+}
+
+@media (max-width: 450px) {
+  .power {
+    width: 20px;
+    height: 13px;
+  }
+
+  .narrow {
+    width: 13px;
+    height: 10px;
+  }
+
+  .transport {
+    width: 16px;
+    height: 10px;
   }
 }
