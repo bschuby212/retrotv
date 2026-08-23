@@ -79,21 +79,6 @@
   z-index: 0;
 }
 
-@media (max-width: 768px) {
-  .backgroundWrap {
-    transform: scale(var(--room-bg-scale-mobile, 2.5));
-    transform-origin: center var(--room-focal-y-mobile, 56%);
-  }
-
-  .background {
-    object-position: var(--room-focal-x, 50%) var(--room-focal-y-mobile, 56%);
-  }
-
-  .tvMount {
-    bottom: calc(var(--cabinet-anchor-mobile, 16%) + 20px);
-  }
-}
-
 @media (max-width: 480px) {
   .scene {
     --room-focal-y-mobile: 54%;
@@ -105,6 +90,10 @@
     transform-origin: center var(--room-focal-y-mobile, 54%);
   }
 
+  .background {
+    object-position: var(--room-focal-x, 50%) var(--room-focal-y-mobile, 54%);
+  }
+
   .tvMount {
     top: 50%;
     bottom: auto;
@@ -112,13 +101,49 @@
   }
 }
 
-@media (min-width: 769px) and (max-width: 1366px) {
+@media (min-width: 481px) and (max-width: 768px) {
+  .backgroundWrap {
+    transform: scale(2.2);
+    transform-origin: center 52%;
+  }
+
+  .background {
+    object-position: 50% 52%;
+  }
+
+  .tvMount {
+    bottom: 18%;
+    top: auto;
+    transform: translateX(-50%);
+  }
+}
+
+@media (min-width: 769px) and (max-width: 1024px) {
+  .backgroundWrap {
+    transform: scale(2.15);
+    transform-origin: center calc(48% + 60px);
+  }
+
+  .background {
+    object-position: var(--room-focal-x, 50%) var(--room-focal-y, calc(48% + 60px));
+  }
+
+  .tvMount {
+    bottom: 18%;
+    top: auto;
+    transform: translateX(-50%);
+  }
+}
+
+@media (min-width: 1025px) and (max-width: 1366px) {
   .background {
     object-position: var(--room-focal-x, 50%) var(--room-focal-y, calc(48% + 60px));
   }
 
   .tvMount {
     bottom: var(--cabinet-anchor, 20%);
+    top: auto;
+    transform: translateX(-50%);
   }
 }
 

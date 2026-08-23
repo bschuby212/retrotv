@@ -124,32 +124,6 @@
   white-space: nowrap;
 }
 
-@media (max-width: 768px) {
-  .power {
-    width: 22px;
-    height: 14px;
-  }
-
-  .narrow {
-    width: 14px;
-    height: 11px;
-  }
-
-  .transport {
-    width: 17px;
-    height: 11px;
-  }
-
-  .narrow .buttonIcon {
-    font-size: 0.36rem;
-    transform: scale(1.05);
-  }
-
-  .transport .buttonIcon {
-    font-size: 0.28rem;
-  }
-}
-
 @media (max-width: 480px) {
   .power {
     width: 20px;
@@ -164,5 +138,14 @@
   .transport {
     width: 16px;
     height: 10px;
+  }
+
+  .narrow .buttonIcon {
+    font-size: 0.36rem;
+    transform: scale(1.05);
+  }
+
+  .transport .buttonIcon {
+    font-size: 0.28rem;
   }
 }

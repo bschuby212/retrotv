@@ -468,35 +468,7 @@
     inset 0 1px 0 rgba(255, 248, 235, 0.05);
 }
 
-/* Tablet and phone */
-@media (max-width: 768px) {
-  .retroTv {
-    width: min(520px, calc(100vw - 32px));
-    aspect-ratio: 0.92 / 1;
-  }
-
-  .lowerCenter {
-    top: 76.4%;
-    gap: 10px;
-    padding-bottom: 6px;
-  }
-
-  .controlsArea {
-    min-height: 38px;
-  }
-
-  .avInputs {
-    bottom: 3.8%;
-    left: 14%;
-    gap: 4px;
-  }
-
-  .headphoneJack {
-    bottom: 3.8%;
-    right: 18%;
-  }
-}
-
+/* Phone */
 @media (max-width: 480px) {
   .retroTv {
     width: min(360px, calc(100vw - 24px));
@@ -513,12 +485,23 @@
   .controlsArea {
     min-height: 40px;
   }
+
+  .avInputs {
+    bottom: 3.8%;
+    left: 14%;
+    gap: 4px;
+  }
+
+  .headphoneJack {
+    bottom: 3.8%;
+    right: 18%;
+  }
 }
 
-/* Laptop */
-@media (min-width: 769px) and (max-width: 1366px) {
+/* Tablet portrait */
+@media (min-width: 481px) and (max-width: 768px) {
   .retroTv {
-    width: 620px;
+    width: min(400px, calc(100vw - 48px));
     aspect-ratio: 1.05 / 1;
     min-height: auto;
   }
@@ -545,9 +528,69 @@
   }
 }
 
-/* Desktop: large monitors */
+/* Tablet landscape / small laptop */
+@media (min-width: 769px) and (max-width: 1024px) {
+  .retroTv {
+    width: min(480px, calc(100vw - 56px));
+    aspect-ratio: 1.05 / 1;
+    min-height: auto;
+  }
+
+  .lowerCenter {
+    top: 77.6%;
+    gap: 12px;
+    padding-bottom: 0;
+  }
+
+  .controlsArea {
+    min-height: 0;
+  }
+
+  .avInputs {
+    bottom: 2.4%;
+    left: 18%;
+    gap: 6px;
+  }
+
+  .headphoneJack {
+    bottom: 2.4%;
+    right: 21%;
+  }
+}
+
+/* Laptop */
+@media (min-width: 1025px) and (max-width: 1366px) {
+  .retroTv {
+    width: min(620px, calc(100vw - 48px));
+    aspect-ratio: 1.05 / 1;
+    min-height: auto;
+  }
+
+  .lowerCenter {
+    top: 77.6%;
+    gap: 12px;
+    padding-bottom: 0;
+  }
+
+  .controlsArea {
+    min-height: 0;
+  }
+
+  .avInputs {
+    bottom: 2.4%;
+    left: 18%;
+    gap: 6px;
+  }
+
+  .headphoneJack {
+    bottom: 2.4%;
+    right: 21%;
+  }
+}
+
+/* Desktop */
 @media (min-width: 1367px) {
   .retroTv {
-    width: 880px;
+    width: min(880px, calc(100vw - 64px));
   }
 }
