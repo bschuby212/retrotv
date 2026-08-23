@@ -558,8 +558,8 @@
   }
 }
 
-/* Laptop */
-@media (min-width: 1025px) and (max-width: 1366px) {
+/* Laptop and desktop: always cap at 620px */
+@media (min-width: 1025px) {
   .retroTv {
     width: min(620px, calc(100vw - 48px));
     aspect-ratio: 1.05 / 1;
@@ -585,12 +585,5 @@
   .headphoneJack {
     bottom: 2.4%;
     right: 21%;
-  }
-}
-
-/* Desktop */
-@media (min-width: 1367px) {
-  .retroTv {
-    width: min(880px, calc(100vw - 64px));
   }
 }
