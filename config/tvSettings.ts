@@ -13,7 +13,6 @@ export const tvSettings = {
   powerOffDurationMs: 450,
   channelChangeLockMs: 300,
   maxEpisodeTitleLength: 28,
-  tuneInMinMs: 2200,
-  tuneInSettleMs: 500,
-  tuneInMaxMs: 8000,
+  tuneInMinMs: 1200,
+  tuneInSettleMs: 350,
 } as const;

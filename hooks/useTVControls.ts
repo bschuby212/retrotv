@@ -85,8 +85,7 @@ export function useTVControls({
   const transportOsdTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const powerTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const tuneInStartedAtRef = useRef(0);
-  const tuneInEndTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-  const tuneInMaxTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const tuneInTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const channelLockRef = useRef(false);
   const episodePositionRef = useRef<Record<number, number>>({});
   const errorSkipAttemptsRef = useRef(0);
@@ -134,43 +133,43 @@ export function useTVControls({
     }
   }, []);
 
-  const beginTuneIn = useCallback(() => {
-    if (tuneInEndTimerRef.current) {
-      clearTimeout(tuneInEndTimerRef.current);
-      tuneInEndTimerRef.current = null;
+  const endTuneIn = useCallback(() => {
+    if (tuneInTimerRef.current) {
+      clearTimeout(tuneInTimerRef.current);
+      tuneInTimerRef.current = null;
     }
-    if (tuneInMaxTimerRef.current) {
-      clearTimeout(tuneInMaxTimerRef.current);
-    }
+    setIsTuningIn(false);
+  }, []);
 
+  const beginTuneIn = useCallback(() => {
     tuneInStartedAtRef.current = Date.now();
     setIsTuningIn(true);
 
-    tuneInMaxTimerRef.current = setTimeout(() => {
-      setIsTuningIn(false);
-      tuneInMaxTimerRef.current = null;
-    }, tvSettings.tuneInMaxMs);
-  }, []);
-
-  const tryEndTuneIn = useCallback(() => {
-    if (tuneInEndTimerRef.current) {
-      clearTimeout(tuneInEndTimerRef.current);
+    if (tuneInTimerRef.current) {
+      clearTimeout(tuneInTimerRef.current);
     }
 
+    tuneInTimerRef.current = setTimeout(() => {
+      setIsTuningIn(false);
+      tuneInTimerRef.current = null;
+    }, tvSettings.tuneInMinMs);
+  }, []);
+
+  const tryEndTuneInOnPlay = useCallback(() => {
     const elapsed = Date.now() - tuneInStartedAtRef.current;
-    const waitMs = Math.max(
+    const delay = Math.max(
       tvSettings.tuneInSettleMs,
       tvSettings.tuneInMinMs - elapsed
     );
 
-    tuneInEndTimerRef.current = setTimeout(() => {
+    if (tuneInTimerRef.current) {
+      clearTimeout(tuneInTimerRef.current);
+    }
+
+    tuneInTimerRef.current = setTimeout(() => {
       setIsTuningIn(false);
-      if (tuneInMaxTimerRef.current) {
-        clearTimeout(tuneInMaxTimerRef.current);
-        tuneInMaxTimerRef.current = null;
-      }
-      tuneInEndTimerRef.current = null;
-    }, waitMs);
+      tuneInTimerRef.current = null;
+    }, delay);
   }, []);
 
   const reapplyCaptionsIfEnabled = useCallback(() => {
@@ -289,9 +288,10 @@ export function useTVControls({
   const showNoSignal = useCallback(() => {
     clearChannelOsdTimer();
     clearEpisodeOsdTimer();
+    endTuneIn();
     setHasSignal(false);
     setOsd({ type: null });
-  }, [clearChannelOsdTimer, clearEpisodeOsdTimer]);
+  }, [clearChannelOsdTimer, clearEpisodeOsdTimer, endTuneIn]);
 
   const loadChannelSource = useCallback(
     (channel: Channel) => {
@@ -533,21 +533,19 @@ export function useTVControls({
     if (!channel || !isPoweredRef.current) return;
 
     if (channel.loop && channel.videoId) {
-      beginTuneIn();
       seekTo(0);
       play();
       return;
     }
 
     if (channel.type === "playlist" && tvSettings.autoPlayNextEpisode) {
-      beginTuneIn();
       return;
     }
 
     if (channel.type === "playlist" && !tvSettings.autoPlayNextEpisode) {
       pause();
     }
-  }, [beginTuneIn, pause, play, seekTo]);
+  }, [pause, play, seekTo]);
 
   const handlePlayerError = useCallback(() => {
     const channel = channels[currentChannelIndexRef.current];
@@ -602,10 +600,10 @@ export function useTVControls({
   const handlePlayerStateChange = useCallback(
     (state: number) => {
       if (state === 1) {
-        tryEndTuneIn();
+        tryEndTuneInOnPlay();
       }
     },
-    [tryEndTuneIn]
+    [tryEndTuneInOnPlay]
   );
 
   const togglePower = useCallback(() => {
@@ -623,7 +621,7 @@ export function useTVControls({
 
     if (isPoweredRef.current) {
       setPowerPhase("shuttingDown");
-      setIsTuningIn(false);
+      endTuneIn();
       pause();
       stop();
 
@@ -672,8 +670,7 @@ export function useTVControls({
       clearVolumeOsdTimer();
       clearTransportOsdTimer();
       if (powerTimerRef.current) clearTimeout(powerTimerRef.current);
-      if (tuneInEndTimerRef.current) clearTimeout(tuneInEndTimerRef.current);
-      if (tuneInMaxTimerRef.current) clearTimeout(tuneInMaxTimerRef.current);
+      if (tuneInTimerRef.current) clearTimeout(tuneInTimerRef.current);
     };
   }, [
     clearChannelOsdTimer,
